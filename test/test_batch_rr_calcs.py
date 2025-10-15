@@ -2,7 +2,7 @@
 Unit tests for the batch_rr_calcs library
 """
 
-import batch_rr_calcs
+import daamsim.batch_rr_calcs
 
 class TestBatchRrCalcs:
 
