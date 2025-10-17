@@ -1,3 +1,10 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "daamsim"
+
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
