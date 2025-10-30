@@ -3,7 +3,7 @@ Implements the functionality of the batchRrCalcs script.
 """
 
 
-from structs import daa_spec
+from data_classes import daa_spec
 
 
 def make_speed_array(min_speed: int, max_speed: int, speed_increment: int) -> list[int]:

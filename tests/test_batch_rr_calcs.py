@@ -2,7 +2,7 @@
 Unit tests for the batch_rr_calcs library
 """
 
-from src.daamsim.batch_rr_calcs import make_speed_array
+from src.calculations.batch_rr_calcs import make_speed_array
 
 
 class TestBatchRrCalcs:
