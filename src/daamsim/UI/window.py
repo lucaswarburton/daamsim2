@@ -8,6 +8,8 @@ from DMController import DMController
 class Window(Tk):
     def __init__(self):
         super().__init__()
+        self.frames = dict()
+
         screen_width = super().winfo_screenwidth()
         screen_height = super().winfo_screenheight()
         super().title("DAAMSIM")
@@ -21,12 +23,25 @@ class Window(Tk):
              
         
     def setDMUIFrame(self, frame):
+        
         self.DMUIFrame = frame
         self.DMUIFrame.pack(side = LEFT, fill = "both", expand=True)
 
     def setActiveFrame(self, frame):
-        self.ActiveFrame = frame
+        if isinstance(frame, str):
+            self.ActiveFrame = self.frames[frame]
+        else:
+            self.ActiveFrame = frame
         self.ActiveFrame.pack(side = RIGHT, fill="both", expand=True)
+
+    # def setActiveFrame(self, frameName):
+    #     self.setActiveFrame(self.frames[frameName])
+
+    def addFrame(self, frameName, frame):
+        self.frames[frameName] = frame
+        
+
+        
 
 
 

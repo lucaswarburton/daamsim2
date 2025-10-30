@@ -22,7 +22,7 @@ class DMController:
         self.model
 
     def save_model(self):
-        self.model
+        self
 
     def load_model(self):
-        self.model
+        self
