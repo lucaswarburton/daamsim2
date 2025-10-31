@@ -8,7 +8,6 @@ class Configuration:
     _config_file_path = Path.cwd() / "config.ini"
 
     def __init__(self):
-        self.daa_spec = daa_spec()
         self.parseConfig()
 
     def get_instance():
@@ -31,47 +30,69 @@ class Configuration:
         
         #Get default intruder speed array
         if custom_intruder_speed_enabled == 'true' or custom_intruder_speed_enabled == 't' or custom_intruder_speed_enabled == 'y' or custom_intruder_speed_enabled == 'yes':
-            self.daa_spec.intruder_speed_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_intruder_speed_array'])
+            intruder_speed_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_intruder_speed_array'])
         else:
             #Set default intruder speed array
             min_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
             max_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
             speed_interval = Decimal(parser['DEFAULTS']['intruder_speed_interval'])
-            self.daa_spec.intruder_speed_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
+            intruder_speed_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
             
         custom_vector_array_enabled = parser['Settings']['custom_vector_array_enabled']
         custom_vector_array_enabled = custom_intruder_speed_enabled.lower()
         
         #Get default intruder speed array
         if custom_vector_array_enabled == 'true' or custom_vector_array_enabled == 't' or custom_vector_array_enabled == 'y' or custom_vector_array_enabled == 'yes':
-            self.daa_spec.azimuth_vector_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_vector_array'])
+            azimuth_vector_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_vector_array'])
         else:
             #Set default intruder speed array
             min_speed =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
             max_speed = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
             speed_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
-            self.daa_spec.azimuth_vector_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
+            azimuth_vector_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
             
-        self.daa_spec.max_bank = Decimal(parser['DEFAULTS']['max_bank_deg'])
-        self.daa_spec.range = Decimal(parser['DEFAULTS']['range'])
-        self.daa_spec.FOV = Decimal(parser['DEFAULTS']['FOV_deg'])
-        self.daa_spec.ownsize = Decimal(parser['DEFAULTS']['rov_size'])
-        self.daa_spec.ownspeed = Decimal(parser['DEFAULTS']['rov_speed'])
-        self.daa_spec.max_roll_rate = Decimal(parser['DEFAULTS']['rov_max_roll_rate'])
-        self.daa_spec.sigma_al = Decimal(parser['DEFAULTS']['sigma_al'])
-        self.daa_spec.signma_cross = Decimal(parser['DEFAULTS']['signma_cross'])
-        self.daa_spec.DMOD = Decimal(parser['DEFAULTS']['DMOD'])
-        self.daa_spec.t_sim = Decimal(parser['DEFAULTS']['t_sim'])
-        self.daa_spec.post_col = Decimal(parser['DEFAULTS']['post_col'])
-        self.daa_spec.wind_speed = Decimal(parser['DEFAULTS']['wind_speed'])
-        self.daa_spec.wind_dir = Decimal(parser['DEFAULTS']['wind_dir'])
-        self.daa_spec.NDecimals = int(parser['DEFAULTS']['NDecimals'])
-        self.daa_spec.sensor_rate = int(parser['DEFAULTS']['sensor_rate'])
-        self.daa_spec.scans_track = int(parser['DEFAULTS']['scans_track'])
-        self.daa_spec.t_warn = int(parser['DEFAULTS']['t_warn'])
+        max_bank = Decimal(parser['DEFAULTS']['max_bank_deg'])
+        range = Decimal(parser['DEFAULTS']['range'])
+        FOV = Decimal(parser['DEFAULTS']['FOV_deg'])
+        ownsize = Decimal(parser['DEFAULTS']['rov_size'])
+        ownspeed = Decimal(parser['DEFAULTS']['rov_speed'])
+        max_roll_rate = Decimal(parser['DEFAULTS']['rov_max_roll_rate'])
+        sigma_al = Decimal(parser['DEFAULTS']['sigma_al'])
+        signma_cross = Decimal(parser['DEFAULTS']['signma_cross'])
+        DMOD = Decimal(parser['DEFAULTS']['DMOD'])
+        t_sim = Decimal(parser['DEFAULTS']['t_sim'])
+        post_col = Decimal(parser['DEFAULTS']['post_col'])
+        wind_speed = Decimal(parser['DEFAULTS']['wind_speed'])
+        wind_dir = Decimal(parser['DEFAULTS']['wind_dir'])
+        NDecimals = int(parser['DEFAULTS']['NDecimals'])
+        sensor_rate = int(parser['DEFAULTS']['sensor_rate'])
+        scans_track = int(parser['DEFAULTS']['scans_track'])
+        t_warn = int(parser['DEFAULTS']['t_warn'])
+        
+        self.daa_spec = daa_spec(\
+            max_bank=max_bank, \
+            range=range,\
+            FOV=FOV,\
+            ownsize=ownsize,\
+            ownspeed=ownspeed,\
+            max_roll_rate=max_roll_rate, \
+            azimuth_vector_array=azimuth_vector_array, \
+            intruder_speed_array=intruder_speed_array, \
+            sigma_al=sigma_al, \
+            signma_cross= signma_cross, \
+            DMOD=DMOD, \
+            t_sim=t_sim, \
+            post_col=post_col, \
+            wind_speed=wind_speed, \
+            wind_dir=wind_dir, \
+            NDecimals=NDecimals, \
+            sensor_rate=sensor_rate, \
+            scans_track=scans_track, \
+            t_warn=t_warn)
+    
         
 
-Configuration().get_instance()
+Configuration.get_instance()
         
         
         

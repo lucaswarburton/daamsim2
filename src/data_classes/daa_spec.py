@@ -30,8 +30,19 @@ class daa_spec:
     
     @staticmethod
     def createIntervalArray(start:Decimal, end: Decimal, interval: Decimal):
-        lst = list(range(start, end, interval))
-        return lst + start
+        if (start > end):
+            raise ValueError("Create Interval Array: Start cannot be greater than end. Start: " + str(start) + "End: " + str(end))
+        elif (interval <= 0):
+            raise ValueError("Create Interval Array: Interval cannot be less than 0: " + str(interval))
+        
+        lst = list()
+        i = start
+        while i < end:
+            lst.append(i)
+            i += interval
+        lst.append(end)
+        
+        return lst
     
     @staticmethod
     def createCustArray(inputStr: str):
