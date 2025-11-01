@@ -10,7 +10,7 @@ class DMController:
         self.model =  model
 
     def run_new_sim(self):
-        self.model
+        self.view.setActiveFrame("NSUI")
 
     def run_cumulative_calc(self):
         self.model
@@ -19,7 +19,7 @@ class DMController:
         self.model
 
     def open_graph_manager(self):
-        self.model
+        self.view.setActiveFrame("GMUI")
 
     def save_model(self):
         self

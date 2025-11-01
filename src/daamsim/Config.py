@@ -3,8 +3,7 @@ from pathlib import Path
 from decimal import Decimal
 import sys
 import os
-needed = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data_classes")
-sys.path.append(needed)
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data_classes"))
 from daa_spec import daa_spec
 
 
@@ -51,11 +50,21 @@ class Configuration:
             azimuth_vector_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_vector_array'])
         else:
             #Set default intruder speed array
-            min_speed =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
-            max_speed = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
-            speed_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
-            azimuth_vector_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
-            
+            min_azimuth =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
+            max_azimuth = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
+            azimuth_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
+            azimuth_vector_array = daa_spec.createIntervalArray(min_azimuth, max_azimuth, azimuth_interval)
+        
+        self.min_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
+        self.max_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
+        self.speed_interval = Decimal(parser['DEFAULTS']['intruder_speed_interval'])
+        self.custom_intruder_speed_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_intruder_speed_array'])
+        
+        self.min_azimuth =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
+        self.max_azimuth = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
+        self.azimuth_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
+        self.custom_azimuth_vector_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_vector_array'])
+        
         max_bank = Decimal(parser['DEFAULTS']['max_bank_deg'])
         range = Decimal(parser['DEFAULTS']['range'])
         FOV = Decimal(parser['DEFAULTS']['FOV_deg'])
@@ -94,8 +103,10 @@ class Configuration:
             sensor_rate=sensor_rate, \
             scans_track=scans_track, \
             t_warn=t_warn)
+        
 
 
+ 
         
 
         

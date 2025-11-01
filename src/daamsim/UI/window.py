@@ -9,6 +9,7 @@ class Window(Tk):
     def __init__(self):
         super().__init__()
         self.frames = dict()
+        self.container = Frame(self)
 
         screen_width = super().winfo_screenwidth()
         screen_height = super().winfo_screenheight()
@@ -32,10 +33,7 @@ class Window(Tk):
             self.ActiveFrame = self.frames[frame]
         else:
             self.ActiveFrame = frame
-        self.ActiveFrame.pack(side = RIGHT, fill="both", expand=True)
-
-    # def setActiveFrame(self, frameName):
-    #     self.setActiveFrame(self.frames[frameName])
+        self.ActiveFrame.tkraise()
 
     def addFrame(self, frameName, frame):
         self.frames[frameName] = frame

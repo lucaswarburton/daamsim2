@@ -4,8 +4,8 @@ from tkinter import ttk
 from DMController import DMController
 
 class DMUIFrame(Frame):
-    def __init__(self, controller, master = None, cnf = {}, background = "white", bd = 2, bg = "blue", border = 0, borderwidth = 0, class_ = "Frame", colormap = "", container = False, cursor = "", height = 0, highlightbackground = "grey", highlightcolor = "white", highlightthickness = 0, name = "data_manager", padx = 0, pady = 0, relief = "flat", takefocus = 0, visual = "", width = 0):
-        super().__init__(master, cnf, background=background, bd=bd, bg=bg, border=border, borderwidth=borderwidth, class_=class_, colormap=colormap, container=container, cursor=cursor, height=height, highlightbackground=highlightbackground, highlightcolor=highlightcolor, highlightthickness=highlightthickness, name=name, padx=padx, pady=pady, relief=relief, takefocus=takefocus, visual=visual, width=width)
+    def __init__(self, controller, master, bg = "blue"):
+        Frame.__init__(self, master, bg=bg)
         self.controller = controller
 
         self.new_sim_button = Button(self, text = "Run New Simulation", command=controller.run_new_sim)
