@@ -1,7 +1,12 @@
 import configparser
 from pathlib import Path
 from decimal import Decimal
-from data_classes.daa_spec import daa_spec
+import sys
+import os
+needed = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data_classes")
+sys.path.append(needed)
+from daa_spec import daa_spec
+
 
 class Configuration:
     _instance = None
@@ -89,10 +94,10 @@ class Configuration:
             sensor_rate=sensor_rate, \
             scans_track=scans_track, \
             t_warn=t_warn)
-    
+
+
         
 
-Configuration.get_instance()
         
         
         
