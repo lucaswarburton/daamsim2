@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class daa_spec:
+class DaaSpec:
     max_bank: float # degrees
     range: float # meters
     FOV: float # degrees
