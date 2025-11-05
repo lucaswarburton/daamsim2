@@ -1,5 +1,5 @@
 import threading
-from threadsafe_list import ThreadSafeList
+from data_classes.threadsafe_list import ThreadSafeList
 
 class CurrentData:
     _instance = None
@@ -28,4 +28,7 @@ class CurrentData:
             for name in self._fields_names:
                 setattr(self, name, ThreadSafeList())
             self._initialized = True
+
+    def clear(self):
+        del self
 
