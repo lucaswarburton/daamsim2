@@ -1,10 +1,14 @@
 from dataclasses import dataclass
+from decimal import Decimal
 
 @dataclass
-class daa_spec:
-    max_bank: float # degrees
-    range: float # meters
-    FOV: float # degrees
-    ownsize: float # meters
-    ownspeed: float # knots
-    max_roll_rate: float # degrees/second
+class DaaSpec:
+    max_bank: Decimal # degrees
+    range: Decimal # meters
+    FOV: Decimal # degrees
+    ownsize: Decimal # meters
+    ownspeed: Decimal # knots
+    max_roll_rate: Decimal # degrees/second
+    min_speed: Decimal # knots
+    max_speed: Decimal # knots
+    speed_increment: Decimal # knots
