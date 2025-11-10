@@ -1,16 +1,20 @@
 class DMController:
     def __init__(self):
-        self.view = None
+        self.window = None
         self.model = None
+        self.view = None
         
-    def setView(self, view):
-        self.view = view
+    def setWindow(self, window):
+        self.window = window
     
     def setmodel(self, model):
         self.model =  model
+        
+    def setView(self, view):
+        self.view = view
 
     def run_new_sim(self):
-        self.view.setActiveFrame("NSUI")
+        self.window.setActiveFrame("NSUI")
 
     def run_cumulative_calc(self):
         self.model
@@ -19,7 +23,7 @@ class DMController:
         self.model
 
     def open_graph_manager(self):
-        self.view.setActiveFrame("GMUI")
+        self.window.setActiveFrame("GMUI")
 
     def save_model(self):
         self
@@ -28,4 +32,11 @@ class DMController:
         self
         
     def update_window(self):
-        self.view.update()
+        self.window.update()
+        
+    def lock_buttons(self):
+        self.view.lock_buttons()
+        
+    def calculation_mode(self):
+        self.lock_buttons()
+        self.window.setActiveFrame("ProgressFrameUI")

@@ -12,10 +12,11 @@ class new_sim_controller:
     
     def update_window(self):
         self.master_controller.update_window()
-        
-    
+         
     def run_new_sim(self):
         daa_spec = self.view.get_params()
+        self.master_controller.calculation_mode()
+        
         
     
     

@@ -8,7 +8,6 @@ class DMUIFrame(Frame):
         Frame.__init__(self, master, bg=bg, width=250)
         self.controller = controller
 
-
         self.new_sim_button = Button(self, text = "Run New Simulation", command=controller.run_new_sim)
         self.calculate_cumulative_data_button = Button(self,text = "Calculate Sample Cumulative Risk Ratio", command=controller.run_cumulative_calc)
         self.calculate_daa_sensitivity_button = Button(self, text = "Calculate Sample Sensitivity", command = controller.run_sensitivity_calc)
@@ -26,5 +25,20 @@ class DMUIFrame(Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
     
+    def lock_buttons(self):
+        self.new_sim_button.config(state=DISABLED)
+        self.calculate_cumulative_data_button.config(state=DISABLED)
+        self.calculate_daa_sensitivity_button.config(state=DISABLED)
+        self.view_graphs_button.config(state=DISABLED)
+        self.save_data_button.config(state=DISABLED)
+        self.load_data_button.config(state=DISABLED)
+    
+    def unlock_buttons(self):
+        self.new_sim_button.config(state=NORMAL)
+        self.calculate_cumulative_data_button.config(state=NORMAL)
+        self.calculate_daa_sensitivity_button.config(state=NORMAL)
+        self.view_graphs_button.config(state=NORMAL)
+        self.save_data_button.config(state=NORMAL)
+        self.load_data_button.config(state=NORMAL)
 
 

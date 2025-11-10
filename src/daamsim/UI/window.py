@@ -10,6 +10,11 @@ class Window(Tk):
         super().__init__()
         self.frames = dict()
         self.container = Frame(self, width=300)
+
+        self.container.pack(side = RIGHT, fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
+        
         
         screen_width = super().winfo_screenwidth()
         screen_height = super().winfo_screenheight()
@@ -17,7 +22,7 @@ class Window(Tk):
         super().geometry(str(int(screen_width*3/4)) + 'x' + str(int(screen_height * 3/4)) + '+' + str(int(screen_width/8)) + '+' + str(int(screen_height/8)))
 
         main_controller = DMController()
-        main_controller.setView(self)
+        main_controller.setWindow(self)
 
         self.pack_propagate(0)
 
@@ -38,6 +43,9 @@ class Window(Tk):
 
     def addFrame(self, frameName, frame):
         self.frames[frameName] = frame
+    
+    
+        
         
 
         

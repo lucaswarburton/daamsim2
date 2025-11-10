@@ -3,7 +3,10 @@ from tkinter import ttk
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
 from Config import Configuration
+from daa_spec import daa_spec
+from decimal import Decimal
 
 from NSController import new_sim_controller
 
@@ -201,11 +204,6 @@ class new_sim_UI(Frame):
 
         self.pack_propagate(0)
         self.grid_propagate(0)
-
-        
-    def get_params(self):
-        self
-    
     
     """
     Switches which set of inputs are visible for the custom intruder speed array.
@@ -218,7 +216,6 @@ class new_sim_UI(Frame):
     
     
     def enable_custom_intruder_speed_array(self):  
-        print("enable")  
         self.labels["min_intruder_speed"].grid_forget()
         self.entries["min_intruder_speed"].grid_forget()
         
@@ -237,7 +234,6 @@ class new_sim_UI(Frame):
         
    
     def disable_custom_intruder_speed_array(self):
-        print("disable")
         self.labels["custom_intruder_speed"].grid_forget()
         self.entries["custom_intruder_speed"].grid_forget()
         
@@ -298,6 +294,67 @@ class new_sim_UI(Frame):
         
         self.labels["azimuth_array_interval"].grid(column = 1, row=17, padx=2, pady=2, sticky=W)
         self.entries["azimuth_array_interval"].grid(column=2, row=17, padx=2, pady=2, sticky=W)
+    
+    def get_params(self):
+        max_bank = Decimal(self.entries["max_bank"].get())
+        range = Decimal(self.entries["range"].get())
+        FOV = Decimal(self.entries["FOV"].get())
+        ownsize = Decimal(self.entries["ownsize"].get())
+        ownspeed = Decimal(self.entries["ownspeed"].get())
+        max_roll_rate = Decimal(self.entries["ROV_Roll_Rate"].get())
+        
+        if(self.use_cust_intruder_speed.get()):
+            intruder_speed_array = daa_spec.create_Cust_array(self.entries["custom_intruder_speed"].get())
+        else:
+            min_speed = Decimal(self.entries["min_intruder_speed"].get())
+            max_speed = Decimal(self.entries["max_intruder_speed"].get())
+            speed_interval = Decimal(self.entries["intruder_speed_interval"].get())
+            intruder_speed_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
+            
+        if(self.use_cust_azimuth_array.get()):
+            azimuth_vector_array = daa_spec.create_Cust_array(self.entries["custom_azimuth_array"].get())
+        else:
+            min_azimuth = Decimal(self.entries["azimuth_vector_start"].get())
+            max_azimuth = Decimal(self.entries["azimuth_vector_end"].get())
+            azimuth_interval = Decimal(self.entries["azimuth_array_interval"].get())
+            azimuth_vector_array = daa_spec.createIntervalArray(min_azimuth, max_azimuth, azimuth_interval)     
+        
+        sigma_al = Decimal(self.entries["sigma_al"].get())
+        sigma_cross = Decimal(self.entries["sigma_cross"].get())
+        DMOD = Decimal(self.entries["DMOD"].get())
+        t_sim = Decimal(self.entries["t_sim"].get())
+        post_col = Decimal(self.entries["post_col"].get())
+        wind_speed = Decimal(self.entries["wind_speed"].get())
+        wind_dir = Decimal(self.entries["wind_dir"].get())
+        NDecimals = int(self.entries["NDecimals"].get())
+        sensor_rate = int(self.entries["sensor_rate"].get())
+        scans_track = int(self.entries["scans_track"].get())
+        t_warn = int(self.entries["t_warn"].get())
+        
+        params = daa_spec(\
+            max_bank=max_bank, \
+            range=range,\
+            FOV=FOV,\
+            ownsize=ownsize,\
+            ownspeed=ownspeed,\
+            max_roll_rate=max_roll_rate, \
+            azimuth_vector_array=azimuth_vector_array, \
+            intruder_speed_array=intruder_speed_array, \
+            sigma_al=sigma_al, \
+            sigma_cross= sigma_cross, \
+            DMOD=DMOD, \
+            t_sim=t_sim, \
+            post_col=post_col, \
+            wind_speed=wind_speed, \
+            wind_dir=wind_dir, \
+            NDecimals=NDecimals, \
+            sensor_rate=sensor_rate, \
+            scans_track=scans_track, \
+            t_warn=t_warn)
+        
+        return params
+        
+        
         
 
     
