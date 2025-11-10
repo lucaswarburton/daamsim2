@@ -26,3 +26,6 @@ class DMController:
 
     def load_model(self):
         self
+        
+    def update_window(self):
+        self.view.update()

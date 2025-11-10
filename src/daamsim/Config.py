@@ -35,25 +35,29 @@ class Configuration:
         #Get default intruder speed array
         if custom_intruder_speed_enabled == 'true' or custom_intruder_speed_enabled == 't' or custom_intruder_speed_enabled == 'y' or custom_intruder_speed_enabled == 'yes':
             intruder_speed_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_intruder_speed_array'])
+            self.custom_intruder_speed_enabled = True
         else:
             #Set default intruder speed array
             min_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
             max_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
             speed_interval = Decimal(parser['DEFAULTS']['intruder_speed_interval'])
             intruder_speed_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
+            self.custom_intruder_speed_enabled = False
             
         custom_vector_array_enabled = parser['Settings']['custom_vector_array_enabled']
-        custom_vector_array_enabled = custom_intruder_speed_enabled.lower()
+        custom_vector_array_enabled = custom_vector_array_enabled.lower()
         
         #Get default intruder speed array
         if custom_vector_array_enabled == 'true' or custom_vector_array_enabled == 't' or custom_vector_array_enabled == 'y' or custom_vector_array_enabled == 'yes':
             azimuth_vector_array = daa_spec.createCustArray(parser['DEFAULTS']['custom_vector_array'])
+            self.custom_vector_array_enabled = True
         else:
             #Set default intruder speed array
             min_azimuth =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
             max_azimuth = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
             azimuth_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
             azimuth_vector_array = daa_spec.createIntervalArray(min_azimuth, max_azimuth, azimuth_interval)
+            self.custom_vector_array_enabled = False
         
         self.min_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
         self.max_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
@@ -72,7 +76,7 @@ class Configuration:
         ownspeed = Decimal(parser['DEFAULTS']['rov_speed'])
         max_roll_rate = Decimal(parser['DEFAULTS']['rov_max_roll_rate'])
         sigma_al = Decimal(parser['DEFAULTS']['sigma_al'])
-        signma_cross = Decimal(parser['DEFAULTS']['signma_cross'])
+        sigma_cross = Decimal(parser['DEFAULTS']['sigma_cross'])
         DMOD = Decimal(parser['DEFAULTS']['DMOD'])
         t_sim = Decimal(parser['DEFAULTS']['t_sim'])
         post_col = Decimal(parser['DEFAULTS']['post_col'])
@@ -93,7 +97,7 @@ class Configuration:
             azimuth_vector_array=azimuth_vector_array, \
             intruder_speed_array=intruder_speed_array, \
             sigma_al=sigma_al, \
-            signma_cross= signma_cross, \
+            sigma_cross= sigma_cross, \
             DMOD=DMOD, \
             t_sim=t_sim, \
             post_col=post_col, \

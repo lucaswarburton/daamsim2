@@ -9,8 +9,8 @@ class Window(Tk):
     def __init__(self):
         super().__init__()
         self.frames = dict()
-        self.container = Frame(self)
-
+        self.container = Frame(self, width=300)
+        
         screen_width = super().winfo_screenwidth()
         screen_height = super().winfo_screenheight()
         super().title("DAAMSIM")
@@ -26,7 +26,8 @@ class Window(Tk):
     def setDMUIFrame(self, frame):
         
         self.DMUIFrame = frame
-        self.DMUIFrame.pack(side = LEFT, fill = "both", expand=True)
+        self.DMUIFrame.pack(side = LEFT, fill = "both", expand=False)
+  
 
     def setActiveFrame(self, frame):
         if isinstance(frame, str):

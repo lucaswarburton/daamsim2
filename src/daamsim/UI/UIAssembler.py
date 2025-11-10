@@ -18,7 +18,7 @@ def main():
     main_controller.setView(w)
     dmui_frame = DMUIFrame(main_controller, master=w)
     
-    nsim_controller = new_sim_controller()
+    nsim_controller = new_sim_controller(main_controller)
     new_sim_UI_frame = new_sim_UI(nsim_controller, master=w.container)
     nsim_controller.setView(new_sim_UI_frame)
     new_sim_UI_frame.grid(row=0, column=0, sticky="nsew")

@@ -17,7 +17,7 @@ class daa_spec:
     
     #Simulation Params
     sigma_al: Decimal
-    signma_cross: Decimal
+    sigma_cross: Decimal
     DMOD: Decimal
     t_sim: Decimal
     post_col: Decimal
