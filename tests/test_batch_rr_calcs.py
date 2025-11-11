@@ -2,16 +2,21 @@
 Unit tests for the batch_rr_calcs library
 """
 
-from calculations.batch_rr_calcs import make_speed_array
+from calculations.math_util import *
 
 
-class TestBatchRrCalcs:
+class TestMathUtil:
 
     def test_make_speed_array(self):
-        assert [5, 15, 25] == make_speed_array(5, 25, 10)
+        assert [5, 15, 25] == make_array(5, 25, 10)
         try:
-            make_speed_array(35, 25, 10)
+            make_array(35, 25, 10)
             assert False
         except Exception as e:
             assert isinstance(e, ValueError)
+
+    def test_cosd(self):
+        assert 1 == cosd(0)
+        assert 0 == cosd(90)
+        assert -1 == cosd(180)
 
