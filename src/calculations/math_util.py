@@ -2,8 +2,8 @@ from decimal import Decimal
 import math
 
 
-def cosd(x: Decimal) -> Decimal:
-    return Decimal(math.cos(math.radians(x)))
+def cosd(x: float) -> float:
+    return math.cos(math.radians(x))
 
 def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
     if (min > max):
