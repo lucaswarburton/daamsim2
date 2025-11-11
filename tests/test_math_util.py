@@ -16,7 +16,7 @@ class TestMathUtil:
             assert isinstance(e, ValueError)
 
     def test_cosd(self):
-        assert math.isclose(1, cosd(0))
-        assert math.isclose(0, cosd(90))
-        assert math.isclose(-1, cosd(180))
+        assert math.isclose(1, cosd(0), abs_tol=1e-09)
+        assert math.isclose(0, cosd(90), abs_tol=1e-09)
+        assert math.isclose(-1, cosd(180), abs_tol=1e-09)
 
