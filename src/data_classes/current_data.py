@@ -13,7 +13,8 @@ class CurrentData:
         "alpha_oncoming_vect",
         "alpha_overtake_vect",
         "clos_vel",
-        "clos_vel_over"
+        "clos_vel_over",
+        "specs"
     ]
 
     def __new__(cls):
