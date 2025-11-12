@@ -4,9 +4,11 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "calculations"))
 from Config import Configuration
-from daa_spec import daa_spec
+from daa_spec import DaaSpec
 from decimal import Decimal
+import math_util
 
 from NSController import new_sim_controller
 
@@ -136,28 +138,34 @@ class new_sim_UI(Frame):
         self.labels["Simulation_Vars"] = Label(self, text = "Simulation Variables:", bg="salmon", font=("Ariel",15, "bold"))
         self.labels["Simulation_Vars"].grid(column = 0, row=18, columnspan=3, padx=5, pady=5, sticky = W)
         
+        self.labels["time_resol"] = Label(self, text = "Time Resolution for approximation:", bg="salmon")
+        self.labels["time_resol"].grid(column = 1, row=19, padx=2, pady=2, sticky=W)
+        self.entries["time_resol"] = Entry(self)
+        self.entries["time_resol"].grid(column=2, row=19, padx=2, pady=2, sticky=W)
+        self.entries["time_resol"].insert(0, config.daa_spec.time_resol)
+        
         self.labels["sigma_al"] = Label(self, text = "Sigma al:", bg="salmon")
-        self.labels["sigma_al"].grid(column = 1, row=19, padx=2, pady=2, sticky=W)
+        self.labels["sigma_al"].grid(column = 1, row=20, padx=2, pady=2, sticky=W)
         self.entries["sigma_al"] = Entry(self)
-        self.entries["sigma_al"].grid(column=2, row=19, padx=2, pady=2, sticky=W)
+        self.entries["sigma_al"].grid(column=2, row=20, padx=2, pady=2, sticky=W)
         self.entries["sigma_al"].insert(0, config.daa_spec.sigma_al)
         
         self.labels["sigma_cross"] = Label(self, text = "Sigma cross:", bg="salmon")
-        self.labels["sigma_cross"].grid(column = 1, row=20, padx=2, pady=2, sticky=W)
+        self.labels["sigma_cross"].grid(column = 1, row=21, padx=2, pady=2, sticky=W)
         self.entries["sigma_cross"] = Entry(self)
-        self.entries["sigma_cross"].grid(column=2, row=20, padx=2, pady=2, sticky=W)
+        self.entries["sigma_cross"].grid(column=2, row=21, padx=2, pady=2, sticky=W)
         self.entries["sigma_cross"].insert(0, config.daa_spec.sigma_cross)
         
         self.labels["DMOD"] = Label(self, text = "DMOD:", bg="salmon")
-        self.labels["DMOD"].grid(column = 1, row=21, padx=2, pady=2, sticky=W)
+        self.labels["DMOD"].grid(column = 1, row=22, padx=2, pady=2, sticky=W)
         self.entries["DMOD"] = Entry(self)
-        self.entries["DMOD"].grid(column=2, row=21, padx=2, pady=2, sticky=W)
+        self.entries["DMOD"].grid(column=2, row=22, padx=2, pady=2, sticky=W)
         self.entries["DMOD"].insert(0, config.daa_spec.DMOD)
         
         self.labels["t_sim"] = Label(self, text = "t sim:", bg="salmon")
-        self.labels["t_sim"].grid(column = 1, row=22, padx=2, pady=2, sticky=W)
+        self.labels["t_sim"].grid(column = 1, row=23, padx=2, pady=2, sticky=W)
         self.entries["t_sim"] = Entry(self)
-        self.entries["t_sim"].grid(column=2, row=22, padx=2, pady=2, sticky=W)
+        self.entries["t_sim"].grid(column=2, row=23, padx=2, pady=2, sticky=W)
         self.entries["t_sim"].insert(0, config.daa_spec.t_sim)
         
         self.labels["post_col"] = Label(self, text = "Post collision time (s):", bg="salmon")
@@ -304,21 +312,22 @@ class new_sim_UI(Frame):
         max_roll_rate = Decimal(self.entries["ROV_Roll_Rate"].get())
         
         if(self.use_cust_intruder_speed.get()):
-            intruder_speed_array = daa_spec.create_Cust_array(self.entries["custom_intruder_speed"].get())
+            intruder_speed_array = math_util.create_Cust_array(self.entries["custom_intruder_speed"].get())
         else:
             min_speed = Decimal(self.entries["min_intruder_speed"].get())
             max_speed = Decimal(self.entries["max_intruder_speed"].get())
             speed_interval = Decimal(self.entries["intruder_speed_interval"].get())
-            intruder_speed_array = daa_spec.createIntervalArray(min_speed, max_speed, speed_interval)
+            intruder_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
             
         if(self.use_cust_azimuth_array.get()):
-            azimuth_vector_array = daa_spec.create_Cust_array(self.entries["custom_azimuth_array"].get())
+            azimuth_vector_array = math_util.create_Cust_array(self.entries["custom_azimuth_array"].get())
         else:
             min_azimuth = Decimal(self.entries["azimuth_vector_start"].get())
             max_azimuth = Decimal(self.entries["azimuth_vector_end"].get())
             azimuth_interval = Decimal(self.entries["azimuth_array_interval"].get())
-            azimuth_vector_array = daa_spec.createIntervalArray(min_azimuth, max_azimuth, azimuth_interval)     
+            azimuth_vector_array = math_util.make_array(min_azimuth, max_azimuth, azimuth_interval)     
         
+        time_resol = Decimal(self.entries["time_resol"].get())
         sigma_al = Decimal(self.entries["sigma_al"].get())
         sigma_cross = Decimal(self.entries["sigma_cross"].get())
         DMOD = Decimal(self.entries["DMOD"].get())
@@ -331,15 +340,16 @@ class new_sim_UI(Frame):
         scans_track = int(self.entries["scans_track"].get())
         t_warn = int(self.entries["t_warn"].get())
         
-        params = daa_spec(\
+        params = DaaSpec(\
             max_bank=max_bank, \
             range=range,\
             FOV=FOV,\
             ownsize=ownsize,\
             ownspeed=ownspeed,\
             max_roll_rate=max_roll_rate, \
-            azimuth_vector_array=azimuth_vector_array, \
-            intruder_speed_array=intruder_speed_array, \
+            azimuths=azimuth_vector_array, \
+            intruder_speeds=intruder_speed_array, \
+            time_resol = time_resol, \
             sigma_al=sigma_al, \
             sigma_cross= sigma_cross, \
             DMOD=DMOD, \
