@@ -2,20 +2,23 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 @dataclass
-class daa_spec:
-    #ROV Params
+class DaaSpec:
+    # ROV Params
     max_bank: Decimal # degrees
     range: Decimal # meters
     FOV: Decimal # degrees
     ownsize: Decimal # meters
     ownspeed: Decimal # knots
     max_roll_rate: Decimal # degrees/second
-    
-    #Intruder Params
-    azimuth_vector_array: list[Decimal]
-    intruder_speed_array: list[Decimal]
-    
-    #Simulation Params
+
+    # Intruder speed params
+    intruder_speeds: list[Decimal] # knots
+
+    # Azimuth speed params
+    azimuths: list[Decimal] # degrees
+
+    # Simulation Params
+    time_resol: Decimal
     sigma_al: Decimal
     sigma_cross: Decimal
     DMOD: Decimal
@@ -27,30 +30,3 @@ class daa_spec:
     sensor_rate: int
     scans_track: int
     t_warn: int
-    
-    @staticmethod
-    def createIntervalArray(start:Decimal, end: Decimal, interval: Decimal):
-        if (start > end):
-            raise ValueError("Create Interval Array: Start cannot be greater than end. Start: " + str(start) + "End: " + str(end))
-        elif (interval <= 0):
-            raise ValueError("Create Interval Array: Interval cannot be less than 0: " + str(interval))
-        
-        lst = list()
-        i = start
-        while i < end:
-            lst.append(i)
-            i += interval
-        lst.append(end)
-        
-        return lst
-    
-    @staticmethod
-    def createCustArray(inputStr: str):
-        str_lst = inputStr.split(",")
-        dec_lst = []
-        for item in str_lst:
-            item.strip()
-            dec_lst.append(Decimal(item))
-        return dec_lst
-    
-    
