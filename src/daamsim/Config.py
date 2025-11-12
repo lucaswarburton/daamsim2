@@ -4,9 +4,10 @@ from decimal import Decimal
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data_classes"))
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "math_util"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "calculations"))
 from daa_spec import DaaSpec
 import math_util
+
 
 
 class Configuration:
@@ -29,7 +30,8 @@ class Configuration:
         disable_ui = disable_ui.lower()
 
         self.disable_ui = disable_ui == 'true' or   disable_ui == 't' or disable_ui == 'y' or disable_ui == 'yes'
-        self.default_file_path = parser['Settings']['default_file_path']
+        self.default_load_file_path = parser['Settings']['default_load_file_path']
+        print(self.default_load_file_path)
         
         custom_intruder_speed_enabled = parser['Settings']['custom_intruder_speed_enabled']
         custom_intruder_speed_enabled = custom_intruder_speed_enabled.lower()
@@ -64,12 +66,12 @@ class Configuration:
         self.min_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
         self.max_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
         self.speed_interval = Decimal(parser['DEFAULTS']['intruder_speed_interval'])
-        self.custom_intruder_speed_array = math_util.createCustArray(parser['DEFAULTS']['custom_intruder_speed_array'])
+        self.custom_intruder_speed_array = parser['DEFAULTS']['custom_intruder_speed_array']
         
         self.min_azimuth =  Decimal(parser['DEFAULTS']['azimuth_vector_start'])
         self.max_azimuth = Decimal(parser['DEFAULTS']['azimuth_vector_end'])
         self.azimuth_interval = Decimal(parser['DEFAULTS']['azimuth_vector_array_interval'])
-        self.custom_azimuth_vector_array = math_util.createCustArray(parser['DEFAULTS']['custom_vector_array'])
+        self.custom_azimuth_vector_array = parser['DEFAULTS']['custom_vector_array']
         
         max_bank = Decimal(parser['DEFAULTS']['max_bank_deg'])
         range = Decimal(parser['DEFAULTS']['range'])

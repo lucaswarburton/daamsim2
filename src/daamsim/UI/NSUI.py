@@ -96,7 +96,7 @@ class new_sim_UI(Frame):
         
         self.labels["custom_intruder_speed"] = Label(self, text = "Intruder Speed Custom Array:", bg="salmon")
         self.entries["custom_intruder_speed"] = Entry(self)
-        self.entries["custom_intruder_speed"].insert(0, config.custom_azimuth_vector_array)
+        self.entries["custom_intruder_speed"].insert(0, config.custom_intruder_speed_array)
         
         self.labels["custom_intruder_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg="salmon")
         

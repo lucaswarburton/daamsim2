@@ -1,3 +1,11 @@
+from tkinter import filedialog
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from Config import Configuration
+
+
+
 class DMController:
     def __init__(self):
         self.window = None
@@ -29,7 +37,8 @@ class DMController:
         self
 
     def load_model(self):
-        self
+        filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
+        #Load file in
         
     def update_window(self):
         self.window.update()
