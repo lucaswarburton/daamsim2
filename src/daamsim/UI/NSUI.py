@@ -40,9 +40,9 @@ class new_sim_UI(Frame):
         
         
         self.labels["range"] = Label(self, text = "ROV Sight Range (m):", bg="salmon")
-        self.labels["range"].grid(column = 1, row=4, padx=2, pady=2, sticky=W)
+        self.labels["range"].grid(column = 3, row=3, padx=2, pady=2, sticky=W)
         self.entries["range"] = Entry(self)
-        self.entries["range"].grid(column=2, row=4, padx=2, pady=2, sticky=W)
+        self.entries["range"].grid(column=4, row=3, padx=2, pady=2, sticky=W)
         self.entries["range"].insert(0, config.daa_spec.range)
         
         self.labels["FOV"] = Label(self, text = "ROV FOV (Deg):", bg="salmon")
@@ -53,9 +53,9 @@ class new_sim_UI(Frame):
         
 
         self.labels["ownsize"] = Label(self, text = "ROV Size (m):", bg="salmon")
-        self.labels["ownsize"].grid(column = 1, row=6, padx=2, pady=2, sticky=W)
+        self.labels["ownsize"].grid(column = 3, row=5, padx=2, pady=2, sticky=W)
         self.entries["ownsize"] = Entry(self)
-        self.entries["ownsize"].grid(column=2, row=6, padx=2, pady=2, sticky=W)
+        self.entries["ownsize"].grid(column=4, row=5, padx=2, pady=2, sticky=W)
         self.entries["ownsize"].insert(0, config.daa_spec.ownsize)
         
         self.labels["ownspeed"] = Label(self, text = "ROV Size (kts):", bg="salmon")
@@ -65,9 +65,9 @@ class new_sim_UI(Frame):
         self.entries["ownspeed"].insert(0, config.daa_spec.ownsize)
         
         self.labels["ROV_Roll_Rate"] = Label(self, text = "ROV Roll Rate (deg/s):", bg="salmon")
-        self.labels["ROV_Roll_Rate"].grid(column = 1, row=8, padx=2, pady=2, sticky=W)
+        self.labels["ROV_Roll_Rate"].grid(column = 3, row=7, padx=2, pady=2, sticky=W)
         self.entries["ROV_Roll_Rate"] = Entry(self)
-        self.entries["ROV_Roll_Rate"].grid(column=2, row=8, padx=2, pady=2, sticky=W)
+        self.entries["ROV_Roll_Rate"].grid(column=4, row=7, padx=2, pady=2, sticky=W)
         self.entries["ROV_Roll_Rate"].insert(0, config.daa_spec.max_roll_rate)
         
         self.labels["Intruder_Vars"] = Label(self, text = "Intruder Variables:", bg="salmon", font=("Ariel",15, "bold"))
