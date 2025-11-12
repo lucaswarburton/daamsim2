@@ -22,7 +22,7 @@ class new_sim_UI(Frame):
         self.entries = dict()
         
         self.labels["Title"] = Label(self, text = "Run New Simulation", bg="salmon", font=("Ariel",20, "bold"))
-        self.labels["Title"].grid(column = 0, row=0, columnspan=3, padx=5, pady=5, sticky = W)
+        self.labels["Title"].grid(column = 0, row=0, columnspan=3, padx=2, pady=2, sticky = W)
         
         self.enterbutton = Button(self, text = "Run Simulation", command = controller.run_new_sim)
         self.enterbutton.grid(column=1, row=1, padx=5, pady=5, sticky=W)
@@ -30,7 +30,7 @@ class new_sim_UI(Frame):
         #ROV Variables
         
         self.labels["ROV_Vars"] = Label(self, text = "ROV Variables:", bg="salmon", font=("Ariel",15, "bold"))
-        self.labels["ROV_Vars"].grid(column = 0, row=2, columnspan=3, padx=5, pady=5, sticky = W)
+        self.labels["ROV_Vars"].grid(column = 0, row=2, columnspan=3, padx=2, pady=2, sticky = W)
         
         self.labels["max_bank"] = Label(self, text = "ROV Max Bank (Deg):", bg="salmon")
         self.labels["max_bank"].grid(column = 1, row=3, padx=2, pady=2, sticky=W)
@@ -71,7 +71,7 @@ class new_sim_UI(Frame):
         self.entries["ROV_Roll_Rate"].insert(0, config.daa_spec.max_roll_rate)
         
         self.labels["Intruder_Vars"] = Label(self, text = "Intruder Variables:", bg="salmon", font=("Ariel",15, "bold"))
-        self.labels["Intruder_Vars"].grid(column = 0, row=9, columnspan=3, padx=5, pady=5, sticky = W)
+        self.labels["Intruder_Vars"].grid(column = 0, row=9, columnspan=3, padx=2, pady=2, sticky = W)
         
         #Intruder Variables
         
