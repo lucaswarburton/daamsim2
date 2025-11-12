@@ -3,17 +3,21 @@ Implements the functionality of the batchRrCalcs script.
 """
 
 
-from data_classes import daa_spec
+from decimal import Decimal
+from calculations.rr_calcs import rr_calcs
+import calculations.math_util as math_util
+from data_classes.daa_spec import DaaSpec
+from data_classes.current_data import CurrentData
 
 
-def make_speed_array(min_speed: int, max_speed: int, speed_increment: int) -> list[int]:
-    intruderSpeedKts = list(range(min_speed, max_speed + speed_increment // 2, speed_increment))
-    return intruderSpeedKts
+def batch_calcs(specs: DaaSpec):
+    intruder_speeds = specs.intruder_speeds
 
-def batch_calcs(specs: daa_spec, min_speed: int, max_speed: int, speed_increment: int):
-    intruder_speeds = make_speed_array(min_speed, max_speed, speed_increment)
-
+    current_data = CurrentData()
+    CurrentData().clear()
+    current_data.specs = specs
+    
     for i in range(len(intruder_speeds)):
         print(f"Evaluating Intruder speed {intruder_speeds[i]:d} kts")
-        # call calculation script
+        rr_calcs(intruder_speeds[i])
 
