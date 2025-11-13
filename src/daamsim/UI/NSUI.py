@@ -312,7 +312,7 @@ class new_sim_UI(Frame):
         max_roll_rate = Decimal(self.entries["ROV_Roll_Rate"].get())
         
         if(self.use_cust_intruder_speed.get()):
-            intruder_speed_array = math_util.create_Cust_array(self.entries["custom_intruder_speed"].get())
+            intruder_speed_array = math_util.createCustArray(self.entries["custom_intruder_speed"].get())
         else:
             min_speed = Decimal(self.entries["min_intruder_speed"].get())
             max_speed = Decimal(self.entries["max_intruder_speed"].get())
@@ -320,7 +320,7 @@ class new_sim_UI(Frame):
             intruder_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
             
         if(self.use_cust_azimuth_array.get()):
-            azimuth_vector_array = math_util.create_Cust_array(self.entries["custom_azimuth_array"].get())
+            azimuth_vector_array = math_util.createCustArray(self.entries["custom_azimuth_array"].get())
         else:
             min_azimuth = Decimal(self.entries["azimuth_vector_start"].get())
             max_azimuth = Decimal(self.entries["azimuth_vector_end"].get())
