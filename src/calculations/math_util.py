@@ -8,6 +8,9 @@ def cosd(x: float) -> float:
 def sind(x: float) -> float:
     return math.sin(math.radians(x))
 
+def tand(x: float) -> float:
+     return math.tan(math.radians(x))
+
 def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
     if (min > max):
             raise ValueError("Create Array: Start cannot be greater than end. Start: " + str(min) + "End: " + str(max))
@@ -19,3 +22,6 @@ def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
         for i in range(int((max - min) / increment) + 1)
     ]
     return array
+
+def wrapTo180(angle: float) -> float:
+     return (angle + 180) % 360 - 180
