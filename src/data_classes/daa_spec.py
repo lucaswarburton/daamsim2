@@ -3,30 +3,29 @@ from decimal import Decimal
 
 @dataclass
 class DaaSpec:
-    # ROV Params
-    max_bank: Decimal # degrees
-    range: Decimal # meters
-    FOV: Decimal # degrees
-    ownsize: Decimal # meters
-    ownspeed: Decimal # knots
-    max_roll_rate: Decimal # degrees/second
+    #Read RTAS Characteristics
+    rtas_max_bank_deg: Decimal
+    rtas_wingspan: Decimal
+    rtas_max_roll_rate: Decimal
+    rtas_speed_array: list
 
-    # Intruder speed params
-    intruder_speeds: list[Decimal] # knots
+    #Intruder Characteristics
+    intruder_speed_array: list
 
-    # Azimuth speed params
-    azimuths: list[Decimal] # degrees
+    #DAA Characteristics
+    daa_declaration_range: Decimal
+    daa_fov_deg: Decimal
+    rate_of_revisit: int
+    scans_track: int
 
-    # Simulation Params
+    #Simulation Variables
+    NDecimals: int
     time_resol: Decimal
-    sigma_al: Decimal
-    sigma_cross: Decimal
-    DMOD: Decimal
+    conflict_volume: Decimal
     t_sim: Decimal
     post_col: Decimal
     wind_speed: Decimal
     wind_dir: Decimal
-    NDecimals: int
-    sensor_rate: int
-    scans_track: int
-    t_warn: int
+    human_factor_delay: int
+    encounter_azimuth_array: list
+
