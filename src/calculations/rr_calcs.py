@@ -21,8 +21,8 @@ def rr_calcs(intruder_speed: Decimal, eng: object):
 
     ground_speed_h_vect = CurrentData.specs.ownspeed * 0.514444 # Convert to m/s
     ground_int_speed = intruder_speed * 0.514444; # Convert to m/s
-    sigma_al = CurrentData.specs.sigma_al
-    sigma_cross = CurrentData.specs.sigma_cross                 
+    sigma_al = 0
+    sigma_cross = 0                 
     DMOD = CurrentData.specs.DMOD # collision bubble              
     t_sim = CurrentData.specs.t_sim # simulation time
     post_col = CurrentData.specs.psot_col # post-collision time
@@ -57,20 +57,25 @@ def rr_calcs(intruder_speed: Decimal, eng: object):
     # daamsim has loop here but round_speed_h_vect is a scalar. Opportunity to make it a list, multiple calculations?
     ground_speed_h = ground_speed_h_vect
 
+    tm = np.full(n, np.nan)
+    clos_vel = np.full(n, np.nan)
+    delta_hdg_r = np.full(n, np.nan)
+    delta_hdg_l = np.full(n, np.nan)
+    azim_r = np.full(n, np.nan)
+    azim_l = np.full(n, np.nan)
+
     for k in range(n):
         array_size = (t_sim + post_col) / time_resol
 
-        y_h = np.zeros(array_size)
-        y_i = np.zeros(array_size)
-        x_h = np.zeros(array_size)
-        x_i = np.zeros(array_size)
-
-        vy_h = np.zeros(array_size)
-        vy_i = np.zeros(array_size)
-        vx_h = np.zeros(array_size)
-        vx_i = np.zeros(array_size)
-
-        bank_angle = np.zeros(1, array_size)
+        x_h = np.zeros(array_size)      # host x position
+        y_h = np.zeros(array_size)      # host y position
+        vx_h = np.zeros(array_size)     # host x velocity
+        vy_h = np.zeros(array_size)     # host y velocity
+        x_i = np.zeros(array_size)      # intruder x position
+        y_i = np.zeros(array_size)      # intruder y position
+        vx_i = np.zeros(array_size)     # intruder x velocity
+        vy_i = np.zeros(array_size)     # intruder y velocity
+        bank_angle = np.zeros(array_size)  # bank angle
 
         # calculate collision alpha
         alpha = round(eng.calculate_alpha(ground_speed_h, ground_int_speed, azimuth_vect[k]), num_decimals)
@@ -85,7 +90,7 @@ def rr_calcs(intruder_speed: Decimal, eng: object):
             elif beta < -180:
                beta = beta + 360
                
-            psi_i = ((360 - alpha) * math.pi / 180) % (2 * math.pi) # intruder heading in rads
+            psi_i = np.deg2rad((360 - alpha) % 360) # intruder heading in rads
             psi_h = 0 # ownship going north
             beta_rad = beta * math.pi / 180
 
@@ -131,5 +136,28 @@ def rr_calcs(intruder_speed: Decimal, eng: object):
             posvel = np.dot(pos_rel, vel_rel) # positive if ships are growing further
 
             Tcpa = 0
-            if vvel > 0: # what is the purpose of this? it should always be positive (x dot x = |x|^2)
+            if vvel > 0: # if relative velocity is not 0
                 Tcpa = -posvel/vvel
+
+            Taumod = -1
+            if posvel < 0: # aircraft are approaching each other
+                Taumod = (DMOD ** 2 - np.dot(pos_rel, pos_rel)) / np.dot(pos_rel, vel_rel)
+            
+            if Taumod < 0:
+                Taumod = -1
+            
+            tm[k] = Taumod - pref_man_time
+
+            r_min_m[k] = tm[k] * math.sqrt(vvel)
+            clos_vel[k] = math.sqrt(vvel)
+
+            if pref_man_turn >= 0:
+                delta_hdg_r[k] = pref_man_turn
+                azim_r[k] = azimuth_vect[k]
+            else:
+                delta_hdg_l[k] = pref_man_turn
+                azim_l[k] = azimuth_vect[k]
+            
+            for time in range(1, int((t_sim + post_col) / time_resol)): # start from 1 here because we have value at 0 initialized
+                if time < pref_man_time / time_resol:
+                    x_h[time] = x_h[time - 1] + vx_h[time - 1] * time_resol
