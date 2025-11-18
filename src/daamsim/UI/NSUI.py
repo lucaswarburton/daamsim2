@@ -3,99 +3,511 @@ from tkinter import ttk
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "calculations"))
 from Config import Configuration
+from daa_spec import DaaSpec
+from decimal import Decimal
+import math_util
+from ScrollFrame import Scroll_Frame
 
 from NSController import new_sim_controller
 
-class new_sim_UI(Frame):
+class new_sim_UI(Scroll_Frame):
     def __init__(self, controller, master, bg = "salmon"):
-        Frame.__init__(self, master, bg=bg)
+        super().__init__(controller=controller, master = master, SCROLLFRAMETYPE=new_sim_UI_inner_frame,  bg=bg)
+
+class new_sim_UI_inner_frame(Frame):
+    def __init__(self, controller, master, bg = "salmon"):
+        super().__init__(master, bg=bg)
+        self.bg = bg
         self.controller = controller
-        config = Configuration.get_instance()
 
         self.labels = dict()
         self.entries = dict()
-        
-        
-        self.labels["Title"] = Label(self, text = "Run New Simulation", bg="salmon", font=("Ariel",20, "bold"))
-        self.labels["Title"].grid(column = 0, row=0, columnspan=3, padx=5, pady=5, sticky = W)
-        
-        self.enterbutton = Button(self, text = "Run Simulation", command = controller.run_new_sim)
-        self.enterbutton.grid(column=1, row=1, padx=5, pady=5, sticky=W)
-        
-        self.labels["max_bank"] = Label(self, text = "ROV Max Bank (Deg):", bg="salmon")
-        self.labels["max_bank"].grid(column = 1, row=2, padx=2, pady=2, sticky=W)
-        self.entries["max_bank"] = Entry(self)
-        self.entries["max_bank"].grid(column=2, row=2, padx=2, pady=2, sticky=W)
-        self.entries["max_bank"].insert(0, config.daa_spec.max_bank)
-        
-        
-        self.labels["range"] = Label(self, text = "ROV Sight Range (m):", bg="salmon")
-        self.labels["range"].grid(column = 1, row=3, padx=2, pady=2, sticky=W)
-        self.entries["range"] = Entry(self)
-        self.entries["range"].grid(column=2, row=3, padx=2, pady=2, sticky=W)
-        self.entries["range"].insert(0, config.daa_spec.range)
-        
-        self.labels["FOV"] = Label(self, text = "ROV FOV (Deg):", bg="salmon")
-        self.labels["FOV"].grid(column = 1, row=4, padx=2, pady=2, sticky=W)
-        self.entries["FOV"] = Entry(self)
-        self.entries["FOV"].grid(column=2, row=4, padx=2, pady=2, sticky=W)
-        self.entries["FOV"].insert(0, config.daa_spec.FOV)
-        
+ 
+        self.config = Configuration.get_instance()
+        i = 0
 
-        self.labels["ownsize"] = Label(self, text = "ROV Size (m):", bg="salmon")
-        self.labels["ownsize"].grid(column = 1, row=5, padx=2, pady=2, sticky=W)
-        self.entries["ownsize"] = Entry(self)
-        self.entries["ownsize"].grid(column=2, row=5, padx=2, pady=2, sticky=W)
-        self.entries["ownsize"].insert(0, config.daa_spec.ownsize)
+        self.labels["Title"] = Label(self, text = "Run New Simulation", bg=self.bg, font=("Ariel",20, "bold"))
+        self.labels["Title"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
+        i += 1
         
-        self.labels["ownspeed"] = Label(self, text = "ROV Size (kts):", bg="salmon")
-        self.labels["ownspeed"].grid(column = 1, row=6, padx=2, pady=2, sticky=W)
-        self.entries["ownspeed"] = Entry(self)
-        self.entries["ownspeed"].grid(column=2, row=6, padx=2, pady=2, sticky=W)
-        self.entries["ownspeed"].insert(0, config.daa_spec.ownsize)
-        
-        # self.labels["max_roll_rate"] = Label(self, text = "ROV Roll Rate:")
-        # self.labels["max_roll_rate"].grid(column = 1, row=7)
-        
-        # self.labels["cust_button"] = Label(self, text = "Use Custom Speed Array:")
-        # self.labels["cust_button"].grid(column = 1, row=8)
-        
-        # self.labels["min_speed"] = Label(self, text = "ROV Min Speed (Inclusive):")
-        # self.labels["min_speed"].grid(column = 1, row=9)
-        
-        # self.labels["max_speed"] = Label(self, text = "ROV Max Speed (Inclusive):")
-        # self.labels["max_speed"].grid(column = 1, row=10)
-        
-        # self.labels["speed_interval"] = Label(self, text = "ROV Speed Array Interval:")
-        # self.labels["speed_interval"].grid(column = 1, row=11)
+        self.enterbutton = Button(self, text = "Run Simulation", command = self.controller.run_new_sim)
+        self.enterbutton.grid(column=1, row=i, padx=5, pady=5, sticky=W)
+        i += 1
 
-        self.pack_propagate(0)
-        self.grid_propagate(0)
+        i = self.setup_rtas(i)
+
+        i = self.setup_intruder_chars(i)
+
+        i = self.setup_daa_chars(i)
+
+        i = self.setup_simulation_vars(i)
+
         
-    def get_params(self):
-        self
+    #Sets up characteristics inputs for RTAS
+    def setup_rtas(self, i):
+        self.labels["rtas_Chars"] = Label(self, text = "RTAS Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
+        self.labels["rtas_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
+        i += 1
+
+        self.labels["rtas_max_bank_deg"] = Label(self, text = "RTAS Max Bank (Deg):", bg=self.bg)
+        self.labels["rtas_max_bank_deg"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_max_bank_deg"] = Entry(self)
+        self.entries["rtas_max_bank_deg"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_max_bank_deg"].insert(0, self.config.daa_spec.rtas_max_bank_deg)
+        i +=1
+
+        self.labels["rtas_wingspan"] = Label(self, text = "RTAS Wingspan (m):", bg=self.bg)
+        self.labels["rtas_wingspan"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_wingspan"] = Entry(self)
+        self.entries["rtas_wingspan"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_wingspan"].insert(0, self.config.daa_spec.rtas_wingspan)
+        i += 1
+
+        self.labels["rtas_max_roll_rate"] = Label(self, text = "RTAS Max Roll Rate (deg/s):", bg=self.bg)
+        self.labels["rtas_max_roll_rate"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_max_roll_rate"] = Entry(self)
+        self.entries["rtas_max_roll_rate"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rtas_max_roll_rate"].insert(0, self.config.daa_spec.rtas_max_roll_rate)
+        i += 1
+
+        self.use_cust_rtas_speed = BooleanVar()
+        self.use_cust_rtas_speed.set(self.config.custom_rtas_speed_enabled)
+        
+        self.entries["Cust_RTAS_Checkbox"] = Checkbutton(self, text="Use Custom RTAS Speed Array", font=("Ariel", 10, "bold"),variable=self.use_cust_rtas_speed, onvalue=True, offvalue=False, command=self.switch_cust_rtas_speed, bg=self.bg)
+        self.entries["Cust_RTAS_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
+        i += 1
+
+        self.labels["min_rtas_speed"] = Label(self, text = "Minimum RTAS Speed (Inclusive):", bg=self.bg)
+        self.entries["min_rtas_speed"] = Entry(self)
+        self.entries["min_rtas_speed"].insert(0, self.config.min_rtas_speed)
+        self.min_rtas_speed_row = i
+        i += 1
+        
+        self.labels["max_rtas_speed"] = Label(self, text = "Maximum RTAS Speed (Inclusive):", bg=self.bg)
+        self.entries["max_rtas_speed"] = Entry(self)
+        self.entries["max_rtas_speed"].insert(0, self.config.max_rtas_speed)
+        self.max_rtas_speed_row = i
+        i += 1
+
+        self.labels["rtas_speed_interval"] = Label(self, text = "RTAS Speed Array Interval:", bg=self.bg)
+        self.entries["rtas_speed_interval"] = Entry(self)
+        self.entries["rtas_speed_interval"].insert(0, self.config.rtas_speed_interval)
+        self.rtas_speed_interval_row = i
+        i += 1
+
+        self.labels["custom_rtas_speed_array"] = Label(self, text = "RTAS Speed Custom Array:", bg=self.bg)
+        self.entries["custom_rtas_speed_array"] = Entry(self)
+        self.entries["custom_rtas_speed_array"].insert(0, self.config.custom_rtas_speed_array)
+
+        self.labels["custom_rtas_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
+        
+        self.labels["custom_rtas_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
+        
+        self.switch_cust_rtas_speed()
+        
+        return i
+
+    #Sets up intruder Characteristics inputs
+    def setup_intruder_chars(self, i):
+        self.labels["Intruder_Chars"] = Label(self, text = "Intruder Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
+        self.labels["Intruder_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
+        i += 1
+
+        self.use_cust_intruder_speed = BooleanVar()
+        self.use_cust_intruder_speed.set(self.config.custom_intruder_speed_enabled)
+        
+        self.entries["Cust_Intruder_Checkbox"] = Checkbutton(self, text="Use Custom Intruder Speed Array", font=("Ariel", 10, "bold"), variable=self.use_cust_intruder_speed, onvalue=True, offvalue=False, command=self.switch_cust_intruder_speed, bg=self.bg)
+        self.entries["Cust_Intruder_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
+        i += 1
+
+        self.labels["min_intruder_speed"] = Label(self, text = "Minimum Intruder Speed (Inclusive):", bg=self.bg)
+        self.entries["min_intruder_speed"] = Entry(self)
+        self.entries["min_intruder_speed"].insert(0, self.config.min_intruder_speed)
+        self.min_intruder_speed_row = i
+        i += 1
+        
+        self.labels["max_intruder_speed"] = Label(self, text = "Maximum Intruder Speed (Inclusive):", bg=self.bg)
+        self.entries["max_intruder_speed"] = Entry(self)
+        self.entries["max_intruder_speed"].insert(0, self.config.max_intruder_speed)
+        self.max_intruder_speed_row = i
+        i += 1
+        
+        self.labels["intruder_speed_interval"] = Label(self, text = "Intruder Speed Array Interval:", bg=self.bg)
+        self.entries["intruder_speed_interval"] = Entry(self)
+        self.entries["intruder_speed_interval"].insert(0, self.config.intruder_speed_interval)
+        self.intruder_speed_interval_row = i
+        i += 1
+        
+        self.labels["custom_intruder_speed_array"] = Label(self, text = "Intruder Speed Custom Array:", bg=self.bg)
+        self.entries["custom_intruder_speed_array"] = Entry(self)
+        self.entries["custom_intruder_speed_array"].insert(0, self.config.custom_intruder_speed_array)
+        
+        self.labels["custom_intruder_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
+        
+        self.labels["custom_intruder_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
+        
+        self.switch_cust_intruder_speed()
+        return i
+
+    #Setup daa Characteristics
+    def setup_daa_chars(self, i):
+        self.labels["DAA_Chars"] = Label(self, text = "DAA Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
+        self.labels["DAA_Chars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
+        i += 1
+
+        self.labels["daa_declaration_range"] = Label(self, text = "DAA Declaration Range (m):", bg=self.bg)
+        self.labels["daa_declaration_range"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["daa_declaration_range"] = Entry(self)
+        self.entries["daa_declaration_range"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["daa_declaration_range"].insert(0, self.config.daa_spec.daa_declaration_range)
+        i += 1
+        
+        self.labels["daa_fov_deg"] = Label(self, text = "DAA FOV (Deg):", bg=self.bg)
+        self.labels["daa_fov_deg"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["daa_fov_deg"] = Entry(self)
+        self.entries["daa_fov_deg"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["daa_fov_deg"].insert(0, self.config.daa_spec.daa_fov_deg)
+        i += 1
+
+        self.labels["rate_of_revisit"] = Label(self, text = "Rate of Revisit (s):", bg=self.bg)
+        self.labels["rate_of_revisit"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rate_of_revisit"] = Entry(self)
+        self.entries["rate_of_revisit"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rate_of_revisit"].insert(0, self.config.daa_spec.rate_of_revisit)
+        i += 1
+
+        self.labels["scans_track"] = Label(self, text = "Scans to establish track:", bg=self.bg)
+        self.labels["scans_track"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["scans_track"] = Entry(self)
+        self.entries["scans_track"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["scans_track"].insert(0, self.config.daa_spec.scans_track)
+        i += 1
+
+        return i
+        
     
-    def enable_custom_intruder_speed_array(self):
-        self
+    def setup_simulation_vars(self, i):    
+        #Simulation Variables
+        self.labels["Simulation_Vars"] = Label(self, text = "Simulation Variables:", bg=self.bg, font=("Ariel",15, "bold"))
+        self.labels["Simulation_Vars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
+        i += 1
+
+        self.labels["NDecimals"] = Label(self, text = "Rounding Alpha:", bg=self.bg)
+        self.labels["NDecimals"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["NDecimals"] = Entry(self)
+        self.entries["NDecimals"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["NDecimals"].insert(0, self.config.daa_spec.NDecimals)
+        i += 1
+        
+        self.labels["time_resol"] = Label(self, text = "Time Resolution:", bg=self.bg)
+        self.labels["time_resol"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["time_resol"] = Entry(self)
+        self.entries["time_resol"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["time_resol"].insert(0, self.config.daa_spec.time_resol)
+        i += 1
+
+        self.labels["conflict_volume"] = Label(self, text = "Conflict Volume (m):", bg=self.bg)
+        self.labels["conflict_volume"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["conflict_volume"] = Entry(self)
+        self.entries["conflict_volume"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["conflict_volume"].insert(0, self.config.daa_spec.conflict_volume)
+        i += 1
+
+        self.labels["t_sim"] = Label(self, text = "t sim:", bg=self.bg)
+        self.labels["t_sim"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["t_sim"] = Entry(self)
+        self.entries["t_sim"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["t_sim"].insert(0, self.config.daa_spec.t_sim)
+        i += 1
+
+        self.labels["post_col"] = Label(self, text = "Post collision time (s):", bg=self.bg)
+        self.labels["post_col"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["post_col"] = Entry(self)
+        self.entries["post_col"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["post_col"].insert(0, self.config.daa_spec.post_col)
+        i += 1
+
+        self.labels["wind_speed"] = Label(self, text = "Wind speed (m/s):", bg=self.bg)
+        self.labels["wind_speed"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["wind_speed"] = Entry(self)
+        self.entries["wind_speed"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["wind_speed"].insert(0, self.config.daa_spec.wind_speed)
+        i += 1
+        
+        self.labels["wind_dir"] = Label(self, text = "Wind direction:", bg=self.bg)
+        self.labels["wind_dir"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["wind_dir"] = Entry(self)
+        self.entries["wind_dir"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["wind_dir"].insert(0, self.config.daa_spec.wind_dir)
+        i += 1
+
+        self.labels["human_factor_delay"] = Label(self, text = "Human Factor Delay (s):", bg=self.bg)
+        self.labels["human_factor_delay"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["human_factor_delay"] = Entry(self)
+        self.entries["human_factor_delay"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["human_factor_delay"].insert(0, self.config.daa_spec.human_factor_delay)
+        i += 1
+        
+        #Azimuth Array
+        self.use_cust_azimuth_array = BooleanVar()
+        self.use_cust_azimuth_array.set(self.config.custom_encounter_azimuth_array_enabled)
+        
+        self.entries["Cust_Azimuth_Checkbox"] = Checkbutton(self, text="Use Custom Encounter Azimuth Array", font=("Ariel", 10, "bold"), variable=self.use_cust_azimuth_array, onvalue=True, offvalue=False, command=self.switch_cust_azimuth_array, bg=self.bg)
+        self.entries["Cust_Azimuth_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
+        i += 1
+        
+        self.labels["encounter_azimuth_array_start"] = Label(self, text = "Encounter Azimuth Array Start (deg) (> -180):", bg=self.bg)
+        self.entries["encounter_azimuth_array_start"] = Entry(self)
+        self.entries["encounter_azimuth_array_start"].insert(0, self.config.encounter_azimuth_array_start)
+        self.azimuth_start_row = i
+        i += 1
+        
+        self.labels["encounter_azimuth_array_end"] = Label(self, text = "Encounter Azimuth Array End (deg) (< 180):", bg=self.bg)
+        self.entries["encounter_azimuth_array_end"] = Entry(self)
+        self.entries["encounter_azimuth_array_end"].insert(0, self.config.encounter_azimuth_array_end)
+        self.azimuth_end_row = i
+        i += 1
+
+        self.labels["encounter_azimuth_array_interval"] = Label(self, text = "Encounter Azimuth Array Interval:", bg=self.bg)
+        self.entries["encounter_azimuth_array_interval"] = Entry(self)
+        self.entries["encounter_azimuth_array_interval"].insert(0, self.config.encounter_azimuth_array_interval)
+        self.azimuth_interval_row = i
+        i += 1
+
+        self.labels["custom_encounter_azimuth_array"] = Label(self, text = "Custom Encounter Azimuth Array:", bg=self.bg)
+        self.entries["custom_encounter_azimuth_array"] = Entry(self)
+        self.entries["custom_encounter_azimuth_array"].insert(0, self.config.custom_encounter_azimuth_array)
+        
+        self.labels["custom_azimuth_array_instructions"] = Label(self, text = "Use commas to separate entries", bg=self.bg)
+        
+        self.labels["custom_azimuth_array_example"] = Label(self, text = "Ex: -90, 80, 90", bg=self.bg)
+        
+        self.switch_cust_azimuth_array()
+
+        return i
+        
+
+        
+    
+    #Switches which set of inputs are visible for the custom intruder speed array.
+    def switch_cust_rtas_speed(self):
+        if (self.use_cust_rtas_speed.get()):
+            self.enable_custom_rtas_speed_array()
+        else:
+            self.disable_custom_rtas_speed_array()
+    
+    
+    def enable_custom_rtas_speed_array(self):  
+        self.labels["min_rtas_speed"].grid_forget()
+        self.entries["min_rtas_speed"].grid_forget()
+        
+        self.labels["max_rtas_speed"].grid_forget()
+        self.entries["max_rtas_speed"].grid_forget()
+        
+        self.labels["rtas_speed_interval"].grid_forget()
+        self.entries["rtas_speed_interval"].grid_forget()
+        
+        self.labels["custom_rtas_speed_array"].grid(column = 1, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["custom_rtas_speed_array"].grid(column=2, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_rtas_speed_instructions"].grid(column = 1, row=self.max_rtas_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_rtas_speed_example"].grid(column = 1, row=self.rtas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
+   
+    def disable_custom_rtas_speed_array(self):
+        self.labels["custom_rtas_speed_array"].grid_forget()
+        self.entries["custom_rtas_speed_array"].grid_forget()
+        
+        self.labels["custom_rtas_speed_instructions"].grid_forget()
+        
+        self.labels["custom_rtas_speed_example"].grid_forget()
+        
+        self.labels["min_rtas_speed"].grid(column = 1, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["min_rtas_speed"].grid(column=2, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["max_rtas_speed"].grid(column = 1, row=self.max_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["max_rtas_speed"].grid(column=2, row=self.max_rtas_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["rtas_speed_interval"].grid(column = 1, row=self.rtas_speed_interval_row, padx=2, pady=2, sticky=W)
+        self.entries["rtas_speed_interval"].grid(column=2, row=self.rtas_speed_interval_row, padx=2, pady=2, sticky=W)
+        
+
+
+    
+    #Switches which set of inputs are visible for the custom intruder speed array.
+    def switch_cust_intruder_speed(self):
+        if (self.use_cust_intruder_speed.get()):
+            self.enable_custom_intruder_speed_array()
+        else:
+            self.disable_custom_intruder_speed_array()
+    
+    
+    def enable_custom_intruder_speed_array(self):  
+        self.labels["min_intruder_speed"].grid_forget()
+        self.entries["min_intruder_speed"].grid_forget()
+        
+        self.labels["max_intruder_speed"].grid_forget()
+        self.entries["max_intruder_speed"].grid_forget()
+        
+        self.labels["intruder_speed_interval"].grid_forget()
+        self.entries["intruder_speed_interval"].grid_forget()
+        
+        self.labels["custom_intruder_speed_array"].grid(column = 1, row=self.min_intruder_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["custom_intruder_speed_array"].grid(column=2, row=self.min_intruder_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_intruder_speed_instructions"].grid(column = 1, row=self.max_intruder_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_intruder_speed_example"].grid(column = 1, row=self.intruder_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
    
     def disable_custom_intruder_speed_array(self):
-        self
+        self.labels["custom_intruder_speed_array"].grid_forget()
+        self.entries["custom_intruder_speed_array"].grid_forget()
         
-    def enable_custom_intruder_azimuth_array(self):
-        self
+        self.labels["custom_intruder_speed_instructions"].grid_forget()
+        
+        self.labels["custom_intruder_speed_example"].grid_forget()
+        
+        self.labels["min_intruder_speed"].grid(column = 1, row=self.min_intruder_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["min_intruder_speed"].grid(column=2, row=self.min_intruder_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["max_intruder_speed"].grid(column = 1, row=self.max_intruder_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["max_intruder_speed"].grid(column=2, row=self.max_intruder_speed_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["intruder_speed_interval"].grid(column = 1, row=self.intruder_speed_interval_row, padx=2, pady=2, sticky=W)
+        self.entries["intruder_speed_interval"].grid(column=2, row=self.intruder_speed_interval_row, padx=2, pady=2, sticky=W)
+        
+        
+    #Switches which set of inputs are visible for the custom intruder speed array.
+    def switch_cust_azimuth_array(self):
+        if (self.use_cust_azimuth_array.get()):
+            self.enable_custom_encounter_azimuth_array()
+        else:
+            self.disable_custom_encounter_azimuth_array()    
+        
+    def enable_custom_encounter_azimuth_array(self):
+        self.labels["encounter_azimuth_array_start"].grid_forget()
+        self.entries["encounter_azimuth_array_start"].grid_forget()
+        
+        self.labels["encounter_azimuth_array_end"].grid_forget()
+        self.entries["encounter_azimuth_array_end"].grid_forget()
+        
+        self.labels["encounter_azimuth_array_interval"].grid_forget()
+        self.entries["encounter_azimuth_array_interval"].grid_forget()
+        
+        self.labels["custom_encounter_azimuth_array"].grid(column = 1, row=self.azimuth_start_row, padx=2, pady=2, sticky=W)
+        self.entries["custom_encounter_azimuth_array"].grid(column=2, row=self.azimuth_start_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_azimuth_array_instructions"].grid(column = 1, row=self.azimuth_end_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
+        self.labels["custom_azimuth_array_example"].grid(column = 1, row=self.azimuth_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
+        
    
-    def disable_custom_intruder_azimuth_array(self):
-        self
+    def disable_custom_encounter_azimuth_array(self):
+        self.labels["custom_encounter_azimuth_array"].grid_forget()
+        self.entries["custom_encounter_azimuth_array"].grid_forget()
+        
+        self.labels["custom_azimuth_array_instructions"].grid_forget()
+        
+        self.labels["custom_azimuth_array_example"].grid_forget()
+        
+        self.labels["encounter_azimuth_array_start"].grid(column = 1, row=self.azimuth_start_row, padx=2, pady=2, sticky=W)
+        self.entries["encounter_azimuth_array_start"].grid(column=2, row=self.azimuth_start_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["encounter_azimuth_array_end"].grid(column = 1, row=self.azimuth_end_row, padx=2, pady=2, sticky=W)
+        self.entries["encounter_azimuth_array_end"].grid(column=2, row=self.azimuth_end_row, padx=2, pady=2, sticky=W)
+        
+        self.labels["encounter_azimuth_array_interval"].grid(column = 1, row=self.azimuth_interval_row, padx=2, pady=2, sticky=W)
+        self.entries["encounter_azimuth_array_interval"].grid(column=2, row=self.azimuth_interval_row, padx=2, pady=2, sticky=W)
+    
+    def get_params(self):
+        #Read RTAS Characteristics
+        rtas_max_bank_deg = Decimal(self.entries["rtas_max_bank_deg"].get())
+        rtas_wingspan = Decimal(self.entries["rtas_wingspan"].get())
+        rtas_max_roll_rate = Decimal(self.entries["rtas_max_roll_rate"].get())
+
+        if(self.use_cust_rtas_speed.get()):
+            rtas_speed_array = math_util.createCustArray(self.entries["custom_rtas_speed_array"].get())
+        else:
+            min_speed = Decimal(self.entries["min_rtas_speed"].get())
+            max_speed = Decimal(self.entries["max_rtas_speed"].get())
+            speed_interval = Decimal(self.entries["rtas_speed_interval"].get())
+            rtas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
+
+        #Read Intruder Chars
+        if(self.use_cust_intruder_speed.get()):
+            intruder_speed_array = math_util.createCustArray(self.entries["custom_intruder_speed_array"].get())
+        else:
+            min_speed = Decimal(self.entries["min_intruder_speed"].get())
+            max_speed = Decimal(self.entries["max_intruder_speed"].get())
+            speed_interval = Decimal(self.entries["intruder_speed_interval"].get())
+            intruder_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
+             
+        #Read DAA Chars
+        daa_declaration_range = Decimal(self.entries["daa_declaration_range"].get())
+        daa_fov_deg = Decimal(self.entries["daa_fov_deg"].get())
+        rate_of_revisit = int(self.entries["rate_of_revisit"].get())
+        scans_track = int(self.entries["scans_track"].get())
+ 
+        #Read Simulation Variables
+        time_resol = Decimal(self.entries["time_resol"].get())
+        conflict_volume = Decimal(self.entries["conflict_volume"].get())
+        t_sim = Decimal(self.entries["t_sim"].get())
+        post_col = Decimal(self.entries["post_col"].get())
+        wind_speed = Decimal(self.entries["wind_speed"].get())
+        wind_dir = Decimal(self.entries["wind_dir"].get())
+        NDecimals = int(self.entries["NDecimals"].get())
+        human_factor_delay = int(self.entries["human_factor_delay"].get())
+
+        if(self.use_cust_azimuth_array.get()):
+            encounter_azimuth_array = math_util.createCustArray(self.entries["custom_encounter_azimuth_array"].get())
+        else:
+            min_azimuth = Decimal(self.entries["encounter_azimuth_array_start"].get())
+            max_azimuth = Decimal(self.entries["encounter_azimuth_array_end"].get())
+            azimuth_interval = Decimal(self.entries["encounter_azimuth_array_interval"].get())
+            encounter_azimuth_array = math_util.make_array(min_azimuth, max_azimuth, azimuth_interval)     
+        
+        
+        params = DaaSpec(\
+            rtas_max_bank_deg = rtas_max_bank_deg, \
+            rtas_wingspan = rtas_wingspan, \
+            rtas_max_roll_rate = rtas_max_roll_rate, \
+            rtas_speed_array = rtas_speed_array, \
+            intruder_speed_array = intruder_speed_array, \
+            daa_declaration_range = daa_declaration_range, \
+            daa_fov_deg = daa_fov_deg, \
+            rate_of_revisit = rate_of_revisit, \
+            scans_track = scans_track, \
+            NDecimals = NDecimals, \
+            time_resol = time_resol, \
+            conflict_volume = conflict_volume, \
+            t_sim = t_sim, \
+            post_col = post_col, \
+            wind_speed = wind_speed, \
+            wind_dir = wind_dir, \
+            human_factor_delay = human_factor_delay, \
+            encounter_azimuth_array = encounter_azimuth_array
+            )
+        
+        return params
+        
+        
         
 if __name__ == "__main__":
-    w = Tk()
-    w.geometry("500x500+50+50")
-    controller = new_sim_controller()
-    frame = new_sim_UI(master=w, controller=controller)
-    controller.setView(frame)
-    frame.pack(side = LEFT, fill = "both", expand=True)
-    w.mainloop()
+    root = Tk()
+    root.geometry("500x500")
+    controller = new_sim_controller(None)
+
+    scr_fr = new_sim_UI(controller=controller, master=root)
+    scr_fr.pack(fill=BOTH, expand=1)
+    
+
+
+    root.mainloop()
     
         
     

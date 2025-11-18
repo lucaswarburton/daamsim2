@@ -11,7 +11,7 @@ from data_classes.current_data import CurrentData
 
 
 def batch_calcs(specs: DaaSpec):
-    intruder_speeds = specs.intruder_speeds
+    intruder_speeds = specs.intruder_speed_array
 
     current_data = CurrentData()
     CurrentData().clear()
