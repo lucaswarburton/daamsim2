@@ -45,6 +45,9 @@ class DMController:
         
     def lock_buttons(self):
         self.view.lock_buttons()
+    
+    def unlock_buttons(self):
+        self.view.unlock_buttons()
         
     def calculation_mode(self):
         self.lock_buttons()
