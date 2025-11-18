@@ -18,6 +18,7 @@ class Scroll_Frame(Frame):
 
         self.scrolling_frame.bind("<Configure>", self.update_scrollregion)
         self.canvas.bind("<Configure>", self.resize_frame)
+        self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
     def update_scrollregion(self, event=None):
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
@@ -25,6 +26,9 @@ class Scroll_Frame(Frame):
     def resize_frame(self, event=None):
         canvas_width = event.width
         self.canvas.itemconfig(self.canvas_window, width=canvas_width)
+
+    def on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), UNITS)
 
 
 if __name__ == "__main__":

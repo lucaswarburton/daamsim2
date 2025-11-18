@@ -119,16 +119,16 @@ class Configuration:
         return intruder_speed_array
         
     def get_encounter_azimuth_array(self, parser):
-        custom_encounter_zimuth_array_enabled = parser['Settings']['custom_encounter_azimuth_array_enabled']
-        custom_encounter_zimuth_array_enabled = custom_encounter_zimuth_array_enabled.lower().strip()
-        self.custom_encounter_zimuth_array_enabled = custom_encounter_zimuth_array_enabled in self.valid_true_values
+        custom_encounter_azimuth_array_enabled = parser['Settings']['custom_encounter_azimuth_array_enabled']
+        custom_encounter_azimuth_array_enabled = custom_encounter_azimuth_array_enabled.lower().strip()
+        self.custom_encounter_azimuth_array_enabled = custom_encounter_azimuth_array_enabled in self.valid_true_values
 
         self.custom_encounter_azimuth_array = parser['DEFAULTS']['custom_encounter_azimuth_array']
         self.encounter_azimuth_array_start =  Decimal(parser['DEFAULTS']['encounter_azimuth_array_start'])
         self.encounter_azimuth_array_end = Decimal(parser['DEFAULTS']['encounter_azimuth_array_end'])
         self.encounter_azimuth_array_interval = Decimal(parser['DEFAULTS']['encounter_azimuth_array_interval'])
         
-        if self.custom_encounter_zimuth_array_enabled:
+        if self.custom_encounter_azimuth_array_enabled:
             encounter_azimuth_array = math_util.createCustArray(self.custom_encounter_azimuth_array)
         else: 
             encounter_azimuth_array = math_util.make_array(self.encounter_azimuth_array_start, self.encounter_azimuth_array_end, self.encounter_azimuth_array_interval)
