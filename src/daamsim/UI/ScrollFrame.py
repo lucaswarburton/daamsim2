@@ -5,13 +5,13 @@ class Scroll_Frame(Frame):
     def __init__(self, master, SCROLLFRAMETYPE, controller, bg = None):
         Frame.__init__(self, master, bg=bg)
 
-        self.canvas = Canvas(self, bg="green")
+        self.canvas = Canvas(self, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
         self.scrollbar = Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.scrollbar.pack(side=RIGHT, fill=Y)
 
-        self.scrolling_frame = SCROLLFRAMETYPE(controller = controller, master =self.canvas, bg="yellow")
+        self.scrolling_frame = SCROLLFRAMETYPE(controller = controller, master =self.canvas, bg=bg)
         self.canvas_window = self.canvas.create_window((0,0), window=self.scrolling_frame, anchor = "nw")
 
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
