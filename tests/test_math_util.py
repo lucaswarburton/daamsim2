@@ -3,8 +3,7 @@ Unit tests for the batch_rr_calcs library
 """
 import sys
 import os
-print(os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "src"), "calculations"))
-sys.path.append(os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "src"), "calculations"))
+import numpy as np
 from calculations.math_util import *
 
 
