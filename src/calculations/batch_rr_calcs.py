@@ -4,20 +4,33 @@ Implements the functionality of the batchRrCalcs script.
 
 
 from decimal import Decimal
-from calculations.rr_calcs import rr_calcs
-import calculations.math_util as math_util
-from data_classes.daa_spec import DaaSpec
-from data_classes.current_data import CurrentData
+from rr_calcs import rr_calcs
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
+from daa_spec import DaaSpec
+from current_data import CurrentData
+import matlab.engine
 
 
 def batch_calcs(specs: DaaSpec):
+    eng = matlab.engine.start_matlab()
     intruder_speeds = specs.intruder_speed_array
 
     current_data = CurrentData()
-    CurrentData().clear()
-    current_data.specs = specs
+    current_data.rtas_specs = specs
+    current_data.azimuth_vect = [] * len(intruder_speeds)
+    current_data.r_min_m = [] * len(intruder_speeds)
+    current_data.r_min_over = [] * len(intruder_speeds)
+    current_data.ground_int_speed = [] * len(intruder_speeds)
+    current_data.alpha_oncoming_vect = [] * len(intruder_speeds)
+    current_data.alpha_overtake_vect = [] * len(intruder_speeds)
+    current_data.clos_vel = [] * len(intruder_speeds)
+    current_data.clos_vel_over = [] * len(intruder_speeds)
     
-    for i in range(len(intruder_speeds)):
-        print(f"Evaluating Intruder speed {intruder_speeds[i]:d} kts")
-        rr_calcs(intruder_speeds[i])
+    for i, speed in enumerate(intruder_speeds):
+        print(f"Evaluating Intruder speed {speed} kts")
+        rr_calcs(speed, i, eng)
+
+    eng.quit()
 
