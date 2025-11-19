@@ -1,43 +1,47 @@
 from decimal import Decimal
 import math
 
-from calculations import math_util
-from data_classes.current_data import CurrentData
+import math_util
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
+from current_data import CurrentData
 import numpy as np
 import matlab.engine
 
 def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     current_data = CurrentData()
+    specs = current_data.rtas_specs
 
     # unpack specs
     # RTAS characteristics
-    max_bank = current_data.rtas_specs.maxBank # deg
-    max_roll_rate = current_data.specs.rtas_max_roll_rate # deg/s
+    max_bank = specs.rtas_max_bank_deg # deg
+    max_roll_rate = specs.rtas_max_roll_rate # deg/s
 
     # Intruder characteristics
-    ground_int_speed = intruder_speed * 0.514444 # Convert to m/s
+    ground_int_speed = float(intruder_speed) * 0.514444 # Convert to m/s
 
     # DAA characteristics
-    range = current_data.specs.daa_declaration_range # m
-    daa_fov_deg = current_data.daa_fov_deg # deg
-    sensor_rate = current_data.specs.rate_of_revisit # s, time per scan
-    scans_track = current_data.specs.scans_track # scans needed to establish track after detection
+    range = specs.daa_declaration_range # m
+    daa_fov_deg = specs.daa_fov_deg # deg
+    sensor_rate = specs.rate_of_revisit # s, time per scan
+    scans_track = specs.scans_track # scans needed to establish track after detection
     
     # Simulation variables
-    num_decimals = current_data.specs.Ndecimals
-    time_resol = current_data.time_resol # time resolution for approximation
-    DMOD = current_data.specs.conflict_volume # collision bubble radius
-    t_sim = current_data.specs.t_sim # simulation time
-    post_col = current_data.specs.post_col # post-collision time
-    wind_speed = current_data.specs.wind_speed # m/s
-    wind_dir = current_data.specs.wind_dir; # direction wind is coming from
-    t_warn = current_data.specs.human_factor_delay # seconds, time pilot needs to begin executing CA maneuver
-    azimuth_vect = current_data.specs.encounter_azimuth_array
+    num_decimals = specs.Ndecimals
+    time_resol = specs.time_resol # time resolution for approximation
+    DMOD = specs.conflict_volume # collision bubble radius
+    t_sim = specs.t_sim # simulation time
+    post_col = specs.post_col # post-collision time
+    wind_speed = specs.wind_speed # m/s
+    wind_dir = specs.wind_dir; # direction wind is coming from
+    t_warn = specs.human_factor_delay # seconds, time pilot needs to begin executing CA maneuver
+    azimuth_vect = specs.encounter_azimuth_array
 
     # Own UAS with the following characteristics
     nz = 1/math_util.cosd(max_bank) # 1.5g turn considered reasonable for a UAS
     
-    ground_speed_h_vect = current_data.specs.ownspeed * 0.514444 # Convert to m/s
+    ground_speed_h_vect = specs.ownspeed * 0.514444 # Convert to m/s
     
     sigma_al = 0
     sigma_cross = 0                
