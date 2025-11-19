@@ -10,7 +10,6 @@ from daa_spec import DaaSpec
 from decimal import Decimal
 import math_util
 from ScrollFrame import Scroll_Frame
-
 from NSController import new_sim_controller
 
 class new_sim_UI(Scroll_Frame):

@@ -22,7 +22,7 @@ class new_sim_controller:
     def run_new_sim(self):
         daa_spec = self.view.get_params()
         self.master_controller.calculation_mode()
-        # batch_calcs(daa_spec)
+        batch_calcs(daa_spec)
         self.master_controller.unlock_buttons()
         
     

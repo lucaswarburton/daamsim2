@@ -7,9 +7,8 @@ from decimal import Decimal
 from rr_calcs import rr_calcs
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
-from daa_spec import DaaSpec
-from current_data import CurrentData
+from data_classes.daa_spec import DaaSpec
+from data_classes.current_data import CurrentData
 import matlab.engine
 
 
