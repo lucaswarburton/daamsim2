@@ -17,6 +17,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     # RTAS characteristics
     max_bank = specs.rtas_max_bank_deg # deg
     max_roll_rate = specs.rtas_max_roll_rate # deg/s
+    ground_speed_h_vect = specs.rtas_speed_array * 0.514444 # Convert to m/s
 
     # Intruder characteristics
     ground_int_speed = float(intruder_speed) * 0.514444 # Convert to m/s
@@ -28,7 +29,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     scans_track = specs.scans_track # scans needed to establish track after detection
     
     # Simulation variables
-    num_decimals = specs.Ndecimals
+    num_decimals = specs.NDecimals
     time_resol = specs.time_resol # time resolution for approximation
     DMOD = specs.conflict_volume # collision bubble radius
     t_sim = specs.t_sim # simulation time
@@ -41,7 +42,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     # Own UAS with the following characteristics
     nz = 1/math_util.cosd(max_bank) # 1.5g turn considered reasonable for a UAS
     
-    ground_speed_h_vect = specs.ownspeed * 0.514444 # Convert to m/s
+    
     
     sigma_al = 0
     sigma_cross = 0                
