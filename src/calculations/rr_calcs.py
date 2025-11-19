@@ -10,42 +10,43 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     current_data = CurrentData()
 
     # unpack specs
-    FOV = CurrentData.specs.FOV # Deg
-    range = CurrentData.specs.range # meters
-    max_bank = CurrentData.specs.maxBank # degrees
-    max_roll_rate = CurrentData.specs.max_roll_rate # degrees/second
+    # RTAS characteristics
+    max_bank = current_data.rtas_specs.maxBank # deg
+    max_roll_rate = current_data.specs.rtas_max_roll_rate # deg/s
+
+    # Intruder characteristics
+    ground_int_speed = intruder_speed * 0.514444 # Convert to m/s
+
+    # DAA characteristics
+    range = current_data.specs.daa_declaration_range # m
+    daa_fov_deg = current_data.daa_fov_deg # deg
+    sensor_rate = current_data.specs.rate_of_revisit # s, time per scan
+    scans_track = current_data.specs.scans_track # scans needed to establish track after detection
+    
+    # Simulation variables
+    num_decimals = current_data.specs.Ndecimals
+    time_resol = current_data.time_resol # time resolution for approximation
+    DMOD = current_data.specs.conflict_volume # collision bubble radius
+    t_sim = current_data.specs.t_sim # simulation time
+    post_col = current_data.specs.post_col # post-collision time
+    wind_speed = current_data.specs.wind_speed # m/s
+    wind_dir = current_data.specs.wind_dir; # direction wind is coming from
+    t_warn = current_data.specs.human_factor_delay # seconds, time pilot needs to begin executing CA maneuver
+    azimuth_vect = current_data.specs.encounter_azimuth_array
 
     # Own UAS with the following characteristics
     nz = 1/math_util.cosd(max_bank) # 1.5g turn considered reasonable for a UAS
-    time_resol = CurrentData.time_resol # time resolution for approximation
-
-    ground_speed_h_vect = CurrentData.specs.ownspeed * 0.514444 # Convert to m/s
-    ground_int_speed = intruder_speed * 0.514444 # Convert to m/s
+    
+    ground_speed_h_vect = current_data.specs.ownspeed * 0.514444 # Convert to m/s
+    
     sigma_al = 0
-    sigma_cross = 0                 
-    DMOD = CurrentData.specs.DMOD # collision bubble              
-    t_sim = CurrentData.specs.t_sim # simulation time
-    post_col = CurrentData.specs.psot_col # post-collision time
-
-    # wind 
-    wind_speed = CurrentData.specs.wind_speed # m/s
-    wind_dir = CurrentData.specs.wind_dir; # direction wind is coming from
+    sigma_cross = 0                
 
     vx_w = wind_speed * math_util.sind(wind_dir)
-    vy_w = wind_speed * math_util.cosd(wind_dir)
-
-    # Rounding alpha
-    num_decimals = CurrentData.specs.Ndecimals
-
-    azimuth_vect = CurrentData.specs.azimuths
+    vy_w = wind_speed * math_util.cosd(wind_dir)    
     
-    sensor_rate = CurrentData.specs.sensor_rate # seconds, time per scan
-    scans_track = CurrentData.specs.scans_track # scans needed to establish track after detection
     t_track = sensor_rate * scans_track # seconds, time needed to establish track after detection
-    t_warn = CurrentData.specs.t_warn # seconds, time pilot needs to begin executing CA maneuver
     t_delta = t_track + t_warn # seconds, time from detection to maneuver starting
-
-    
 
     n = len(azimuth_vect)
 
@@ -56,7 +57,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     alpha_overtake_vect = np.zeros(n)
     
     # for ii=1:length(ground_speed_h_vect)
-    # daamsim has loop here but round_speed_h_vect is a scalar. Opportunity to make it a list, multiple calculations?
+    # make ground_speed_h_vect an array, loop over it here
     ground_speed_h = ground_speed_h_vect
 
     tm = np.full(n, np.nan)

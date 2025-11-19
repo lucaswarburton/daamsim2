@@ -17,11 +17,22 @@ def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
     if (increment <= 0):
         raise ValueError("Create Array: Interval cannot be less than 0: " + str(increment))
     
-    array = [
-        min + i * increment
-        for i in range(int((max - min) / increment) + 1)
-    ]
-    return array
+    #Use this instead of range because range does not allow Decimal and we may want to generate an array with Decimal
+    lst = list()
+    i = min
+    while i < max:
+        lst.append(i)
+        i += increment
+    lst.append(max)
+    return lst
+
+def createCustArray(inputStr: str):
+        str_lst = inputStr.split(",")
+        dec_lst = []
+        for item in str_lst:
+            item.strip()
+            dec_lst.append(Decimal(item))
+        return dec_lst
 
 def wrapTo180(angle: float) -> float:
      return (angle + 180) % 360 - 180
