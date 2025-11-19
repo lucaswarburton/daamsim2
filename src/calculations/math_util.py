@@ -34,3 +34,6 @@ def createCustArray(inputStr: str):
             item.strip()
             dec_lst.append(Decimal(item))
         return np.array(dec_lst)
+
+def wrapTo180(angle: float) -> float:
+     return (angle + 180) % 360 - 180
