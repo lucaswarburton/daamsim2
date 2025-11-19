@@ -28,3 +28,4 @@ class DaaSpec:
     wind_dir: Decimal
     human_factor_delay: int
     encounter_azimuth_array: list
+

@@ -13,10 +13,9 @@ import matlab.engine
 
 def batch_calcs(specs: DaaSpec):
     eng = matlab.engine.start_matlab()
-    intruder_speeds = specs.intruder_speeds
+    intruder_speeds = specs.intruder_speed_array
 
     current_data = CurrentData()
-    CurrentData().clear()
     current_data.specs = specs
     current_data.azimuth_vect = [] * len(intruder_speeds)
     current_data.r_min_m = [] * len(intruder_speeds)

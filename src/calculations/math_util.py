@@ -36,3 +36,4 @@ def createCustArray(inputStr: str):
 
 def wrapTo180(angle: float) -> float:
      return (angle + 180) % 360 - 180
+        return dec_lst
