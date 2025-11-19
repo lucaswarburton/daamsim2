@@ -8,7 +8,7 @@ class CurrentData:
     _fields_names = [
         "rr_val",
         "azimuth_vect",
-        "r_min",
+        "r_min_m",
         "r_min_over",
         "alpha_oncoming_vect",
         "alpha_overtake_vect",

@@ -5,6 +5,12 @@ import math
 def cosd(x: float) -> float:
     return math.cos(math.radians(x))
 
+def sind(x: float) -> float:
+    return math.sin(math.radians(x))
+
+def tand(x: float) -> float:
+     return math.tan(math.radians(x))
+
 def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
     if (min > max):
             raise ValueError("Create Array: Start cannot be greater than end. Start: " + str(min) + "End: " + str(max))
@@ -27,3 +33,7 @@ def createCustArray(inputStr: str):
             item.strip()
             dec_lst.append(Decimal(item))
         return dec_lst
+
+def wrapTo180(angle: float) -> float:
+     return (angle + 180) % 360 - 180
+    
