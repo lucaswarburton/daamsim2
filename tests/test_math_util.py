@@ -1,14 +1,16 @@
 """
 Unit tests for the batch_rr_calcs library
 """
-
+import sys
+import os
+import numpy as np
 from calculations.math_util import *
 
 
 class TestMathUtil:
 
     def test_make_array(self):
-        assert np.array([5, 15, 25]) == make_array(5, 25, 10)
+        assert np.array_equal(np.array([5, 15, 25]), make_array(5, 25, 10))
         try:
             make_array(35, 25, 10)
             assert False
