@@ -7,7 +7,7 @@ from calculations.math_util import *
 
 class TestMathUtil:
 
-    def test_make_speed_array(self):
+    def test_make_array(self):
         assert [5, 15, 25] == make_array(5, 25, 10)
         try:
             make_array(35, 25, 10)
@@ -19,4 +19,11 @@ class TestMathUtil:
         assert math.isclose(1, cosd(0), abs_tol=1e-09)
         assert math.isclose(0, cosd(90), abs_tol=1e-09)
         assert math.isclose(-1, cosd(180), abs_tol=1e-09)
+        assert math.isclose(0, cosd(270), abs_tol=1e-09)
+
+    def test_sind(self):
+        assert math.isclose(0, sind(0), abs_tol=1e-09)
+        assert math.isclose(1, sind(90), abs_tol=1e-09)
+        assert math.isclose(0, sind(180), abs_tol=1e-09)
+        assert math.isclose(-1, sind(270), abs_tol=1e-09)
 

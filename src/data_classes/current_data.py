@@ -1,5 +1,5 @@
 import threading
-from data_classes.threadsafe_list import ThreadSafeList
+from threadsafe_list import ThreadSafeList
 
 class CurrentData:
     _instance = None
@@ -8,13 +8,13 @@ class CurrentData:
     _fields_names = [
         "rr_val",
         "azimuth_vect",
-        "r_min",
+        "r_min_m",
         "r_min_over",
         "alpha_oncoming_vect",
         "alpha_overtake_vect",
         "clos_vel",
         "clos_vel_over",
-        "specs"
+        "rtas_specs"
     ]
 
     def __new__(cls):
