@@ -6,7 +6,7 @@ from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
 
-def rr_calcs(intruder_speed: Decimal, eng: object):
+def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     current_data = CurrentData()
 
     # unpack specs
@@ -227,4 +227,14 @@ def rr_calcs(intruder_speed: Decimal, eng: object):
         alpha = math.round(eng.calculate_alpha_ov(ground_speed_h, ground_int_speed, azimuth_vect[k]), num_decimals)
         alpha_overtake_vect[k] = alpha
         simulate_alpha()
+
+        # save data
+        current_data.azimuth_vect[i] = azimuth_vect
+        current_data.r_min_m[i] = r_min_m
+        current_data.r_min_over[i] = r_min_m_over
+        current_data.ground_int_speed[i] = ground_int_speed
+        current_data.alpha_oncoming_vect[i] = alpha_oncoming_vect
+        current_data.alpha_overtake_vect[i] = alpha_overtake_vect
+        current_data.clos_vel[i] = clos_vel
+        current_data.clos_vel_over[i] = clos_vel_over
 
