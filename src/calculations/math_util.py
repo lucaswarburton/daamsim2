@@ -1,5 +1,6 @@
 from decimal import Decimal
 import math
+import numpy as np
 
 
 def cosd(x: float) -> float:
@@ -18,7 +19,7 @@ def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
         lst.append(i)
         i += increment
     lst.append(max)
-    return lst
+    return np.array(lst)
 
 def createCustArray(inputStr: str):
         str_lst = inputStr.split(",")
@@ -26,4 +27,4 @@ def createCustArray(inputStr: str):
         for item in str_lst:
             item.strip()
             dec_lst.append(Decimal(item))
-        return dec_lst
+        return np.array(dec_lst)
