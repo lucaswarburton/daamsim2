@@ -2,10 +2,7 @@ from decimal import Decimal
 import math
 
 import math_util
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
-from current_data import CurrentData
+from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
 

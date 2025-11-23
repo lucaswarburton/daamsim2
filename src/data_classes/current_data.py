@@ -1,5 +1,5 @@
 import threading
-from threadsafe_list import ThreadSafeList
+from .threadsafe_list import ThreadSafeList
 
 class CurrentData:
     _instance = None
