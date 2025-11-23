@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt 
 import numpy as np
+from calculations.graph_evals import per_speed_graph_evals
 
 class per_speed_plot:
+    KTS_TO_MS = 0.514444
     def __init__(self, rtas_speed, intruder_speed, rr, daa_declaration_range, daa_fov):
         fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
         self.ax = ax
@@ -12,6 +14,10 @@ class per_speed_plot:
         left_curve = np.linspace(left_angle, 2*np.pi, 100)
         right_curve = np.linspace(0, right_angle, 100)
         radii = np.linspace(0, daa_declaration_range, 100) # From r=0 to r=5
+        
+        rtas_speed = round(rtas_speed * 0.514444, 1)
+        intruder_speed = round(intruder_speed * 0.514444, 1)
+        
 
         # Plot the radial line
         ax.plot(np.full_like(radii, right_angle), radii, color='black', linestyle='-', label='FOV Right')
@@ -19,8 +25,9 @@ class per_speed_plot:
         ax.plot(left_curve, np.full_like(left_curve, daa_declaration_range), color='black', linestyle='-', label='FOV Curve Left')
         ax.plot(right_curve, np.full_like(right_curve, daa_declaration_range), color='black', linestyle='-', label='FOV Curve Right')
         ax.plot(1000, 30 * np.pi/180)
-        plt.show()
-        
+        degree_symbol = "\N{DEGREE SIGN}"
+        title = "RTAS Speed: " + str(rtas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
+        ax.set_title(title)
         
     #Placeholder function var names  
     def add_point(self, distance, azimuth, isCollision):
@@ -32,11 +39,16 @@ class per_speed_plot:
     
     #placeholder function var names
     def add_points(self, points):
-        for point in points:
-            distance = point[0]
-            azimuth = point[1]
-            isCollision = point[2]
-            self.add_point(distance=distance, azimuth=azimuth, isCollision=isCollision)
+        self.ax.scatter(points[0], points[1], c=points[2])
+            
+    def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range):
+        return per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
+            
+            
+    def show_plt(self):
+        plt.show()
             
 if __name__ == "__main__":
-    per_speed_plot(10, 10, 0.25, 1000, 60)
+    plot1 = per_speed_plot(10, 10, 0.25, 1000, 60)
+    plot1.show_plt()
+    

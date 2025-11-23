@@ -1,15 +1,16 @@
 from tkinter import *
 from tkinter import ttk
 
-from DMController import DMController
-from window import Window
-from DMUI import DMUIFrame
-from GMUI import GMUIFrame
-from NSUI import new_sim_UI
-from ProgressFrameUI import Progress_Frame
-from NSController import new_sim_controller
+from .DMController import DMController
+from .window import Window
+from .DMUI import DMUIFrame
+from .GMUI import GMUIFrame
+from .NSUI import new_sim_UI
+from .ProgressFrameUI import Progress_Frame
+from .NSController import new_sim_controller
+from .GController import GraphComtroller
 
-def main():
+def UI_main():
     w = Window()
     
     main_controller = DMController()
@@ -38,5 +39,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    UI_main()
 

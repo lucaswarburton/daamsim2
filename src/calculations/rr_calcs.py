@@ -2,10 +2,7 @@ from decimal import Decimal
 import math
 
 import math_util
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
-from current_data import CurrentData
+from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
 
@@ -28,7 +25,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     scans_track = specs.scans_track # scans needed to establish track after detection
     
     # Simulation variables
-    num_decimals = specs.Ndecimals
+    num_decimals = specs.NDecimals
     time_resol = specs.time_resol # time resolution for approximation
     DMOD = specs.conflict_volume # collision bubble radius
     t_sim = specs.t_sim # simulation time

@@ -1,16 +1,11 @@
 from tkinter import *
 from tkinter import ttk
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data_classes"))
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "calculations"))
-from Config import Configuration
-from daa_spec import DaaSpec
+from daamsim.Config import Configuration
+from data_classes.daa_spec import DaaSpec
 from decimal import Decimal
-import math_util
-from ScrollFrame import Scroll_Frame
-from NSController import new_sim_controller
+from calculations import math_util
+from daamsim.UI.ScrollFrame import Scroll_Frame
+from daamsim.UI.NSController import new_sim_controller
 
 class new_sim_UI(Scroll_Frame):
     def __init__(self, controller, master, bg = "salmon"):

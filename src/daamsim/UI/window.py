@@ -1,9 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 
-from DMUI import DMUIFrame 
-from GMUI import GMUIFrame
-from DMController import DMController
+from .DMUI import DMUIFrame 
+from .GMUI import GMUIFrame
+from .DMController import DMController
 
 class Window(Tk):
     def __init__(self):

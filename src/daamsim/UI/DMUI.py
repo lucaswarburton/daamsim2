@@ -1,8 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 
-from DMController import DMController
-
 class DMUIFrame(Frame):
     def __init__(self, controller, master, bg = "blue"):
         Frame.__init__(self, master, bg=bg, width=250)
