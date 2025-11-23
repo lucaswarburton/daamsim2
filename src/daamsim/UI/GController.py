@@ -32,7 +32,9 @@ class GraphController:
                 results = per_speed_plot.convert_data(azimuthOncoming, r_min, azimuthOvertake, r_min_overtake, fov, range)
                 rr = results[0]
                 points = results[1]
-                plt = per_speed_plot(rtas_speeds[i], intruder_speeds[i], rr, range, fov)
+                cur_rtas_speed = rtas_speeds[int(i/len(rtas_speeds))]
+                cur_intruder_speed = intruder_speeds[i%len(intruder_speeds)]
+                plt = per_speed_plot(cur_rtas_speed, cur_intruder_speed, rr, range, fov)
                 plt.add_points(points)
                 plt.show_plt
                 i += i
