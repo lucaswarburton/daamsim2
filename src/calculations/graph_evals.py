@@ -10,9 +10,9 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
     colour_array = np.array([])
     
     i = 0
-    while i < len(azimuthDegOncoming):
+    for i in range(len(azimuthDegOncoming)):
         if not np.isnan(RminOncoming[i]):
-            azimuth_array = azimuth_array.append(azimuth_array, azimuthDegOncoming[i])
+            azimuth_array = azimuth_array.append(azimuth_array, azimuthDegOncoming[i]*np.pi/180)
             rmin_array = rmin_array.append(rmin_array, RminOncoming[i])
             
             if abs(azimuthDegOncoming[i]) <= fov/2 and RminOncoming[i] <= range:
@@ -24,9 +24,9 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
             numberOfAzimuthEvaluated += 1
             
     if not (azimuthOvertake.size == 0):    
-        while i < len(azimuthOvertake):
+        for i in range(len(azimuthOvertake)):
             if not np.isnan(RminOvertake[i]):
-                azimuth_array = azimuth_array.append(azimuth_array, azimuthOvertake[i])
+                azimuth_array = azimuth_array.append(azimuth_array, azimuthOvertake[i]*np.pi/180)
                 rmin_array = rmin_array.append(rmin_array, RminOvertake[i])
             
                 if abs(azimuthOvertake[i]) <= fov/2 and RminOvertake[i] <= range:
@@ -36,6 +36,8 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
                     colour_array = colour_array.append(colour_array, FAIL_COLOUR)
             
                 numberOfAzimuthEvaluated += 1
+        
+  
     
     rr = get_daa_rr(numberOfAzimuthEvaluated, numberOfAzimuthsPassed)
     points = (azimuth_array, rmin_array, colour_array)

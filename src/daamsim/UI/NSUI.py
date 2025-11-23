@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 from daamsim.Config import Configuration
 from data_classes.daa_spec import DaaSpec
-from decimal import Decimal
 from calculations import math_util
 from daamsim.UI.ScrollFrame import Scroll_Frame
 from daamsim.UI.NSController import new_sim_controller
@@ -420,49 +419,49 @@ class new_sim_UI_inner_frame(Frame):
     
     def get_params(self):
         #Read RTAS Characteristics
-        rtas_max_bank_deg = Decimal(self.entries["rtas_max_bank_deg"].get())
-        rtas_wingspan = Decimal(self.entries["rtas_wingspan"].get())
-        rtas_max_roll_rate = Decimal(self.entries["rtas_max_roll_rate"].get())
+        rtas_max_bank_deg = float(self.entries["rtas_max_bank_deg"].get())
+        rtas_wingspan = float(self.entries["rtas_wingspan"].get())
+        rtas_max_roll_rate = float(self.entries["rtas_max_roll_rate"].get())
 
         if(self.use_cust_rtas_speed.get()):
             rtas_speed_array = math_util.createCustArray(self.entries["custom_rtas_speed_array"].get())
         else:
-            min_speed = Decimal(self.entries["min_rtas_speed"].get())
-            max_speed = Decimal(self.entries["max_rtas_speed"].get())
-            speed_interval = Decimal(self.entries["rtas_speed_interval"].get())
+            min_speed = float(self.entries["min_rtas_speed"].get())
+            max_speed = float(self.entries["max_rtas_speed"].get())
+            speed_interval = float(self.entries["rtas_speed_interval"].get())
             rtas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
 
         #Read Intruder Chars
         if(self.use_cust_intruder_speed.get()):
             intruder_speed_array = math_util.createCustArray(self.entries["custom_intruder_speed_array"].get())
         else:
-            min_speed = Decimal(self.entries["min_intruder_speed"].get())
-            max_speed = Decimal(self.entries["max_intruder_speed"].get())
-            speed_interval = Decimal(self.entries["intruder_speed_interval"].get())
+            min_speed = float(self.entries["min_intruder_speed"].get())
+            max_speed = float(self.entries["max_intruder_speed"].get())
+            speed_interval = float(self.entries["intruder_speed_interval"].get())
             intruder_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
              
         #Read DAA Chars
-        daa_declaration_range = Decimal(self.entries["daa_declaration_range"].get())
-        daa_fov_deg = Decimal(self.entries["daa_fov_deg"].get())
+        daa_declaration_range = float(self.entries["daa_declaration_range"].get())
+        daa_fov_deg = float(self.entries["daa_fov_deg"].get())
         rate_of_revisit = int(self.entries["rate_of_revisit"].get())
         scans_track = int(self.entries["scans_track"].get())
  
         #Read Simulation Variables
-        time_resol = Decimal(self.entries["time_resol"].get())
-        conflict_volume = Decimal(self.entries["conflict_volume"].get())
-        t_sim = Decimal(self.entries["t_sim"].get())
-        post_col = Decimal(self.entries["post_col"].get())
-        wind_speed = Decimal(self.entries["wind_speed"].get())
-        wind_dir = Decimal(self.entries["wind_dir"].get())
+        time_resol = float(self.entries["time_resol"].get())
+        conflict_volume = float(self.entries["conflict_volume"].get())
+        t_sim = float(self.entries["t_sim"].get())
+        post_col = float(self.entries["post_col"].get())
+        wind_speed = float(self.entries["wind_speed"].get())
+        wind_dir = float(self.entries["wind_dir"].get())
         NDecimals = int(self.entries["NDecimals"].get())
         human_factor_delay = int(self.entries["human_factor_delay"].get())
 
         if(self.use_cust_azimuth_array.get()):
             encounter_azimuth_array = math_util.createCustArray(self.entries["custom_encounter_azimuth_array"].get())
         else:
-            min_azimuth = Decimal(self.entries["encounter_azimuth_array_start"].get())
-            max_azimuth = Decimal(self.entries["encounter_azimuth_array_end"].get())
-            azimuth_interval = Decimal(self.entries["encounter_azimuth_array_interval"].get())
+            min_azimuth = float(self.entries["encounter_azimuth_array_start"].get())
+            max_azimuth = float(self.entries["encounter_azimuth_array_end"].get())
+            azimuth_interval = float(self.entries["encounter_azimuth_array_interval"].get())
             encounter_azimuth_array = math_util.make_array(min_azimuth, max_azimuth, azimuth_interval)     
         
         

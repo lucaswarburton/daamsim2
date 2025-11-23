@@ -25,7 +25,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     scans_track = specs.scans_track # scans needed to establish track after detection
     
     # Simulation variables
-    num_decimals = specs.NDecimals
+    num_decimals = specs.Ndecimals
     time_resol = specs.time_resol # time resolution for approximation
     DMOD = specs.conflict_volume # collision bubble radius
     t_sim = specs.t_sim # simulation time

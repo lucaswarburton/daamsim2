@@ -8,7 +8,7 @@ from .GMUI import GMUIFrame
 from .NSUI import new_sim_UI
 from .ProgressFrameUI import Progress_Frame
 from .NSController import new_sim_controller
-from .GController import GraphComtroller
+from .GController import GraphController
 
 def UI_main():
     w = Window()
@@ -24,7 +24,8 @@ def UI_main():
     new_sim_UI_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("NSUI", new_sim_UI_frame)
     
-    gmui_frame = GMUIFrame(main_controller, master=w.container)
+    g_controller = GraphController(main_controller)
+    gmui_frame = GMUIFrame(g_controller, master=w.container)
     gmui_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("GMUI", gmui_frame)
     

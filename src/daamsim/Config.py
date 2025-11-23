@@ -1,12 +1,9 @@
 import configparser
 from pathlib import Path
-from decimal import Decimal
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data_classes"))
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "calculations"))
-from daa_spec import DaaSpec
-import math_util
+from data_classes.daa_spec import DaaSpec
+from calculations import math_util
 
 
 
@@ -37,28 +34,28 @@ class Configuration:
             
         
         #Read RTAS Characteristics
-        rtas_max_bank_deg = Decimal(parser['DEFAULTS']['rtas_max_bank_deg'])
-        rtas_wingspan = Decimal(parser['DEFAULTS']['rtas_wingspan'])
-        rtas_max_roll_rate = Decimal(parser['DEFAULTS']['rtas_max_roll_rate'])
+        rtas_max_bank_deg = float(parser['DEFAULTS']['rtas_max_bank_deg'])
+        rtas_wingspan = float(parser['DEFAULTS']['rtas_wingspan'])
+        rtas_max_roll_rate = float(parser['DEFAULTS']['rtas_max_roll_rate'])
         rtas_speed_array = self.get_rtas_speed_array(parser)
 
         #Intruder Characteristics
         intruder_speed_array = self.get_intruder_speed_array(parser)
 
         #DAA Characteristics
-        daa_declaration_range = Decimal(parser['DEFAULTS']['daa_declaration_range'])
-        daa_fov_deg = Decimal(parser['DEFAULTS']['daa_fov_deg'])
+        daa_declaration_range = float(parser['DEFAULTS']['daa_declaration_range'])
+        daa_fov_deg = float(parser['DEFAULTS']['daa_fov_deg'])
         rate_of_revisit = int(parser['DEFAULTS']['rate_of_revisit'])
         scans_track = int(parser['DEFAULTS']['scans_track'])
 
         #Simulation Variables
         NDecimals = int(parser['DEFAULTS']['NDecimals'])
-        time_resol = Decimal(parser['DEFAULTS']['time_resol'])
-        conflict_volume = Decimal(parser['DEFAULTS']['conflict_volume'])
-        t_sim = Decimal(parser['DEFAULTS']['t_sim'])
-        post_col = Decimal(parser['DEFAULTS']['post_col'])
-        wind_speed = Decimal(parser['DEFAULTS']['wind_speed'])
-        wind_dir = Decimal(parser['DEFAULTS']['wind_dir'])
+        time_resol = float(parser['DEFAULTS']['time_resol'])
+        conflict_volume = float(parser['DEFAULTS']['conflict_volume'])
+        t_sim = float(parser['DEFAULTS']['t_sim'])
+        post_col = float(parser['DEFAULTS']['post_col'])
+        wind_speed = float(parser['DEFAULTS']['wind_speed'])
+        wind_dir = float(parser['DEFAULTS']['wind_dir'])
         human_factor_delay = int(parser['DEFAULTS']['human_factor_delay'])
         encounter_azimuth_array = self.get_encounter_azimuth_array(parser)
         
@@ -88,9 +85,9 @@ class Configuration:
         custom_rtas_speed_enabled = custom_rtas_speed_enabled.lower().strip()
         self.custom_rtas_speed_enabled = custom_rtas_speed_enabled in self.valid_true_values
 
-        self.min_rtas_speed =  Decimal(parser['DEFAULTS']['min_rtas_speed'])
-        self.max_rtas_speed = Decimal(parser['DEFAULTS']['max_rtas_speed'])
-        self.rtas_speed_interval = Decimal(parser['DEFAULTS']['rtas_speed_interval'])
+        self.min_rtas_speed =  float(parser['DEFAULTS']['min_rtas_speed'])
+        self.max_rtas_speed = float(parser['DEFAULTS']['max_rtas_speed'])
+        self.rtas_speed_interval = float(parser['DEFAULTS']['rtas_speed_interval'])
 
         self.custom_rtas_speed_array = parser['DEFAULTS']['custom_rtas_speed_array']
 
@@ -107,9 +104,9 @@ class Configuration:
         self.custom_intruder_speed_enabled = custom_intruder_speed_enabled in self.valid_true_values
 
         self.custom_intruder_speed_array = parser['DEFAULTS']['custom_intruder_speed_array']
-        self.min_intruder_speed =  Decimal(parser['DEFAULTS']['min_intruder_speed'])
-        self.max_intruder_speed = Decimal(parser['DEFAULTS']['max_intruder_speed'])
-        self.intruder_speed_interval = Decimal(parser['DEFAULTS']['intruder_speed_interval'])
+        self.min_intruder_speed =  float(parser['DEFAULTS']['min_intruder_speed'])
+        self.max_intruder_speed = float(parser['DEFAULTS']['max_intruder_speed'])
+        self.intruder_speed_interval = float(parser['DEFAULTS']['intruder_speed_interval'])
         
         if self.custom_intruder_speed_enabled:
             intruder_speed_array = math_util.createCustArray(self.custom_intruder_speed_array)
@@ -124,9 +121,9 @@ class Configuration:
         self.custom_encounter_azimuth_array_enabled = custom_encounter_azimuth_array_enabled in self.valid_true_values
 
         self.custom_encounter_azimuth_array = parser['DEFAULTS']['custom_encounter_azimuth_array']
-        self.encounter_azimuth_array_start =  Decimal(parser['DEFAULTS']['encounter_azimuth_array_start'])
-        self.encounter_azimuth_array_end = Decimal(parser['DEFAULTS']['encounter_azimuth_array_end'])
-        self.encounter_azimuth_array_interval = Decimal(parser['DEFAULTS']['encounter_azimuth_array_interval'])
+        self.encounter_azimuth_array_start =  float(parser['DEFAULTS']['encounter_azimuth_array_start'])
+        self.encounter_azimuth_array_end = float(parser['DEFAULTS']['encounter_azimuth_array_end'])
+        self.encounter_azimuth_array_interval = float(parser['DEFAULTS']['encounter_azimuth_array_interval'])
         
         if self.custom_encounter_azimuth_array_enabled:
             encounter_azimuth_array = math_util.createCustArray(self.custom_encounter_azimuth_array)

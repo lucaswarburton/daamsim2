@@ -1,6 +1,7 @@
+from calculations.graph_evals import per_speed_graph_evals
+
 import matplotlib.pyplot as plt 
 import numpy as np
-from calculations.graph_evals import per_speed_graph_evals
 
 class per_speed_plot:
     KTS_TO_MS = 0.514444
