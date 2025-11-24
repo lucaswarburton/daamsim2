@@ -1,2 +1,4 @@
 # daamsim2
-daamsim but better
+## Team Members
+- Kyle Foisy
+- Lucas Warburton

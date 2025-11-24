@@ -28,12 +28,12 @@ def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
     return np.array(lst)
 
 def createCustArray(inputStr: str):
-        str_lst = inputStr.split(",")
-        dec_lst = []
-        for item in str_lst:
-            item.strip()
-            dec_lst.append(Decimal(item))
-        return np.array(dec_lst)
+    str_lst = inputStr.split(",")
+    dec_lst = []
+    for item in str_lst:
+        item.strip()
+        dec_lst.append(float(item))
+    return np.array(dec_lst)
 
 def wrapTo180(angle: float) -> float:
      return (angle + 180) % 360 - 180
