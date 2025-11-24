@@ -6,7 +6,7 @@ class GMUIFrame(Frame):
         Frame.__init__(self, master, bg=bg)
         self.controller = controller
         
-        self.show_all = Button(self, text="Show All Graphs", command=controller.displayAllGraphs())
+        self.show_all = Button(self, text="Show All Graphs", command=controller.displayAllGraphs)
         self.show_all.pack()
 
         self.pack_propagate(0)
