@@ -46,7 +46,7 @@ class per_speed_plot:
         return per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
             
             
-    def show_plt(self):
+    def show_plt():
         plt.show()
             
 if __name__ == "__main__":
