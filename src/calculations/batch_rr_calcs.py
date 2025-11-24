@@ -6,7 +6,6 @@ Implements the functionality of the batchRrCalcs script.
 from decimal import Decimal
 from rr_calcs import rr_calcs
 import os
-import sys
 from data_classes.daa_spec import DaaSpec
 from data_classes.current_data import CurrentData
 import matlab.engine
