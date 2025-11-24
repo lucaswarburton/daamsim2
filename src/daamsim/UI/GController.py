@@ -20,7 +20,7 @@ class GraphController:
         azimuthOvertake = data.alpha_overtake_vect
         r_min = data.r_min_m
         r_min_overtake = data.r_min_over
-        daa_spec = data.rtas_specs
+        daa_spec = data.specs
         if not len(daa_spec) == 0:
             fov = daa_spec.daa_fov_deg
             range = daa_spec.daa_declaration_range

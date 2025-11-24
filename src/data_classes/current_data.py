@@ -14,7 +14,7 @@ class CurrentData:
         "alpha_overtake_vect",
         "clos_vel",
         "clos_vel_over",
-        "rtas_specs"
+        "specs"
     ]
 
     def __new__(cls):
