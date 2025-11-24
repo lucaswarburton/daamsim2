@@ -36,8 +36,9 @@ class GraphController:
                 points = results[1]
                 plt = per_speed_plot(rtas_speed, in_speed, round(rr, 2), daa_range, fov)
                 plt.add_points(points)
-                plt.show_plt
                 i += 1
+        
+        per_speed_plot.show_plt()
 
             
             
