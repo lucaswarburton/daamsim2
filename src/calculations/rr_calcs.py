@@ -7,8 +7,19 @@ import numpy as np
 import matlab.engine
 
 def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
+
     current_data = CurrentData()
     specs = current_data.specs
+
+    current_data.azimuth_vect[round(intruder_speed, 3)] = dict()
+    current_data.r_min_m[round(intruder_speed, 3)] = dict()
+    current_data.r_min_over[round(intruder_speed, 3)] = dict()
+    current_data.ground_int_speed[round(intruder_speed, 3)] = dict()
+    current_data.alpha_oncoming_vect[round(intruder_speed, 3)] = dict()
+    current_data.alpha_overtake_vect[round(intruder_speed, 3)] = dict()
+    current_data.clos_vel[round(intruder_speed, 3)] = dict()
+    current_data.clos_vel_over[round(intruder_speed, 3)] = dict()
+
 
     # unpack specs
     # RTAS characteristics
@@ -232,12 +243,12 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
             simulate_alpha()
 
         # save data
-        current_data.azimuth_vect[i] = azimuth_vect
-        current_data.r_min_m[i] = r_min_m
-        current_data.r_min_over[i] = r_min_m_over
-        current_data.ground_int_speed[i] = ground_int_speed
-        current_data.alpha_oncoming_vect[i] = alpha_oncoming_vect
-        current_data.alpha_overtake_vect[i] = alpha_overtake_vect
-        current_data.clos_vel[i] = clos_vel
-        current_data.clos_vel_over[i] = clos_vel_over
+        current_data.azimuth_vect[round(intruder_speed, 3)][round(ground_speed_h, 3)] = azimuth_vect
+        current_data.r_min_m[round(intruder_speed, 3)][round(ground_speed_h, 3)]  = r_min_m
+        current_data.r_min_over[round(intruder_speed, 3)][round(ground_speed_h, 3)]  = r_min_m_over
+        current_data.ground_int_speed[round(intruder_speed, 3)][round(ground_speed_h, 3)] = ground_int_speed
+        current_data.alpha_oncoming_vect[round(intruder_speed, 3)][round(ground_speed_h, 3)] = alpha_oncoming_vect
+        current_data.alpha_overtake_vect[round(intruder_speed, 3)][round(ground_speed_h, 3)] = alpha_overtake_vect
+        current_data.clos_vel[round(intruder_speed, 3)][round(ground_speed_h, 3)] = clos_vel
+        current_data.clos_vel_over[round(intruder_speed, 3)][round(ground_speed_h, 3)] = clos_vel_over
 
