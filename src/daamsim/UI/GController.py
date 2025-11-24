@@ -27,15 +27,18 @@ class GraphController:
         intruder_speeds = daa_spec.intruder_speed_array
     
         i = 0
-        while i < len(azimuthOncoming) and i < len(azimuthOvertake) and i < len(r_min) and i < len(r_min_overtake):
-            results = per_speed_plot.convert_data(azimuthOncoming[i], r_min[i], azimuthOvertake[i], r_min_overtake[i], fov, daa_range)
-            rr = results[0]
-            points = results[1]
-            cur_rtas_speed = rtas_speeds[int(i/len(intruder_speeds))]
-            cur_intruder_speed = intruder_speeds[i%len(intruder_speeds)]
-            plt = per_speed_plot(cur_rtas_speed, cur_intruder_speed, round(rr, 2), daa_range, fov)
-            plt.add_points(points)
-            plt.show_plt
-            i += 1
+        for in_speed in intruder_speeds:
+            in_speed = round(in_speed, 3)
+            for rtas_speed in rtas_speeds:
+                rtas_speed = round(rtas_speed, 3)
+                results = per_speed_plot.convert_data(azimuthOncoming[in_speed][rtas_speed], r_min[in_speed][rtas_speed], azimuthOvertake[in_speed][rtas_speed], r_min_overtake[in_speed][rtas_speed], fov, daa_range)
+                rr = results[0]
+                points = results[1]
+                plt = per_speed_plot(rtas_speed, in_speed, round(rr, 2), daa_range, fov)
+                plt.add_points(points)
+                plt.show_plt
+                i += 1
+
+            
             
         
