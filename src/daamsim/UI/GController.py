@@ -26,8 +26,7 @@ class GraphController:
         rtas_speeds = daa_spec.rtas_speed_array
         intruder_speeds = daa_spec.intruder_speed_array
     
-        i = 0
-        for in_speed in intruder_speeds:
+        for i, in_speed in enumerate(intruder_speeds):
             in_speed = round(in_speed, 3)
             for rtas_speed in rtas_speeds:
                 rtas_speed = round(rtas_speed, 3)
@@ -36,7 +35,6 @@ class GraphController:
                 points = results[1]
                 plt = per_speed_plot(rtas_speed, in_speed, round(rr, 2), daa_range, fov)
                 plt.add_points(points)
-                i += 1
         
         per_speed_plot.show_plt()
 
