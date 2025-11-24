@@ -51,5 +51,10 @@ class per_speed_plot:
             
 if __name__ == "__main__":
     plot1 = per_speed_plot(10, 10, 0.25, 1000, 60)
+    azimuth = np.array([-90*np.pi/180, 10*np.pi/180, 90*np.pi/180])
+    rmin = np.array([500,300,400])
+    colour = np.array(["red", "green", "red"])
+    points = (azimuth, rmin, colour)
+    plot1.add_points(points)
     plot1.show_plt()
     

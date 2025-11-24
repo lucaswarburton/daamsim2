@@ -21,20 +21,24 @@ class GraphController:
         r_min = data.r_min_m
         r_min_overtake = data.r_min_over
         daa_spec = data.specs
-        if not len(daa_spec) == 0:
-            fov = daa_spec.daa_fov_deg
-            range = daa_spec.daa_declaration_range
-            rtas_speeds = daa_spec.rtas_speed_array
-            intruder_speeds = daa_spec.intruder_speed_array
+        fov = daa_spec.daa_fov_deg
+        daa_range = daa_spec.daa_declaration_range
+        rtas_speeds = daa_spec.rtas_speed_array
+        intruder_speeds = daa_spec.intruder_speed_array
     
-            i = 0
-            while i < len(azimuthOncoming) and i < len(azimuthOvertake) and i < len(r_min) and i < r_min_overtake:
-                results = per_speed_plot.convert_data(azimuthOncoming, r_min, azimuthOvertake, r_min_overtake, fov, range)
+        i = 0
+        for in_speed in intruder_speeds:
+            in_speed = round(in_speed, 3)
+            for rtas_speed in rtas_speeds:
+                rtas_speed = round(rtas_speed, 3)
+                results = per_speed_plot.convert_data(azimuthOncoming[in_speed][rtas_speed], r_min[in_speed][rtas_speed], azimuthOvertake[in_speed][rtas_speed], r_min_overtake[in_speed][rtas_speed], fov, daa_range)
                 rr = results[0]
                 points = results[1]
-                plt = per_speed_plot(rtas_speeds[i], intruder_speeds[i], rr, range, fov)
+                plt = per_speed_plot(rtas_speed, in_speed, round(rr, 2), daa_range, fov)
                 plt.add_points(points)
                 plt.show_plt
-                i += i
+                i += 1
+
+            
             
         
