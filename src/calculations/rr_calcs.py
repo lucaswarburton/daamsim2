@@ -99,7 +99,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
                         float(sigma_al), float(sigma_cross), float(time_resol), float(nz),
                         float(DMOD), float(vx_w), float(vy_w), float(max_bank), float(max_roll_rate),
                         nargout=6
-                    )
+                    ) 
 
                     turn_angles = np.array(turn_angles).flatten()
                     t2 = np.array(t2).flatten()

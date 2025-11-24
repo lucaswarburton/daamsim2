@@ -4,6 +4,7 @@ Implements the functionality of the batchRrCalcs script.
 
 
 from decimal import Decimal
+import time
 from rr_calcs import rr_calcs
 import os
 import sys
