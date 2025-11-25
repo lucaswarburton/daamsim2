@@ -1,8 +1,6 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "calculations"))
-from batch_rr_calcs import batch_calcs
+from calculations.batch_rr_calcs import batch_calcs
 
 class new_sim_controller:
     def __init__(self, master_controller):

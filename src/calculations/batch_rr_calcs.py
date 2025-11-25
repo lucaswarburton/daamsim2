@@ -4,10 +4,11 @@ Implements the functionality of the batchRrCalcs script.
 
 
 from decimal import Decimal
-from rr_calcs import rr_calcs
+from .rr_calcs import rr_calcs
 import os
 from data_classes.daa_spec import DaaSpec
 from data_classes.current_data import CurrentData
+from daamsim.UI.ProgressFrameUI import Progress_Frame
 import matlab.engine
 
 
@@ -20,6 +21,10 @@ def batch_calcs(specs: DaaSpec):
     intruder_speeds = specs.intruder_speed_array
 
     current_data = CurrentData()
+    
+    pframe = Progress_Frame.getinstance()
+    pframe.reset()
+    pframe.setMain(len(intruder_speeds), "Speeds Evaluated")
 
     # reset current_data for new calculation
     current_data.specs = specs
@@ -35,8 +40,12 @@ def batch_calcs(specs: DaaSpec):
     for i, speed in enumerate(intruder_speeds):
         print(f"Evaluating Intruder speed {speed} kts")
         rr_calcs(speed, i, eng)
+        pframe.increment_main()
+        
     print_data(current_data)
     eng.quit()
+    
+    current_data._sim_state = 1
 
 def print_data(data):
     intruder_speed = round(data.specs.intruder_speed_array[0], 3)
@@ -47,3 +56,4 @@ def print_data(data):
         print(f"\nRTAS Speed: {rtas_speed}")
         for r in entry[intruder_speed][rtas_speed]:
             print(r)
+            

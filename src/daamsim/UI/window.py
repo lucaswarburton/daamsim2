@@ -29,7 +29,6 @@ class Window(Tk):
              
         
     def setDMUIFrame(self, frame):
-        
         self.DMUIFrame = frame
         self.DMUIFrame.pack(side = LEFT, fill = "both", expand=False)
   
@@ -39,7 +38,10 @@ class Window(Tk):
             self.ActiveFrame = self.frames[frame]
         else:
             self.ActiveFrame = frame
+        self.ActiveFrame.event_generate("<Map>")
         self.ActiveFrame.tkraise()
+        self.update()
+        self.update_idletasks()
 
     def addFrame(self, frameName, frame):
         self.frames[frameName] = frame
