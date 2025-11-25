@@ -35,15 +35,4 @@ def batch_calcs(specs: DaaSpec):
     for i, speed in enumerate(intruder_speeds):
         print(f"Evaluating Intruder speed {speed} kts")
         rr_calcs(speed, i, eng)
-    print_data(current_data)
     eng.quit()
-
-def print_data(data):
-    intruder_speed = round(data.specs.intruder_speed_array[0], 3)
-    print(f"Data for intruder speed: {intruder_speed}")
-    print("r_min_over:")
-    entry = data.r_min_over
-    for rtas_speed in entry[intruder_speed].keys():
-        print(f"\nRTAS Speed: {rtas_speed}")
-        for r in entry[intruder_speed][rtas_speed]:
-            print(r)
