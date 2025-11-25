@@ -5,9 +5,9 @@ from . import math_util
 from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
+from time import perf_counter
 
 def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
-
     current_data = CurrentData()
     specs = current_data.specs
 
@@ -49,9 +49,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
 
     # Own UAS with the following characteristics
     nz = 1/math_util.cosd(max_bank) # 1.5g turn considered reasonable for a UAS
-    
-    
-    
+
     sigma_al = 0
     sigma_cross = 0                
 
@@ -69,8 +67,6 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
     alpha_oncoming_vect = np.zeros(n)
     alpha_overtake_vect = np.zeros(n)
     
-    # for ii=1:length(ground_speed_h_vect)
-    # make ground_speed_h_vect an array, loop over it here
     for rtas_speed in specs.rtas_speed_array:
         ground_speed_h = rtas_speed * 0.514444
         
@@ -175,7 +171,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
                         # not turning
                         bank_angle[time] = 0
                     else: # maneuver has started
-                        track = math_util.wrapTo180(math.atan2(vx_h[time - 1], vy_h[time - 1]) * 180 / math.pi)
+                        track = math_util.wrapTo180(math.degrees(math.atan2(vx_h[time - 1], vy_h[time - 1])))
 
                         if (abs(track) < abs(math_util.wrapTo180(pref_man_turn + psi_h))): # if maneuver hasn't finished yet
                             g = 9.80665
@@ -240,7 +236,6 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
             alpha = round(eng.calculate_alpha(ground_speed_h, ground_int_speed, azimuth_vect[k]), num_decimals)
             alpha_oncoming_vect[k] = alpha
             simulate_alpha(False)
-            
 
             # calculate collision alpha for overtake
             alpha = round(eng.calculate_alpha_ov(ground_speed_h, ground_int_speed, azimuth_vect[k]), num_decimals)
