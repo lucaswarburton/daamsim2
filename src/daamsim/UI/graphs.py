@@ -7,6 +7,7 @@ class per_speed_plot:
     KTS_TO_MS = 0.514444
     def __init__(self, rtas_speed, intruder_speed, rr, daa_declaration_range, daa_fov):
         fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+        fig.set_size_inches((7,7))
         self.ax = ax
         self.ax.set_theta_zero_location("N")#Orient upwards
         self.ax.set_theta_direction(-1)#Clockwise deg
@@ -29,6 +30,7 @@ class per_speed_plot:
         degree_symbol = "\N{DEGREE SIGN}"
         title = "RTAS Speed: " + str(rtas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
         ax.set_title(title)
+        
         
     #Placeholder function var names  
     def add_point(self, distance, azimuth, isCollision):
@@ -56,5 +58,5 @@ if __name__ == "__main__":
     colour = np.array(["red", "green", "red"])
     points = (azimuth, rmin, colour)
     plot1.add_points(points)
-    plot1.show_plt()
+    per_speed_plot.show_plt()
     
