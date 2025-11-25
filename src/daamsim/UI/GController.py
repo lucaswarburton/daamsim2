@@ -16,8 +16,8 @@ class GraphController:
     
     def displayAllGraphs(self):
         data = CurrentData()
-        azimuthOncoming = data.alpha_oncoming_vect
-        azimuthOvertake = data.alpha_overtake_vect
+        azimuthOncoming = data.azimuth_vect
+        azimuthOvertake = data.azimuth_vect
         r_min = data.r_min_m
         r_min_overtake = data.r_min_over
         daa_spec = data.specs
