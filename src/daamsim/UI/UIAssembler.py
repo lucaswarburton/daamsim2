@@ -26,6 +26,7 @@ def UI_main():
     
     g_controller = GraphController(main_controller)
     gmui_frame = GMUIFrame(g_controller, master=w.container)
+    g_controller.setView(gmui_frame)
     gmui_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("GMUI", gmui_frame)
     

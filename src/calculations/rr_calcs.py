@@ -1,7 +1,7 @@
 from decimal import Decimal
 import math
 
-import math_util
+from . import math_util
 from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine

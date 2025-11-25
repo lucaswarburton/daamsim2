@@ -17,6 +17,9 @@ class CurrentData:
         "clos_vel_over",
         "specs",
     ]
+    #0 for start up state
+    #1 for rr_calcs ran
+    _sim_state = 0
 
     def __new__(cls):
         if cls._instance is None:
@@ -30,6 +33,7 @@ class CurrentData:
             for name in self._fields_names:
                 setattr(self, name, ThreadSafeList())
             self._initialized = True
+            self._sim_state = 0
 
     def clear(self):
         del self
