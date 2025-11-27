@@ -16,7 +16,7 @@ class DaaSpec:
     #DAA Characteristics
     daa_declaration_range: float
     daa_fov_deg: float
-    rate_of_revisit: int
+    rate_of_revisit: float
     scans_track: int
 
     #Simulation Variables
@@ -27,6 +27,6 @@ class DaaSpec:
     post_col: float
     wind_speed: float
     wind_dir: float
-    human_factor_delay: int
+    human_factor_delay: float
     encounter_azimuth_array: np.array
 
