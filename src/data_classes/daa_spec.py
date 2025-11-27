@@ -28,5 +28,5 @@ class DaaSpec:
     wind_speed: float
     wind_dir: float
     human_factor_delay: int
-    encounter_azimuth_array: list
+    encounter_azimuth_array: np.array
 
