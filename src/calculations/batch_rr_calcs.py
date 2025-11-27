@@ -10,6 +10,7 @@ from data_classes.daa_spec import DaaSpec
 from data_classes.current_data import CurrentData
 from daamsim.UI.ProgressFrameUI import Progress_Frame
 import matlab.engine
+from time import perf_counter
 
 
 def batch_calcs(specs: DaaSpec):
@@ -19,7 +20,6 @@ def batch_calcs(specs: DaaSpec):
     eng.addpath(MEX_PATH, nargout=0)
 
     intruder_speeds = specs.intruder_speed_array
-
     current_data = CurrentData()
     
     pframe = Progress_Frame.getinstance()
@@ -36,12 +36,11 @@ def batch_calcs(specs: DaaSpec):
     current_data.alpha_overtake_vect = dict()
     current_data.clos_vel = dict()
     current_data.clos_vel_over = dict()
-    
+
     for i, speed in enumerate(intruder_speeds):
         print(f"Evaluating Intruder speed {speed} kts")
         rr_calcs(speed, i, eng)
         pframe.increment_main()
-    
-    eng.quit()
+
     current_data._sim_state = 1
-            
+    eng.quit()
