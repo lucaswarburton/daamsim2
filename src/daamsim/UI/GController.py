@@ -5,12 +5,8 @@ from daamsim.Config import Configuration
 
 class GraphController:
     def __init__(self, master_controller):
-        self.model = None
         self.view = None
         self.master_controller = master_controller
-    
-    def setmodel(self, model):
-        self.model =  model
         
     def setView(self, view):
         self.view = view
