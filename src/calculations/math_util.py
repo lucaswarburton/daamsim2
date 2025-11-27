@@ -12,7 +12,7 @@ def sind(x: float) -> float:
 def tand(x: float) -> float:
      return math.tan(math.radians(x))
 
-def make_array(min: Decimal, max: Decimal, increment: Decimal) -> list[Decimal]:
+def make_array(min: float, max: float, increment: float) -> list[float]:
     if (min > max):
             raise ValueError("Create Array: Start cannot be greater than end. Start: " + str(min) + "End: " + str(max))
     if (increment <= 0):

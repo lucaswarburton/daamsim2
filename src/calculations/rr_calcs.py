@@ -6,7 +6,7 @@ from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
 
-def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
+def rr_calcs(intruder_speed: float, i: int, eng: object):
 
     current_data = CurrentData()
     specs = current_data.specs
