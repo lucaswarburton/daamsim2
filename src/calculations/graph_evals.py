@@ -45,5 +45,7 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
                 
 
 def get_daa_rr(num_az_eval, num_az_pass):
+    if num_az_eval == 0:
+        return 0.0
     return float((num_az_eval-num_az_pass)/num_az_eval)
 
