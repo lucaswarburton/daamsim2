@@ -5,7 +5,7 @@ class CurrentData:
     _instance = None
     _lock = threading.Lock()
 
-    _fields_names = [
+    _dict_field_names = [
         "rr_val",
         "azimuth_vect",
         "r_min_m",
@@ -15,11 +15,7 @@ class CurrentData:
         "alpha_overtake_vect",
         "clos_vel",
         "clos_vel_over",
-        "specs",
     ]
-    #0 for start up state
-    #1 for rr_calcs ran
-    _sim_state = 0
 
     def __new__(cls):
         if cls._instance is None:
@@ -30,11 +26,16 @@ class CurrentData:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
-            for name in self._fields_names:
-                setattr(self, name, ThreadSafeList())
+            for name in self._dict_field_names:
+                setattr(self, name, dict())
             self._initialized = True
+            #0 for start up state
+            #1 for rr_calcs ran
             self._sim_state = 0
 
     def clear(self):
-        del self
+        for name in self._dict_field_names:
+            getattr(self, name).clear()
+        self._sim_state = 0
+        self.specs = None
 

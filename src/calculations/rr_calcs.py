@@ -1,25 +1,17 @@
 from decimal import Decimal
 import math
 
+import os
 from . import math_util
-from data_classes.current_data import CurrentData
 import numpy as np
 import matlab.engine
 from time import perf_counter
 
-def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
-    current_data = CurrentData()
-    specs = current_data.specs
-
-    current_data.azimuth_vect[round(intruder_speed, 3)] = dict()
-    current_data.r_min_m[round(intruder_speed, 3)] = dict()
-    current_data.r_min_over[round(intruder_speed, 3)] = dict()
-    current_data.ground_int_speed[round(intruder_speed, 3)] = dict()
-    current_data.alpha_oncoming_vect[round(intruder_speed, 3)] = dict()
-    current_data.alpha_overtake_vect[round(intruder_speed, 3)] = dict()
-    current_data.clos_vel[round(intruder_speed, 3)] = dict()
-    current_data.clos_vel_over[round(intruder_speed, 3)] = dict()
-
+def rr_calcs(i: int, intruder_speed: float, specs: object):
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    MEX_PATH = os.path.join(PROJECT_ROOT, "matlab-scripts")
+    eng = matlab.engine.start_matlab()
+    eng.addpath(MEX_PATH, nargout=0)
 
     # unpack specs
     # RTAS characteristics
@@ -66,6 +58,9 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
 
     alpha_oncoming_vect = np.zeros(n)
     alpha_overtake_vect = np.zeros(n)
+
+    # for returning data
+    rtas_data = dict()  # keys: rtas_speed, values: dict of all fields
     
     for rtas_speed in specs.rtas_speed_array:
         ground_speed_h = rtas_speed * 0.514444
@@ -185,7 +180,7 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
                                 bank_angle[time] = min(bank_angle[time - 1] + max_roll_rate * time_resol, max_bank)
                                 R = air_speed_h * air_speed_h / (g * math_util.tand(bank_angle[time]))
                             else:
-                                R = air_speed_h ( air_speed_h / (g * math.sqrt(nz * nz - 1.0)))
+                                R = air_speed_h * air_speed_h / (g * math.sqrt(nz * nz - 1.0))
                             omega = - math.copysign(1, pref_man_turn) * air_speed_h / R
 
                             # update ownship with turning
@@ -241,14 +236,20 @@ def rr_calcs(intruder_speed: Decimal, i: int, eng: object):
             alpha = round(eng.calculate_alpha_ov(ground_speed_h, ground_int_speed, azimuth_vect[k]), num_decimals)
             alpha_overtake_vect[k] = alpha
             simulate_alpha(True)
+    
+        # Save results for this rtas_speed
+        rtas_data[round(rtas_speed, 3)] = {
+            "azimuth_vect": azimuth_vect,
+            "r_min_m": r_min_m,
+            "r_min_over": r_min_m_over,
+            "ground_int_speed": ground_int_speed,
+            "alpha_oncoming_vect": alpha_oncoming_vect,
+            "alpha_overtake_vect": alpha_overtake_vect,
+            "clos_vel": clos_vel,
+            "clos_vel_over": clos_vel_over
+        }
 
-        # save data
-        current_data.azimuth_vect[round(intruder_speed, 3)][round(rtas_speed, 3)] = azimuth_vect
-        current_data.r_min_m[round(intruder_speed, 3)][round(rtas_speed, 3)]  = r_min_m
-        current_data.r_min_over[round(intruder_speed, 3)][round(rtas_speed, 3)]  = r_min_m_over
-        current_data.ground_int_speed[round(intruder_speed, 3)][round(rtas_speed, 3)] = ground_int_speed
-        current_data.alpha_oncoming_vect[round(intruder_speed, 3)][round(rtas_speed, 3)] = alpha_oncoming_vect
-        current_data.alpha_overtake_vect[round(intruder_speed, 3)][round(rtas_speed, 3)] = alpha_overtake_vect
-        current_data.clos_vel[round(intruder_speed, 3)][round(rtas_speed, 3)] = clos_vel
-        current_data.clos_vel_over[round(intruder_speed, 3)][round(rtas_speed, 3)] = clos_vel_over
+    eng.quit()
+    # Return the intruder_speed and the dictionary of rtas results
+    return round(intruder_speed, 3), rtas_data
 
