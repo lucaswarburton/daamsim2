@@ -106,7 +106,7 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
         current_data.clos_vel_over[int_key][rtas_key] = clos_vel_over
 
 
-def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: SimulationParams, runSimulations: bool, k: int):
+def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: SimulationParams, run_simulations: bool, k: int):
     if alpha not in [0, 180, -180]:
         # calculate the Beta angle
         beta = math_util.wrapTo180(180-alpha)
@@ -214,7 +214,7 @@ def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: Simulati
             delta_hdg_r = np.nan
             azim_r = np.nan
         
-        if runSimulations:
+        if run_simulations:
             for time in range(1, int((t_sim + post_col) / time_resol)): # start from 1 here because we have value at 0 initialized
                 if time < pref_man_time / time_resol: # if maneuver hasn't started yet
                     # update position
