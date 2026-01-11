@@ -45,7 +45,7 @@ class MainSubFrame(Frame):
         
         self.per_speed_graphs_button = Button(self, text="Per Speed Graphs", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("per_speed_sub_frame"))
         self.per_speed_graphs_button.grid(column=0, row = 2, padx=5, pady=5, sticky= W)
-        self.per_speed_graphs_label = Label(self, text = "(If grayed out, run new sim or load data)", padx=5, pady = 5, bg=bg)
+        self.per_speed_graphs_label = Label(self, text = "(If grayed out, run DAA Simulations (ARC-b) or load data)", padx=5, pady = 5, bg=bg)
         self.per_speed_graphs_label.grid(column=0, row=3, padx=5, pady=5, sticky= W)
 
     
@@ -73,7 +73,7 @@ class PerSpeedSubFrame(Frame):
         self.back_button = Button(self,  text = "Back", command= lambda: controller.setActiveFrame("main_subframe"), font=("Ariel",12, "bold"))
         self.back_button.grid(column=0, row=0, padx=2, pady=2, sticky= W)
         
-        self.title = Label(self, text = "Choose RTAS and Intruder Speed for subplot:", bg = bg, font=("Ariel",15, "bold"))
+        self.title = Label(self, text = "Choose RPAS and Intruder Speed for subplot:", bg = bg, font=("Ariel",15, "bold"))
         self.title.grid(column=0, row=1,columnspan=3, padx=2, pady=2, sticky= W)
         
         self.regenerate()
@@ -85,14 +85,14 @@ class PerSpeedSubFrame(Frame):
         data = CurrentData()
         
         if data._sim_state != 0:
-            self.rtas_speed = DoubleVar()
-            speeds = data.specs.rtas_speed_array.tolist()
-            self.rtas_speed.set(speeds[0])
-            self.rtas_label = Label(self, text = "Select RTAS Speed (kts):", bg=self.bg)
-            self.rtas_label.grid(column=0, row=2, padx=2, pady=2, sticky=W)
-            self.rtas_box = ttk.Combobox(self, text = "Select RTAS speed value", textvariable=self.rtas_speed)
-            self.rtas_box["values"] = speeds
-            self.rtas_box.grid(column=1, row=2, padx=2, pady=2, sticky=W)
+            self.rpas_speed = DoubleVar()
+            speeds = data.specs.rpas_speed_array.tolist()
+            self.rpas_speed.set(speeds[0])
+            self.rpas_label = Label(self, text = "Select RPAS Speed (kts):", bg=self.bg)
+            self.rpas_label.grid(column=0, row=2, padx=2, pady=2, sticky=W)
+            self.rpas_box = ttk.Combobox(self, text = "Select RPAS speed value", textvariable=self.rpas_speed)
+            self.rpas_box["values"] = speeds
+            self.rpas_box.grid(column=1, row=2, padx=2, pady=2, sticky=W)
             
             self.intruder_speed = DoubleVar()
             speeds = data.specs.intruder_speed_array.tolist()
@@ -103,7 +103,7 @@ class PerSpeedSubFrame(Frame):
             self.intruder_box["values"] = speeds
             self.intruder_box.grid(column=1, row=3, padx=2, pady=2, sticky= W)
             
-            self.display_plot_button = Button(self, text="Create Graph", command=lambda: self.controller.displayPerSpeedGraph(self.rtas_speed.get(), self.intruder_speed.get()))
+            self.display_plot_button = Button(self, text="Create Graph", command=lambda: self.controller.displayPerSpeedGraph(self.rpas_speed.get(), self.intruder_speed.get()))
             self.display_plot_button.grid(column=0, row=4, padx=2, pady=2, sticky= W)
         
             self.display_all_button = Button(self, text="Create All Graphs", command=self.controller.displayAllPerSpeedGraphs)

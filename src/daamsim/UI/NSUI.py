@@ -22,7 +22,7 @@ class new_sim_UI_inner_frame(Frame):
         self.config = Configuration.get_instance()
         i = 0
 
-        self.labels["Title"] = Label(self, text = "Run New Simulation", bg=self.bg, font=("Ariel",20, "bold"))
+        self.labels["Title"] = Label(self, text = "DAA Simulations (ARC-b)", bg=self.bg, font=("Ariel",20, "bold"))
         self.labels["Title"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
         i += 1
         
@@ -30,7 +30,7 @@ class new_sim_UI_inner_frame(Frame):
         self.enterbutton.grid(column=1, row=i, padx=5, pady=5, sticky=W)
         i += 1
 
-        i = self.setup_rtas(i)
+        i = self.setup_rpas(i)
 
         i = self.setup_intruder_chars(i)
 
@@ -39,67 +39,67 @@ class new_sim_UI_inner_frame(Frame):
         i = self.setup_simulation_vars(i)
 
         
-    #Sets up characteristics inputs for RTAS
-    def setup_rtas(self, i):
-        self.labels["rtas_Chars"] = Label(self, text = "RTAS Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
-        self.labels["rtas_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
+    #Sets up characteristics inputs for RPAS
+    def setup_rpas(self, i):
+        self.labels["rpas_Chars"] = Label(self, text = "RPAS Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
+        self.labels["rpas_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
         i += 1
 
-        self.labels["rtas_max_bank_deg"] = Label(self, text = "RTAS Max Bank (Deg):", bg=self.bg)
-        self.labels["rtas_max_bank_deg"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_max_bank_deg"] = Entry(self)
-        self.entries["rtas_max_bank_deg"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_max_bank_deg"].insert(0, self.config.daa_spec.rtas_max_bank_deg)
+        self.labels["rpas_max_bank_deg"] = Label(self, text = "RPAS Max Bank (Deg):", bg=self.bg)
+        self.labels["rpas_max_bank_deg"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_max_bank_deg"] = Entry(self)
+        self.entries["rpas_max_bank_deg"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_max_bank_deg"].insert(0, self.config.daa_spec.rpas_max_bank_deg)
         i +=1
 
-        self.labels["rtas_wingspan"] = Label(self, text = "RTAS Wingspan (m):", bg=self.bg)
-        self.labels["rtas_wingspan"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_wingspan"] = Entry(self)
-        self.entries["rtas_wingspan"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_wingspan"].insert(0, self.config.daa_spec.rtas_wingspan)
+        self.labels["rpas_wingspan"] = Label(self, text = "RPAS Wingspan (m):", bg=self.bg)
+        self.labels["rpas_wingspan"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_wingspan"] = Entry(self)
+        self.entries["rpas_wingspan"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_wingspan"].insert(0, self.config.daa_spec.rpas_wingspan)
         i += 1
 
-        self.labels["rtas_max_roll_rate"] = Label(self, text = "RTAS Max Roll Rate (deg/s):", bg=self.bg)
-        self.labels["rtas_max_roll_rate"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_max_roll_rate"] = Entry(self)
-        self.entries["rtas_max_roll_rate"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
-        self.entries["rtas_max_roll_rate"].insert(0, self.config.daa_spec.rtas_max_roll_rate)
+        self.labels["rpas_max_roll_rate"] = Label(self, text = "RPAS Max Roll Rate (deg/s):", bg=self.bg)
+        self.labels["rpas_max_roll_rate"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_max_roll_rate"] = Entry(self)
+        self.entries["rpas_max_roll_rate"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["rpas_max_roll_rate"].insert(0, self.config.daa_spec.rpas_max_roll_rate)
         i += 1
 
-        self.use_cust_rtas_speed = BooleanVar()
-        self.use_cust_rtas_speed.set(self.config.custom_rtas_speed_enabled)
+        self.use_cust_rpas_speed = BooleanVar()
+        self.use_cust_rpas_speed.set(self.config.custom_rpas_speed_enabled)
         
-        self.entries["Cust_RTAS_Checkbox"] = Checkbutton(self, text="Use Custom RTAS Speed Array", font=("Ariel", 10, "bold"),variable=self.use_cust_rtas_speed, onvalue=True, offvalue=False, command=self.switch_cust_rtas_speed, bg=self.bg)
-        self.entries["Cust_RTAS_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["Cust_RPAS_Checkbox"] = Checkbutton(self, text="Use Custom RPAS Speed Array", font=("Ariel", 10, "bold"),variable=self.use_cust_rpas_speed, onvalue=True, offvalue=False, command=self.switch_cust_rpas_speed, bg=self.bg)
+        self.entries["Cust_RPAS_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
         i += 1
 
-        self.labels["min_rtas_speed"] = Label(self, text = "Minimum RTAS Speed (Inclusive):", bg=self.bg)
-        self.entries["min_rtas_speed"] = Entry(self)
-        self.entries["min_rtas_speed"].insert(0, self.config.min_rtas_speed)
-        self.min_rtas_speed_row = i
+        self.labels["min_rpas_speed"] = Label(self, text = "Minimum RPAS Speed (Inclusive) (kts):", bg=self.bg)
+        self.entries["min_rpas_speed"] = Entry(self)
+        self.entries["min_rpas_speed"].insert(0, self.config.min_rpas_speed)
+        self.min_rpas_speed_row = i
         i += 1
         
-        self.labels["max_rtas_speed"] = Label(self, text = "Maximum RTAS Speed (Inclusive):", bg=self.bg)
-        self.entries["max_rtas_speed"] = Entry(self)
-        self.entries["max_rtas_speed"].insert(0, self.config.max_rtas_speed)
-        self.max_rtas_speed_row = i
+        self.labels["max_rpas_speed"] = Label(self, text = "Maximum RPAS Speed (Inclusive) (kts):", bg=self.bg)
+        self.entries["max_rpas_speed"] = Entry(self)
+        self.entries["max_rpas_speed"].insert(0, self.config.max_rpas_speed)
+        self.max_rpas_speed_row = i
         i += 1
 
-        self.labels["rtas_speed_interval"] = Label(self, text = "RTAS Speed Array Interval:", bg=self.bg)
-        self.entries["rtas_speed_interval"] = Entry(self)
-        self.entries["rtas_speed_interval"].insert(0, self.config.rtas_speed_interval)
-        self.rtas_speed_interval_row = i
+        self.labels["rpas_speed_interval"] = Label(self, text = "RPAS Speed Array Interval (kts):", bg=self.bg)
+        self.entries["rpas_speed_interval"] = Entry(self)
+        self.entries["rpas_speed_interval"].insert(0, self.config.rpas_speed_interval)
+        self.rpas_speed_interval_row = i
         i += 1
 
-        self.labels["custom_rtas_speed_array"] = Label(self, text = "RTAS Speed Custom Array:", bg=self.bg)
-        self.entries["custom_rtas_speed_array"] = Entry(self)
-        self.entries["custom_rtas_speed_array"].insert(0, self.config.custom_rtas_speed_array)
+        self.labels["custom_rpas_speed_array"] = Label(self, text = "RPAS Speed Custom Array (kts):", bg=self.bg)
+        self.entries["custom_rpas_speed_array"] = Entry(self)
+        self.entries["custom_rpas_speed_array"].insert(0, self.config.custom_rpas_speed_array)
 
-        self.labels["custom_rtas_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
+        self.labels["custom_rpas_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
         
-        self.labels["custom_rtas_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
+        self.labels["custom_rpas_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
         
-        self.switch_cust_rtas_speed()
+        self.switch_cust_rpas_speed()
         
         return i
 
@@ -116,25 +116,25 @@ class new_sim_UI_inner_frame(Frame):
         self.entries["Cust_Intruder_Checkbox"].grid(column=1, row=i, padx=2, pady=2, sticky=W)
         i += 1
 
-        self.labels["min_intruder_speed"] = Label(self, text = "Minimum Intruder Speed (Inclusive):", bg=self.bg)
+        self.labels["min_intruder_speed"] = Label(self, text = "Minimum Intruder Speed (Inclusive) (kts):", bg=self.bg)
         self.entries["min_intruder_speed"] = Entry(self)
         self.entries["min_intruder_speed"].insert(0, self.config.min_intruder_speed)
         self.min_intruder_speed_row = i
         i += 1
         
-        self.labels["max_intruder_speed"] = Label(self, text = "Maximum Intruder Speed (Inclusive):", bg=self.bg)
+        self.labels["max_intruder_speed"] = Label(self, text = "Maximum Intruder Speed (Inclusive) (kts):", bg=self.bg)
         self.entries["max_intruder_speed"] = Entry(self)
         self.entries["max_intruder_speed"].insert(0, self.config.max_intruder_speed)
         self.max_intruder_speed_row = i
         i += 1
         
-        self.labels["intruder_speed_interval"] = Label(self, text = "Intruder Speed Array Interval:", bg=self.bg)
+        self.labels["intruder_speed_interval"] = Label(self, text = "Intruder Speed Array Interval (kts):", bg=self.bg)
         self.entries["intruder_speed_interval"] = Entry(self)
         self.entries["intruder_speed_interval"].insert(0, self.config.intruder_speed_interval)
         self.intruder_speed_interval_row = i
         i += 1
         
-        self.labels["custom_intruder_speed_array"] = Label(self, text = "Intruder Speed Custom Array:", bg=self.bg)
+        self.labels["custom_intruder_speed_array"] = Label(self, text = "Intruder Speed Custom Array (kts):", bg=self.bg)
         self.entries["custom_intruder_speed_array"] = Entry(self)
         self.entries["custom_intruder_speed_array"].insert(0, self.config.custom_intruder_speed_array)
         
@@ -151,14 +151,14 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["DAA_Chars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
         i += 1
 
-        self.labels["daa_declaration_range"] = Label(self, text = "DAA Declaration Range (m):", bg=self.bg)
+        self.labels["daa_declaration_range"] = Label(self, text = "DAA Sensor Declaration Range (m):", bg=self.bg)
         self.labels["daa_declaration_range"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["daa_declaration_range"] = Entry(self)
         self.entries["daa_declaration_range"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
         self.entries["daa_declaration_range"].insert(0, self.config.daa_spec.daa_declaration_range)
         i += 1
         
-        self.labels["daa_fov_deg"] = Label(self, text = "DAA FOV (Deg):", bg=self.bg)
+        self.labels["daa_fov_deg"] = Label(self, text = "DAA Horizontal FOV (Deg):", bg=self.bg)
         self.labels["daa_fov_deg"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["daa_fov_deg"] = Entry(self)
         self.entries["daa_fov_deg"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
@@ -188,6 +188,7 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["Simulation_Vars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
         i += 1
 
+        #Remove this later
         self.labels["NDecimals"] = Label(self, text = "Rounding Alpha:", bg=self.bg)
         self.labels["NDecimals"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["NDecimals"] = Entry(self)
@@ -195,21 +196,21 @@ class new_sim_UI_inner_frame(Frame):
         self.entries["NDecimals"].insert(0, self.config.daa_spec.NDecimals)
         i += 1
         
-        self.labels["time_resol"] = Label(self, text = "Time Resolution:", bg=self.bg)
+        self.labels["time_resol"] = Label(self, text = "Time Resolution (s):", bg=self.bg)
         self.labels["time_resol"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["time_resol"] = Entry(self)
         self.entries["time_resol"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
         self.entries["time_resol"].insert(0, self.config.daa_spec.time_resol)
         i += 1
 
-        self.labels["conflict_volume"] = Label(self, text = "Conflict Volume (m):", bg=self.bg)
+        self.labels["conflict_volume"] = Label(self, text = "Horizontal Conflict Volume (m):", bg=self.bg)
         self.labels["conflict_volume"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["conflict_volume"] = Entry(self)
         self.entries["conflict_volume"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
         self.entries["conflict_volume"].insert(0, self.config.daa_spec.conflict_volume)
         i += 1
 
-        self.labels["t_sim"] = Label(self, text = "t sim:", bg=self.bg)
+        self.labels["t_sim"] = Label(self, text = "Simulation Duration (s):", bg=self.bg)
         self.labels["t_sim"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["t_sim"] = Entry(self)
         self.entries["t_sim"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
@@ -230,14 +231,14 @@ class new_sim_UI_inner_frame(Frame):
         self.entries["wind_speed"].insert(0, self.config.daa_spec.wind_speed)
         i += 1
         
-        self.labels["wind_dir"] = Label(self, text = "Wind direction:", bg=self.bg)
+        self.labels["wind_dir"] = Label(self, text = "Wind direction (deg):", bg=self.bg)
         self.labels["wind_dir"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["wind_dir"] = Entry(self)
         self.entries["wind_dir"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
         self.entries["wind_dir"].insert(0, self.config.daa_spec.wind_dir)
         i += 1
 
-        self.labels["human_factor_delay"] = Label(self, text = "Human Factor Delay (s):", bg=self.bg)
+        self.labels["human_factor_delay"] = Label(self, text = "Delay (s):", bg=self.bg)
         self.labels["human_factor_delay"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
         self.entries["human_factor_delay"] = Entry(self)
         self.entries["human_factor_delay"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
@@ -264,13 +265,13 @@ class new_sim_UI_inner_frame(Frame):
         self.azimuth_end_row = i
         i += 1
 
-        self.labels["encounter_azimuth_array_interval"] = Label(self, text = "Encounter Azimuth Array Interval:", bg=self.bg)
+        self.labels["encounter_azimuth_array_interval"] = Label(self, text = "Encounter Azimuth Array Interval (deg):", bg=self.bg)
         self.entries["encounter_azimuth_array_interval"] = Entry(self)
         self.entries["encounter_azimuth_array_interval"].insert(0, self.config.encounter_azimuth_array_interval)
         self.azimuth_interval_row = i
         i += 1
 
-        self.labels["custom_encounter_azimuth_array"] = Label(self, text = "Custom Encounter Azimuth Array:", bg=self.bg)
+        self.labels["custom_encounter_azimuth_array"] = Label(self, text = "Custom Encounter Azimuth Array (deg):", bg=self.bg)
         self.entries["custom_encounter_azimuth_array"] = Entry(self)
         self.entries["custom_encounter_azimuth_array"].insert(0, self.config.custom_encounter_azimuth_array)
         
@@ -286,47 +287,47 @@ class new_sim_UI_inner_frame(Frame):
         
     
     #Switches which set of inputs are visible for the custom intruder speed array.
-    def switch_cust_rtas_speed(self):
-        if (self.use_cust_rtas_speed.get()):
-            self.enable_custom_rtas_speed_array()
+    def switch_cust_rpas_speed(self):
+        if (self.use_cust_rpas_speed.get()):
+            self.enable_custom_rpas_speed_array()
         else:
-            self.disable_custom_rtas_speed_array()
+            self.disable_custom_rpas_speed_array()
     
     
-    def enable_custom_rtas_speed_array(self):  
-        self.labels["min_rtas_speed"].grid_forget()
-        self.entries["min_rtas_speed"].grid_forget()
+    def enable_custom_rpas_speed_array(self):  
+        self.labels["min_rpas_speed"].grid_forget()
+        self.entries["min_rpas_speed"].grid_forget()
         
-        self.labels["max_rtas_speed"].grid_forget()
-        self.entries["max_rtas_speed"].grid_forget()
+        self.labels["max_rpas_speed"].grid_forget()
+        self.entries["max_rpas_speed"].grid_forget()
         
-        self.labels["rtas_speed_interval"].grid_forget()
-        self.entries["rtas_speed_interval"].grid_forget()
+        self.labels["rpas_speed_interval"].grid_forget()
+        self.entries["rpas_speed_interval"].grid_forget()
         
-        self.labels["custom_rtas_speed_array"].grid(column = 1, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
-        self.entries["custom_rtas_speed_array"].grid(column=2, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.labels["custom_rpas_speed_array"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["custom_rpas_speed_array"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         
-        self.labels["custom_rtas_speed_instructions"].grid(column = 1, row=self.max_rtas_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
+        self.labels["custom_rpas_speed_instructions"].grid(column = 1, row=self.max_rpas_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
         
-        self.labels["custom_rtas_speed_example"].grid(column = 1, row=self.rtas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
+        self.labels["custom_rpas_speed_example"].grid(column = 1, row=self.rpas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         
    
-    def disable_custom_rtas_speed_array(self):
-        self.labels["custom_rtas_speed_array"].grid_forget()
-        self.entries["custom_rtas_speed_array"].grid_forget()
+    def disable_custom_rpas_speed_array(self):
+        self.labels["custom_rpas_speed_array"].grid_forget()
+        self.entries["custom_rpas_speed_array"].grid_forget()
         
-        self.labels["custom_rtas_speed_instructions"].grid_forget()
+        self.labels["custom_rpas_speed_instructions"].grid_forget()
         
-        self.labels["custom_rtas_speed_example"].grid_forget()
+        self.labels["custom_rpas_speed_example"].grid_forget()
         
-        self.labels["min_rtas_speed"].grid(column = 1, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
-        self.entries["min_rtas_speed"].grid(column=2, row=self.min_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.labels["min_rpas_speed"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["min_rpas_speed"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         
-        self.labels["max_rtas_speed"].grid(column = 1, row=self.max_rtas_speed_row, padx=2, pady=2, sticky=W)
-        self.entries["max_rtas_speed"].grid(column=2, row=self.max_rtas_speed_row, padx=2, pady=2, sticky=W)
+        self.labels["max_rpas_speed"].grid(column = 1, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["max_rpas_speed"].grid(column=2, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
         
-        self.labels["rtas_speed_interval"].grid(column = 1, row=self.rtas_speed_interval_row, padx=2, pady=2, sticky=W)
-        self.entries["rtas_speed_interval"].grid(column=2, row=self.rtas_speed_interval_row, padx=2, pady=2, sticky=W)
+        self.labels["rpas_speed_interval"].grid(column = 1, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
+        self.entries["rpas_speed_interval"].grid(column=2, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
         
 
 
@@ -418,18 +419,18 @@ class new_sim_UI_inner_frame(Frame):
         self.entries["encounter_azimuth_array_interval"].grid(column=2, row=self.azimuth_interval_row, padx=2, pady=2, sticky=W)
     
     def get_params(self):
-        #Read RTAS Characteristics
-        rtas_max_bank_deg = float(self.entries["rtas_max_bank_deg"].get())
-        rtas_wingspan = float(self.entries["rtas_wingspan"].get())
-        rtas_max_roll_rate = float(self.entries["rtas_max_roll_rate"].get())
+        #Read RPAS Characteristics
+        rpas_max_bank_deg = float(self.entries["rpas_max_bank_deg"].get())
+        rpas_wingspan = float(self.entries["rpas_wingspan"].get())
+        rpas_max_roll_rate = float(self.entries["rpas_max_roll_rate"].get())
 
-        if(self.use_cust_rtas_speed.get()):
-            rtas_speed_array = math_util.createCustArray(self.entries["custom_rtas_speed_array"].get())
+        if(self.use_cust_rpas_speed.get()):
+            rpas_speed_array = math_util.createCustArray(self.entries["custom_rpas_speed_array"].get())
         else:
-            min_speed = float(self.entries["min_rtas_speed"].get())
-            max_speed = float(self.entries["max_rtas_speed"].get())
-            speed_interval = float(self.entries["rtas_speed_interval"].get())
-            rtas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
+            min_speed = float(self.entries["min_rpas_speed"].get())
+            max_speed = float(self.entries["max_rpas_speed"].get())
+            speed_interval = float(self.entries["rpas_speed_interval"].get())
+            rpas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
 
         #Read Intruder Chars
         if(self.use_cust_intruder_speed.get()):
@@ -466,10 +467,10 @@ class new_sim_UI_inner_frame(Frame):
         
         
         params = DaaSpec(\
-            rtas_max_bank_deg = rtas_max_bank_deg, \
-            rtas_wingspan = rtas_wingspan, \
-            rtas_max_roll_rate = rtas_max_roll_rate, \
-            rtas_speed_array = rtas_speed_array, \
+            rpas_max_bank_deg = rpas_max_bank_deg, \
+            rpas_wingspan = rpas_wingspan, \
+            rpas_max_roll_rate = rpas_max_roll_rate, \
+            rpas_speed_array = rpas_speed_array, \
             intruder_speed_array = intruder_speed_array, \
             daa_declaration_range = daa_declaration_range, \
             daa_fov_deg = daa_fov_deg, \

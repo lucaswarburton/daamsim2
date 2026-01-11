@@ -6,7 +6,7 @@ class DMUIFrame(Frame):
         Frame.__init__(self, master, bg=bg, width=250)
         self.controller = controller
 
-        self.new_sim_button = Button(self, text = "Run New Simulation", command=controller.run_new_sim)
+        self.new_sim_button = Button(self, text = "DAA Simulations (ARC-b)", command=controller.run_new_sim)
         self.calculate_cumulative_data_button = Button(self,text = "Calculate Sample Cumulative Risk Ratio", command=controller.run_cumulative_calc)
         self.calculate_daa_sensitivity_button = Button(self, text = "Calculate Sample Sensitivity", command = controller.run_sensitivity_calc)
         self.view_graphs_button = Button(self, text = "View Graphs", command = controller.open_graph_manager)

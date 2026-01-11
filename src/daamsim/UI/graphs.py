@@ -5,7 +5,7 @@ import numpy as np
 
 class per_speed_plot:
     KTS_TO_MS = 0.514444
-    def __init__(self, rtas_speed, intruder_speed, rr, daa_declaration_range, daa_fov):
+    def __init__(self, rpas_speed, intruder_speed, rr, daa_declaration_range, daa_fov):
         fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
         fig.set_size_inches((7,7))
         self.ax = ax
@@ -17,7 +17,7 @@ class per_speed_plot:
         right_curve = np.linspace(0, right_angle, 100)
         radii = np.linspace(0, daa_declaration_range, 100) # From r=0 to r=5
         
-        rtas_speed = round(rtas_speed * 0.514444, 1)
+        rpas_speed = round(rpas_speed * 0.514444, 1)
         intruder_speed = round(intruder_speed * 0.514444, 1)
         
 
@@ -28,7 +28,7 @@ class per_speed_plot:
         ax.plot(right_curve, np.full_like(right_curve, daa_declaration_range), color='black', linestyle='-', label='FOV Curve Right')
         ax.plot(1000, 30 * np.pi/180)
         degree_symbol = "\N{DEGREE SIGN}"
-        title = "RTAS Speed: " + str(rtas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
+        title = "RPAS Speed: " + str(rpas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
         ax.set_title(title)
         
         

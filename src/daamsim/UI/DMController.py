@@ -6,14 +6,10 @@ from daamsim.Config import Configuration
 class DMController:
     def __init__(self):
         self.window = None
-        self.model = None
         self.view = None
         
     def setWindow(self, window):
         self.window = window
-    
-    def setmodel(self, model):
-        self.model =  model
         
     def setView(self, view):
         self.view = view
@@ -22,20 +18,25 @@ class DMController:
         self.window.setActiveFrame("NSUI")
 
     def run_cumulative_calc(self):
-        self.model
+        self
+        #to be implemented
+        
 
     def run_sensitivity_calc(self):
-        self.model
+        self
+        #to be implemented
 
     def open_graph_manager(self):
         self.window.setActiveFrame("GMUI")
 
     def save_model(self):
         self
+        #to be implemented
 
     def load_model(self):
         filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
         #Load file in
+        #to be implemented
         
     def update_window(self):
         self.window.update()

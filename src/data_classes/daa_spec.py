@@ -3,12 +3,12 @@ import numpy as np
 
 @dataclass
 class DaaSpec:
-    #Read RTAS Characteristics
-    rtas_max_bank_deg: float
-    rtas_wingspan: float
-    rtas_max_roll_rate: float
+    #Read RPAS Characteristics
+    rpas_max_bank_deg: float
+    rpas_wingspan: float
+    rpas_max_roll_rate: float
 
-    rtas_speed_array: np.array
+    rpas_speed_array: np.array
 
     #Intruder Characteristics
     intruder_speed_array: np.array
@@ -16,7 +16,7 @@ class DaaSpec:
     #DAA Characteristics
     daa_declaration_range: float
     daa_fov_deg: float
-    rate_of_revisit: int
+    rate_of_revisit: float
     scans_track: int
 
     #Simulation Variables
@@ -27,6 +27,6 @@ class DaaSpec:
     post_col: float
     wind_speed: float
     wind_dir: float
-    human_factor_delay: int
-    encounter_azimuth_array: list
+    human_factor_delay: float
+    encounter_azimuth_array: np.array
 
