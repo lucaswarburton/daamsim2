@@ -1,6 +1,7 @@
 from tkinter import filedialog
+from tkinter import messagebox
 from daamsim.Config import Configuration
-
+from .SaveLoadController import LoadController
 
 
 class DMController:
@@ -29,12 +30,23 @@ class DMController:
     def open_graph_manager(self):
         self.window.setActiveFrame("GMUI")
 
-    def save_model(self):
-        self
+    def save_view(self):
+        self.window.setActiveFrame("SAVE")
         #to be implemented
 
-    def load_model(self):
+    def load(self):
         filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
+        if filepath == "":
+            return
+        success = LoadController.load_state(filepath)
+        if success:
+            messagebox.showinfo("Successfully Loaded!", "The data was successfully loaded!")
+            self.lock_buttons()
+            self.unlock_buttons()
+            self.run_new_sim()
+            self.update_window()
+        else:
+            messagebox.showerror("Failed","Failed to load!\nUnrecognized file type or format\nDid you load a valid file?")
         #Load file in
         #to be implemented
         

@@ -10,8 +10,8 @@ class DMUIFrame(Frame):
         self.calculate_cumulative_data_button = Button(self,text = "Calculate Sample Cumulative Risk Ratio", command=controller.run_cumulative_calc)
         self.calculate_daa_sensitivity_button = Button(self, text = "Calculate Sample Sensitivity", command = controller.run_sensitivity_calc)
         self.view_graphs_button = Button(self, text = "View Graphs", command = controller.open_graph_manager)
-        self.save_data_button = Button(self, text = "Save Data", command = controller.save_model)
-        self.load_data_button = Button(self, text = "Load Data", command = controller.load_model)
+        self.save_data_button = Button(self, text = "Save Data", command = controller.save_view)
+        self.load_data_button = Button(self, text = "Load Data", command = controller.load)
 
         self.new_sim_button.grid(column = 1, row = 1, padx=15, pady=10, sticky = NSEW)
         self.calculate_cumulative_data_button.grid(column = 1, row = 2, padx=15, pady=10, sticky = NSEW)

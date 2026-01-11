@@ -6,9 +6,11 @@ from .window import Window
 from .DMUI import DMUIFrame
 from .GMUI import GMUIFrame
 from .NSUI import new_sim_UI
+from .SaveLoadUI import SaveUI
 from .ProgressFrameUI import Progress_Frame
 from .NSController import new_sim_controller
 from .GController import GraphController
+from .SaveLoadController import SaveController
 
 def UI_main():
     w = Window()
@@ -33,6 +35,11 @@ def UI_main():
     progress_frame = Progress_Frame(master = w.container)
     progress_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("ProgressFrameUI", progress_frame)
+    
+    save_controller = SaveController(main_controller)
+    save_frame = SaveUI(save_controller, master = w.container)
+    save_frame.grid(row=0, column=0, sticky="nsew")
+    w.addFrame("SAVE", save_frame)
 
     w.setDMUIFrame(dmui_frame)
     w.setActiveFrame(new_sim_UI_frame)
