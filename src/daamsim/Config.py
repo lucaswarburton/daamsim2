@@ -22,13 +22,13 @@ class Configuration:
     def parseConfig(self):
         parser = configparser.ConfigParser()
         parser.read(Configuration._config_file_path)
+        
+        self.valid_true_values = ["true", "t", "y", "yes"] #The valid inputs for true in the config file
 
         disable_ui = parser['Settings']['ui_disabled']
         disable_ui = disable_ui.lower()
-
-        self.valid_true_values = ["true", "t", "y", "yes"] #The valid inputs for true in the config file
-
         self.disable_ui = disable_ui in self.valid_true_values
+        
         self.default_load_file_path = parser['Settings']['default_load_file_path']
         self.default_save_file_path = parser['Settings']['default_save_file_path']
             

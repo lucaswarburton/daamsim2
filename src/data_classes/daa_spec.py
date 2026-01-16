@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
+import json
 
 @dataclass
 class DaaSpec:
@@ -29,4 +30,30 @@ class DaaSpec:
     wind_dir: float
     human_factor_delay: float
     encounter_azimuth_array: np.array
+    
+    def toJSON(self):
+        dictionary = dict()
+        for attr in dir(self):
+            if not callable(getattr(self, attr)) and not attr.startswith("__"):
+                if isinstance(getattr(self, attr), np.ndarray):
+                    dictionary[attr] = getattr(self, attr).tolist()
+                else:
+                    dictionary[attr] = getattr(self, attr)
+        
+        return json.dumps(dictionary, indent=4)
+        
+    def fromJSON(self, json_string):
+        dictionary: dict = json.loads(json_string)
+        for name in dictionary.keys():
+            curratt = dictionary[name]
+            if isinstance(curratt, list):
+                setattr(self, name, np.array(curratt))
+            else:
+                setattr(self, name, curratt)
+        
+        return json.dumps(dictionary, indent=4)
+    
+        
+        
+        
 
