@@ -3,12 +3,18 @@ from tkinter import messagebox
 
 
 class SaveController:
-    def __init__(self, master_controller):
+    def __init__(self, master_controller, nsui):
         self.master_controller = master_controller
+        self.nsui = nsui
         
     def save_state(self, output_file_path) -> bool: 
         try:
             data = CurrentData()
+            
+            #Only save current params if we do not have an existing data set
+            if data._sim_state == 0:
+                data.specs = self.nsui.get_params()
+                self.nsui.save_current_settings()
         
             with open(output_file_path, 'w') as f:
                 f.write(data.toJSON())
@@ -19,9 +25,11 @@ class SaveController:
     
 class LoadController:     
     def load_state(input_file_path:str) -> bool:
+        
         data = CurrentData()
         if not input_file_path.endswith(".json"):
             return False
         with open(input_file_path) as f:
             json_string = f.read()
             return data.fromJSON(json_string)
+        

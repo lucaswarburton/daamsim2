@@ -36,7 +36,7 @@ def UI_main():
     progress_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("ProgressFrameUI", progress_frame)
     
-    save_controller = SaveController(main_controller)
+    save_controller = SaveController(main_controller, new_sim_UI_frame.scrolling_frame)
     save_frame = SaveUI(save_controller, master = w.container)
     save_frame.grid(row=0, column=0, sticky="nsew")
     w.addFrame("SAVE", save_frame)

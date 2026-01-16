@@ -38,17 +38,20 @@ class DMController:
         filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
         if filepath == "":
             return
-        success = LoadController.load_state(filepath)
-        if success:
-            messagebox.showinfo("Successfully Loaded!", "The data was successfully loaded!")
-            self.lock_buttons()
-            self.unlock_buttons()
-            self.run_new_sim()
-            self.update_window()
-        else:
-            messagebox.showerror("Failed","Failed to load!\nUnrecognized file type or format\nDid you load a valid file?")
-        #Load file in
-        #to be implemented
+        try:
+            success = LoadController.load_state(filepath)
+        
+            if success:
+                self.window.frames["NSUI"].scrolling_frame.regenerate()
+                self.lock_buttons()
+                self.unlock_buttons()
+                self.run_new_sim()
+                self.update_window()
+                messagebox.showinfo("Successfully Loaded!", "The data was successfully loaded!")
+            else:
+                messagebox.showerror("Failed","Failed to load!\nUnrecognized file type or format\nDid you load the wrong file or a depreciated file?")
+        except:
+            messagebox.showerror("Error", "Unexpected Error Encountered Trying to Load Data")
         
     def update_window(self):
         self.window.update()
