@@ -10,7 +10,7 @@ def loadmatlabfile(filename) -> dict:
     return dictionary
 
 def loadjsonfile(filename):
-    
+   return 
     
     
 if __name__ == "__main__":
