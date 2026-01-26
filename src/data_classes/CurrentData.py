@@ -1,11 +1,12 @@
 import threading
-from .threadsafe_list import ThreadSafeList
-from .daa_spec import DaaSpec
-from .CurrentSettings import CurrentSettings
-from daamsim.Config import Configuration
 import json
 import numpy as np
 import pickle
+
+
+from .DaaSpec import DaaSpec
+from .CurrentSettings import CurrentSettings
+from daamsim.Config import Configuration
 
 class CurrentData:
     _instance = None
@@ -28,28 +29,28 @@ class CurrentData:
     #1 for rr_calcs ran
     _sim_state = 0
 
-    def __new__(cls):
+    def __new__(cls) -> None:
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not hasattr(self, "_initialized"):
             for name in self._dict_field_names:
                 setattr(self, name, np.array([]))
             self._initialized = True
             self._sim_state = 0
-            self.specs = Configuration.get_instance().daa_spec
+            self.specs = Configuration().daa_spec
 
-    def clear(self):
+    def clear(self) -> None:
         for name in self._dict_field_names:
             getattr(self, name).clear()
         self._sim_state = 0
         self.specs = None
     
-    def toJSON(self):
+    def to_json(self) -> str:
         dictionary = dict()
         dictionary['JSONIdentifier'] = CurrentData._JSONv
         dictionary['_initialized'] = self._initialized
@@ -63,7 +64,7 @@ class CurrentData:
     
 
     
-    def fromJSON(self, json_string) -> bool: 
+    def from_json(self, json_string: str) -> bool: 
         dictionary: dict = json.loads(json_string)
         if not 'JSONIdentifier' in dictionary:
             return False

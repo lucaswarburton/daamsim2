@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 
 class Scroll_Frame(Frame):
-    def __init__(self, master, SCROLLFRAMETYPE, controller, bg = None):
+    def __init__(self, master, SCROLLFRAMETYPE: type, controller, bg = None) -> None:
         Frame.__init__(self, master, bg=bg)
 
         self.canvas = Canvas(self, bg=bg)
@@ -20,14 +20,14 @@ class Scroll_Frame(Frame):
         self.canvas.bind("<Configure>", self.resize_frame)
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
-    def update_scrollregion(self, event=None):
+    def update_scrollregion(self, event=None) -> None:
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-    def resize_frame(self, event=None):
+    def resize_frame(self, event=None) -> None:
         canvas_width = event.width
         self.canvas.itemconfig(self.canvas_window, width=canvas_width)
 
-    def on_mousewheel(self, event):
+    def on_mousewheel(self, event) -> None:
         self.canvas.yview_scroll(int(-1*(event.delta/120)), UNITS)
 
 

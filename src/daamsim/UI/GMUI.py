@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-from data_classes.current_data import CurrentData
+from data_classes.CurrentData import CurrentData
 
 class GMUIFrame(Frame):
     def __init__(self, controller, master, bg = "green"):

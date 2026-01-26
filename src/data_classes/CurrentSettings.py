@@ -13,7 +13,7 @@ class CurrentSettings:
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self._initialized = True
-            config = Configuration.get_instance()
+            config = Configuration()
 
             self.custom_rpas_speed_enabled = config.custom_rpas_speed_enabled
             self.min_rpas_speed =  config.min_rpas_speed

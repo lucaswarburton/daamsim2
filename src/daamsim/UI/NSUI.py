@@ -1,20 +1,21 @@
 from tkinter import *
 from tkinter import ttk
+
 from daamsim.Config import Configuration
-from data_classes.current_data import CurrentData
+from data_classes.CurrentData import CurrentData
 from data_classes.CurrentSettings import CurrentSettings
-from data_classes.daa_spec import DaaSpec
+from data_classes.DaaSpec import DaaSpec
 from calculations import math_util
 from daamsim.UI.ScrollFrame import Scroll_Frame
-from daamsim.UI.NSController import new_sim_controller
+from daamsim.UI.NSController import NewSimController
 
-class new_sim_UI(Scroll_Frame):
-    def __init__(self, controller, master, bg = "salmon"):
-        super().__init__(controller=controller, master = master, SCROLLFRAMETYPE=new_sim_UI_inner_frame,  bg=bg)
+class NewSimUI(Scroll_Frame):
+    def __init__(self, controller, master, bg = "salmon") -> None:
+        super().__init__(controller=controller, master = master, SCROLLFRAMETYPE=NewSimUIInnerFrame,  bg=bg)
         self.bg = bg
 
-class new_sim_UI_inner_frame(Frame):
-    def __init__(self, controller, master, bg = "salmon"):
+class NewSimUIInnerFrame(Frame):
+    def __init__(self, controller, master, bg = "salmon") -> None:
         super().__init__(master, bg=bg)
         self.bg = bg
         self.controller = controller
@@ -24,16 +25,16 @@ class new_sim_UI_inner_frame(Frame):
  
         
         self.cur_settings = CurrentSettings()
-        self.config = Configuration.get_instance()
+        self.config = Configuration()
         
         self.regenerate()
         
-    def clear(self):
+    def clear(self) -> None:
         for widget in self.winfo_children():
             widget.destroy()
 
     
-    def regenerate(self):
+    def regenerate(self) -> None:
         self.clear()
         self.daa_spec = CurrentData().specs
         i = 0
@@ -55,7 +56,7 @@ class new_sim_UI_inner_frame(Frame):
         i = self.setup_simulation_vars(i)
         
     #Sets up characteristics inputs for RPAS
-    def setup_rpas(self, i):
+    def setup_rpas(self, i) -> int:
         self.labels["rpas_Chars"] = Label(self, text = "RPAS Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["rpas_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
         i += 1
@@ -119,7 +120,7 @@ class new_sim_UI_inner_frame(Frame):
         return i
 
     #Sets up intruder Characteristics inputs
-    def setup_intruder_chars(self, i):
+    def setup_intruder_chars(self, i) -> int:
         self.labels["Intruder_Chars"] = Label(self, text = "Intruder Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["Intruder_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
         i += 1
@@ -161,7 +162,7 @@ class new_sim_UI_inner_frame(Frame):
         return i
 
     #Setup daa Characteristics
-    def setup_daa_chars(self, i):
+    def setup_daa_chars(self, i) -> int:
         self.labels["DAA_Chars"] = Label(self, text = "DAA Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["DAA_Chars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
         i += 1
@@ -197,7 +198,7 @@ class new_sim_UI_inner_frame(Frame):
         return i
         
     
-    def setup_simulation_vars(self, i):    
+    def setup_simulation_vars(self, i) -> int:    
         #Simulation Variables
         self.labels["Simulation_Vars"] = Label(self, text = "Simulation Variables:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["Simulation_Vars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
@@ -302,14 +303,14 @@ class new_sim_UI_inner_frame(Frame):
         
     
     #Switches which set of inputs are visible for the custom intruder speed array.
-    def switch_cust_rpas_speed(self):
+    def switch_cust_rpas_speed(self)  -> None:
         if (self.use_cust_rpas_speed.get()):
             self.enable_custom_rpas_speed_array()
         else:
             self.disable_custom_rpas_speed_array()
     
     
-    def enable_custom_rpas_speed_array(self):  
+    def enable_custom_rpas_speed_array(self) -> None:  
         self.labels["min_rpas_speed"].grid_forget()
         self.entries["min_rpas_speed"].grid_forget()
         
@@ -327,7 +328,7 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["custom_rpas_speed_example"].grid(column = 1, row=self.rpas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         
    
-    def disable_custom_rpas_speed_array(self):
+    def disable_custom_rpas_speed_array(self) -> None:
         self.labels["custom_rpas_speed_array"].grid_forget()
         self.entries["custom_rpas_speed_array"].grid_forget()
         
@@ -348,14 +349,14 @@ class new_sim_UI_inner_frame(Frame):
 
     
     #Switches which set of inputs are visible for the custom intruder speed array.
-    def switch_cust_intruder_speed(self):
+    def switch_cust_intruder_speed(self) -> None:
         if (self.use_cust_intruder_speed.get()):
             self.enable_custom_intruder_speed_array()
         else:
             self.disable_custom_intruder_speed_array()
     
     
-    def enable_custom_intruder_speed_array(self):  
+    def enable_custom_intruder_speed_array(self) -> None:  
         self.labels["min_intruder_speed"].grid_forget()
         self.entries["min_intruder_speed"].grid_forget()
         
@@ -373,7 +374,7 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["custom_intruder_speed_example"].grid(column = 1, row=self.intruder_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         
    
-    def disable_custom_intruder_speed_array(self):
+    def disable_custom_intruder_speed_array(self) -> None:
         self.labels["custom_intruder_speed_array"].grid_forget()
         self.entries["custom_intruder_speed_array"].grid_forget()
         
@@ -392,13 +393,13 @@ class new_sim_UI_inner_frame(Frame):
         
         
     #Switches which set of inputs are visible for the custom intruder speed array.
-    def switch_cust_azimuth_array(self):
+    def switch_cust_azimuth_array(self) -> None:
         if (self.use_cust_azimuth_array.get()):
             self.enable_custom_encounter_azimuth_array()
         else:
             self.disable_custom_encounter_azimuth_array()    
         
-    def enable_custom_encounter_azimuth_array(self):
+    def enable_custom_encounter_azimuth_array(self) -> None:
         self.labels["encounter_azimuth_array_start"].grid_forget()
         self.entries["encounter_azimuth_array_start"].grid_forget()
         
@@ -416,7 +417,7 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["custom_azimuth_array_example"].grid(column = 1, row=self.azimuth_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         
    
-    def disable_custom_encounter_azimuth_array(self):
+    def disable_custom_encounter_azimuth_array(self) -> None:
         self.labels["custom_encounter_azimuth_array"].grid_forget()
         self.entries["custom_encounter_azimuth_array"].grid_forget()
         
@@ -433,7 +434,7 @@ class new_sim_UI_inner_frame(Frame):
         self.labels["encounter_azimuth_array_interval"].grid(column = 1, row=self.azimuth_interval_row, padx=2, pady=2, sticky=W)
         self.entries["encounter_azimuth_array_interval"].grid(column=2, row=self.azimuth_interval_row, padx=2, pady=2, sticky=W)
     
-    def get_params(self):
+    def get_params(self) -> DaaSpec:
         #Read RPAS Characteristics
         rpas_max_bank_deg = float(self.entries["rpas_max_bank_deg"].get())
         rpas_wingspan = float(self.entries["rpas_wingspan"].get())
@@ -504,7 +505,7 @@ class new_sim_UI_inner_frame(Frame):
         
         return params
     
-    def save_current_settings(self):  
+    def save_current_settings(self) -> None:  
         self.cur_settings.custom_rpas_speed_enabled = self.use_cust_rpas_speed.get()
         self.cur_settings.min_rpas_speed =  self.entries["min_rpas_speed"].get()
         self.cur_settings.max_rpas_speed = self.entries["max_rpas_speed"].get()
@@ -529,9 +530,9 @@ class new_sim_UI_inner_frame(Frame):
 if __name__ == "__main__":
     root = Tk()
     root.geometry("500x500")
-    controller = new_sim_controller(None)
+    controller = NewSimController(None)
 
-    scr_fr = new_sim_UI(controller=controller, master=root)
+    scr_fr = NewSimUI(controller=controller, master=root)
     scr_fr.pack(fill=BOTH, expand=1)
     
 

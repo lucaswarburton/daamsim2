@@ -12,7 +12,7 @@ def sind(x: float) -> float:
 def tand(x: float) -> float:
      return math.tan(math.radians(x))
 
-def make_array(min: float, max: float, increment: float) -> list[float]:
+def make_array(min: float, max: float, increment: float) -> np.ndarray:
     if (min > max):
             raise ValueError("Create Array: Start cannot be greater than end. Start: " + str(min) + "End: " + str(max))
     if (increment <= 0):
@@ -27,7 +27,7 @@ def make_array(min: float, max: float, increment: float) -> list[float]:
     lst.append(max)
     return np.array(lst)
 
-def createCustArray(inputStr: str):
+def createCustArray(inputStr: str) -> np.ndarray:
     str_lst = inputStr.split(",")
     dec_lst = []
     for item in str_lst:

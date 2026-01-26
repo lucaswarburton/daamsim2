@@ -1,15 +1,17 @@
-from data_classes.current_data import CurrentData
 from tkinter import messagebox
 
+from data_classes.CurrentData import CurrentData
+from . import NSUI
+from . import DMController
 
 class SaveController:
-    def __init__(self, master_controller, nsui):
-        self.master_controller = master_controller
-        self.nsui = nsui
+    def __init__(self, master_controller, nsui) -> None:
+        self.master_controller: DMController.DMController = master_controller
+        self.nsui: NSUI.NewSimUIInnerFrame = nsui
         
-    def save_state(self, output_file_path) -> bool: 
+    def save_state(self, output_file_path:str) -> bool: 
         try:
-            data = CurrentData()
+            data: CurrentData = CurrentData()
             
             #Only save current params if we do not have an existing data set
             if data._sim_state == 0:
@@ -17,7 +19,7 @@ class SaveController:
                 self.nsui.save_current_settings()
         
             with open(output_file_path, 'w') as f:
-                f.write(data.toJSON())
+                f.write(data.to_json())
             messagebox.showinfo("Success!", "Data Saved Successfully!")
         except Exception as e:
             print(e)
@@ -26,10 +28,10 @@ class SaveController:
 class LoadController:     
     def load_state(input_file_path:str) -> bool:
         
-        data = CurrentData()
+        data:CurrentData = CurrentData()
         if not input_file_path.endswith(".json"):
             return False
         with open(input_file_path) as f:
             json_string = f.read()
-            return data.fromJSON(json_string)
+            return data.from_json(json_string)
         

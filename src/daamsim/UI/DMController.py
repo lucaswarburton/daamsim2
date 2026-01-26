@@ -1,7 +1,9 @@
 from tkinter import filedialog
 from tkinter import messagebox
+
 from daamsim.Config import Configuration
-from .SaveLoadController import LoadController
+from . import SaveLoadController
+from . import DMUI
 
 
 class DMController:
@@ -9,37 +11,37 @@ class DMController:
         self.window = None
         self.view = None
         
-    def setWindow(self, window):
+    def set_window(self, window) -> None:
         self.window = window
         
-    def setView(self, view):
-        self.view = view
+    def set_view(self, view) -> None:
+        self.view: DMUI.DMUIFrame = view
 
-    def run_new_sim(self):
-        self.window.setActiveFrame("NSUI")
+    def run_new_sim(self) -> None:
+        self.window.set_active_frame("NSUI")
 
-    def run_cumulative_calc(self):
+    def run_cumulative_calc(self) -> None:
         self
         #to be implemented
         
 
-    def run_sensitivity_calc(self):
+    def run_sensitivity_calc(self) -> None:
         self
         #to be implemented
 
-    def open_graph_manager(self):
-        self.window.setActiveFrame("GMUI")
+    def open_graph_manager(self) -> None:
+        self.window.set_active_frame("GMUI")
 
-    def save_view(self):
-        self.window.setActiveFrame("SAVE")
+    def save_view(self) -> None:
+        self.window.set_active_frame("SAVE")
         #to be implemented
 
-    def load(self):
+    def load(self) -> None:
         filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
         if filepath == "":
             return
         try:
-            success = LoadController.load_state(filepath)
+            success = SaveLoadController.LoadController.load_state(filepath)
         
             if success:
                 self.window.frames["NSUI"].scrolling_frame.regenerate()
@@ -53,15 +55,15 @@ class DMController:
         except:
             messagebox.showerror("Error", "Unexpected Error Encountered Trying to Load Data")
         
-    def update_window(self):
+    def update_window(self) -> None:
         self.window.update()
         
-    def lock_buttons(self):
+    def lock_buttons(self) -> None:
         self.view.lock_buttons()
     
-    def unlock_buttons(self):
+    def unlock_buttons(self) -> None:
         self.view.unlock_buttons()
         
-    def calculation_mode(self):
+    def calculation_mode(self) -> None:
         self.lock_buttons()
-        self.window.setActiveFrame("ProgressFrameUI")
+        self.window.set_active_frame("ProgressFrameUI")
