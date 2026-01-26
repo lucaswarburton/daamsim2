@@ -13,10 +13,10 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
     specs = current_data.specs
 
     # unpack specs
-    # RTAS characteristics
-    max_bank = specs.rtas_max_bank_deg # deg
-    max_roll_rate = specs.rtas_max_roll_rate # deg/s
-    ground_speed_h_vect = specs.rtas_speed_array * 0.514444 # Convert to m/s
+    # rpas characteristics
+    max_bank = specs.rpas_max_bank_deg # deg
+    max_roll_rate = specs.rpas_max_roll_rate # deg/s
+    ground_speed_h_vect = specs.rpas_speed_array * 0.514444 # Convert to m/s
 
     # Intruder characteristics
     ground_int_speed = float(intruder_speed) * 0.514444 # Convert to m/s
@@ -71,8 +71,8 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
     current_data.clos_vel[int_key] = dict()
     current_data.clos_vel_over[int_key] = dict()
     
-    for rtas_speed in specs.rtas_speed_array:
-        ground_speed_h = rtas_speed * 0.514444
+    for rpas_speed in specs.rpas_speed_array:
+        ground_speed_h = rpas_speed * 0.514444
         simulation_params.ground_speed_h = ground_speed_h
         
         tm = np.full(n, np.nan)
@@ -95,15 +95,15 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
             r_min_m_over[k], clos_vel_over[k], delta_hdg_l[k], delta_hdg_r[k], azim_l[k], azim_r[k], tm[k] = simulate_alpha(alpha, True, eng, simulation_params, False, k)
     
         # save data
-        rtas_key = float(round(rtas_speed, 3))
-        current_data.azimuth_vect[int_key][rtas_key] = azimuth_vect
-        current_data.r_min_m[int_key][rtas_key]  = r_min_m
-        current_data.r_min_over[int_key][rtas_key]  = r_min_m_over
-        current_data.ground_int_speed[int_key][rtas_key] = ground_int_speed
-        current_data.alpha_oncoming_vect[int_key][rtas_key] = alpha_oncoming_vect
-        current_data.alpha_overtake_vect[int_key][rtas_key] = alpha_overtake_vect
-        current_data.clos_vel[int_key][rtas_key] = clos_vel
-        current_data.clos_vel_over[int_key][rtas_key] = clos_vel_over
+        rpas_key = float(round(rpas_speed, 3))
+        current_data.azimuth_vect[int_key][rpas_key] = azimuth_vect
+        current_data.r_min_m[int_key][rpas_key]  = r_min_m
+        current_data.r_min_over[int_key][rpas_key]  = r_min_m_over
+        current_data.ground_int_speed[int_key][rpas_key] = ground_int_speed
+        current_data.alpha_oncoming_vect[int_key][rpas_key] = alpha_oncoming_vect
+        current_data.alpha_overtake_vect[int_key][rpas_key] = alpha_overtake_vect
+        current_data.clos_vel[int_key][rpas_key] = clos_vel
+        current_data.clos_vel_over[int_key][rpas_key] = clos_vel_over
 
 
 def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: SimulationParams, run_simulations: bool, k: int):
@@ -277,4 +277,3 @@ def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: Simulati
     else: # alpha is 0 or 180 or -180
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 # end function
-
