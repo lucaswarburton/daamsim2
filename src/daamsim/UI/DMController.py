@@ -37,7 +37,7 @@ class DMController:
         #to be implemented
 
     def load(self) -> None:
-        filepath = filedialog.askopenfilename(initialdir=Configuration.get_instance().default_load_file_path)
+        filepath = filedialog.askopenfilename(initialdir=Configuration().default_load_file_path)
         if filepath == "":
             return
         try:
