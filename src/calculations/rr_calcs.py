@@ -2,7 +2,7 @@ from decimal import Decimal
 import math
 
 from . import math_util
-from data_classes.current_data import CurrentData
+from data_classes.CurrentData import CurrentData
 import numpy as np
 import matlab.engine
 from time import perf_counter

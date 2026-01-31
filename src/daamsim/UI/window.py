@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 from .DMUI import DMUIFrame 
-from .GMUI import GMUIFrame
 from .DMController import DMController
 
 class Window(Tk):
@@ -22,18 +21,18 @@ class Window(Tk):
         super().geometry(str(int(screen_width*3/4)) + 'x' + str(int(screen_height * 3/4)) + '+' + str(int(screen_width/8)) + '+' + str(int(screen_height/8)))
 
         main_controller = DMController()
-        main_controller.setWindow(self)
+        main_controller.set_window(self)
 
         self.pack_propagate(0)
 
              
         
-    def setDMUIFrame(self, frame):
+    def set_DMUI_frame(self, frame: DMUIFrame):
         self.DMUIFrame = frame
         self.DMUIFrame.pack(side = LEFT, fill = "both", expand=False)
   
 
-    def setActiveFrame(self, frame):
+    def set_active_frame(self, frame):
         if isinstance(frame, str):
             self.ActiveFrame = self.frames[frame]
         else:
@@ -43,7 +42,7 @@ class Window(Tk):
         self.update()
         self.update_idletasks()
 
-    def addFrame(self, frameName, frame):
+    def add_frame(self, frameName:str, frame: str):
         self.frames[frameName] = frame
     
     

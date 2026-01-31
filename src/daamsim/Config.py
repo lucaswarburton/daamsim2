@@ -1,8 +1,8 @@
 import configparser
 from pathlib import Path
-import sys
-import os
-from data_classes.daa_spec import DaaSpec
+import numpy as np
+
+from data_classes.DaaSpec import DaaSpec
 from calculations import math_util
 
 
@@ -10,16 +10,18 @@ from calculations import math_util
 class Configuration:
     _instance = None
     _config_file_path = Path.cwd() / "config.ini"
+    
+    def __new__(cls) -> None:
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
-    def __init__(self):
-        self.parseConfig()
+    def __init__(self) -> None:
+        if not hasattr(self, "_initialized"):
+            self._initialized = True
+            self.parseConfig()
 
-    def get_instance():
-        if Configuration._instance == None:
-            Configuration._instance =  Configuration()
-        return Configuration._instance
-
-    def parseConfig(self):
+    def parseConfig(self) -> None:
         parser = configparser.ConfigParser()
         parser.read(Configuration._config_file_path)
         
@@ -80,7 +82,7 @@ class Configuration:
             encounter_azimuth_array = encounter_azimuth_array
             )
         
-    def get_rpas_speed_array(self, parser):
+    def get_rpas_speed_array(self, parser:configparser.ConfigParser)-> np.ndarray:
         custom_rpas_speed_enabled = parser['Settings']['custom_rpas_speed_enabled']
         custom_rpas_speed_enabled = custom_rpas_speed_enabled.lower().strip()
         self.custom_rpas_speed_enabled = custom_rpas_speed_enabled in self.valid_true_values
@@ -98,7 +100,7 @@ class Configuration:
             
         return rpas_speed_array
         
-    def get_intruder_speed_array(self, parser):
+    def get_intruder_speed_array(self, parser:configparser.ConfigParser)-> np.ndarray:
         custom_intruder_speed_enabled = parser['Settings']['custom_intruder_speed_enabled']
         custom_intruder_speed_enabled = custom_intruder_speed_enabled.lower().strip()
         self.custom_intruder_speed_enabled = custom_intruder_speed_enabled in self.valid_true_values
@@ -115,7 +117,7 @@ class Configuration:
 
         return intruder_speed_array
         
-    def get_encounter_azimuth_array(self, parser):
+    def get_encounter_azimuth_array(self, parser:configparser.ConfigParser)-> np.ndarray:
         custom_encounter_azimuth_array_enabled = parser['Settings']['custom_encounter_azimuth_array_enabled']
         custom_encounter_azimuth_array_enabled = custom_encounter_azimuth_array_enabled.lower().strip()
         self.custom_encounter_azimuth_array_enabled = custom_encounter_azimuth_array_enabled in self.valid_true_values

@@ -3,9 +3,9 @@ from calculations.graph_evals import per_speed_graph_evals
 import matplotlib.pyplot as plt 
 import numpy as np
 
-class per_speed_plot:
+class PerSpeedPlot:
     KTS_TO_MS = 0.514444
-    def __init__(self, rpas_speed, intruder_speed, rr, daa_declaration_range, daa_fov):
+    def __init__(self, rpas_speed, intruder_speed, rr, daa_declaration_range, daa_fov) -> None:
         fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
         fig.set_size_inches((7,7))
         self.ax = ax
@@ -33,7 +33,7 @@ class per_speed_plot:
         
         
     #Placeholder function var names  
-    def add_point(self, distance, azimuth, isCollision):
+    def add_point(self, distance, azimuth, isCollision) -> None:
         if isCollision:
             colour = "red"
         else:
@@ -41,22 +41,22 @@ class per_speed_plot:
         self.ax.scatter(distance, azimuth, c=colour)
     
     #placeholder function var names
-    def add_points(self, points):
+    def add_points(self, points) -> None:
         self.ax.scatter(points[0], points[1], c=points[2])
             
-    def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range):
+    def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range) -> None:
         return per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
             
             
-    def show_plt():
+    def show_plt() -> None:
         plt.show()
             
 if __name__ == "__main__":
-    plot1 = per_speed_plot(10, 10, 0.25, 1000, 60)
+    plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)
     azimuth = np.array([-90*np.pi/180, 10*np.pi/180, 90*np.pi/180])
     rmin = np.array([500,300,400])
     colour = np.array(["red", "green", "red"])
     points = (azimuth, rmin, colour)
     plot1.add_points(points)
-    per_speed_plot.show_plt()
+    PerSpeedPlot.show_plt()
     

@@ -6,9 +6,9 @@ Implements the functionality of the batchRrCalcs script.
 from decimal import Decimal
 from .rr_calcs import rr_calcs
 import os
-from data_classes.daa_spec import DaaSpec
-from data_classes.current_data import CurrentData
-from daamsim.UI.ProgressFrameUI import Progress_Frame
+from data_classes.DaaSpec import DaaSpec
+from data_classes.CurrentData import CurrentData
+from daamsim.UI.ProgressFrameUI import ProgressFrame
 import matlab.engine
 from time import perf_counter
 
@@ -22,9 +22,9 @@ def batch_calcs(specs: DaaSpec):
     intruder_speeds = specs.intruder_speed_array
     current_data = CurrentData()
     
-    pframe = Progress_Frame.getinstance()
+    pframe:ProgressFrame = ProgressFrame()
     pframe.reset()
-    pframe.setMain(len(intruder_speeds), "Speeds Evaluated")
+    pframe.set_main(len(intruder_speeds), "Speeds Evaluated")
 
     # reset current_data for new calculation
     current_data.specs = specs

@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 
+from . import DMController
+
 class DMUIFrame(Frame):
-    def __init__(self, controller, master, bg = "blue"):
+    def __init__(self, controller, master, bg = "blue") -> None:
         Frame.__init__(self, master, bg=bg, width=250)
-        self.controller = controller
+        self.controller: DMController.DMController = controller
 
         self.new_sim_button = Button(self, text = "DAA Simulations (ARC-b)", command=controller.run_new_sim)
         self.calculate_cumulative_data_button = Button(self,text = "Calculate Sample Cumulative Risk Ratio", command=controller.run_cumulative_calc)
@@ -23,7 +25,7 @@ class DMUIFrame(Frame):
         self.pack_propagate(0)
         self.grid_propagate(0)
     
-    def lock_buttons(self):
+    def lock_buttons(self) -> None:
         self.new_sim_button.config(state=DISABLED)
         self.calculate_cumulative_data_button.config(state=DISABLED)
         self.calculate_daa_sensitivity_button.config(state=DISABLED)
@@ -31,7 +33,7 @@ class DMUIFrame(Frame):
         self.save_data_button.config(state=DISABLED)
         self.load_data_button.config(state=DISABLED)
     
-    def unlock_buttons(self):
+    def unlock_buttons(self) -> None:
         self.new_sim_button.config(state=NORMAL)
         self.calculate_cumulative_data_button.config(state=NORMAL)
         self.calculate_daa_sensitivity_button.config(state=NORMAL)
