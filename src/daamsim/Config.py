@@ -90,14 +90,22 @@ class Configuration:
         self.min_rpas_speed =  float(parser['DEFAULTS']['min_rpas_speed'])
         self.max_rpas_speed = float(parser['DEFAULTS']['max_rpas_speed'])
         self.rpas_speed_interval = float(parser['DEFAULTS']['rpas_speed_interval'])
+        self.min_rpas_speed =  float(parser['DEFAULTS']['min_rpas_speed'])
+        self.max_rpas_speed = float(parser['DEFAULTS']['max_rpas_speed'])
+        self.rpas_speed_interval = float(parser['DEFAULTS']['rpas_speed_interval'])
 
+        self.custom_rpas_speed_array = parser['DEFAULTS']['custom_rpas_speed_array']
         self.custom_rpas_speed_array = parser['DEFAULTS']['custom_rpas_speed_array']
 
         if self.custom_rpas_speed_enabled:
             rpas_speed_array = math_util.createCustArray(self.custom_rpas_speed_array)
+        if self.custom_rpas_speed_enabled:
+            rpas_speed_array = math_util.createCustArray(self.custom_rpas_speed_array)
         else:
             rpas_speed_array = math_util.make_array(self.min_rpas_speed, self.max_rpas_speed, self.rpas_speed_interval)
+            rpas_speed_array = math_util.make_array(self.min_rpas_speed, self.max_rpas_speed, self.rpas_speed_interval)
             
+        return rpas_speed_array
         return rpas_speed_array
         
     def get_intruder_speed_array(self, parser:configparser.ConfigParser)-> np.ndarray:

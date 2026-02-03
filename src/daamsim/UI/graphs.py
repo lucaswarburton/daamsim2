@@ -18,6 +18,7 @@ class PerSpeedPlot:
         radii = np.linspace(0, daa_declaration_range, 100) # From r=0 to r=5
         
         rpas_speed = round(rpas_speed * 0.514444, 1)
+        rpas_speed = round(rpas_speed * 0.514444, 1)
         intruder_speed = round(intruder_speed * 0.514444, 1)
         
 
@@ -28,6 +29,7 @@ class PerSpeedPlot:
         ax.plot(right_curve, np.full_like(right_curve, daa_declaration_range), color='black', linestyle='-', label='FOV Curve Right')
         ax.plot(1000, 30 * np.pi/180)
         degree_symbol = "\N{DEGREE SIGN}"
+        title = "RPAS Speed: " + str(rpas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
         title = "RPAS Speed: " + str(rpas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
         ax.set_title(title)
         
