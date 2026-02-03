@@ -3,12 +3,12 @@ import numpy as np
 
 @dataclass
 class DaaSpec:
-    #Read RTAS Characteristics
-    rtas_max_bank_deg: float
-    rtas_wingspan: float
-    rtas_max_roll_rate: float
+    #Read rpas Characteristics
+    rpas_max_bank_deg: float
+    rpas_wingspan: float
+    rpas_max_roll_rate: float
 
-    rtas_speed_array: np.array
+    rpas_speed_array: np.array
 
     #Intruder Characteristics
     intruder_speed_array: np.array

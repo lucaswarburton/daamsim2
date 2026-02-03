@@ -33,11 +33,11 @@ class Configuration:
         self.default_save_file_path = parser['Settings']['default_save_file_path']
             
         
-        #Read RTAS Characteristics
-        rtas_max_bank_deg = float(parser['DEFAULTS']['rtas_max_bank_deg'])
-        rtas_wingspan = float(parser['DEFAULTS']['rtas_wingspan'])
-        rtas_max_roll_rate = float(parser['DEFAULTS']['rtas_max_roll_rate'])
-        rtas_speed_array = self.get_rtas_speed_array(parser)
+        #Read rpas Characteristics
+        rpas_max_bank_deg = float(parser['DEFAULTS']['rpas_max_bank_deg'])
+        rpas_wingspan = float(parser['DEFAULTS']['rpas_wingspan'])
+        rpas_max_roll_rate = float(parser['DEFAULTS']['rpas_max_roll_rate'])
+        rpas_speed_array = self.get_rpas_speed_array(parser)
 
         #Intruder Characteristics
         intruder_speed_array = self.get_intruder_speed_array(parser)
@@ -60,10 +60,10 @@ class Configuration:
         encounter_azimuth_array = self.get_encounter_azimuth_array(parser)
         
         self.daa_spec = DaaSpec(\
-            rtas_max_bank_deg = rtas_max_bank_deg, \
-            rtas_wingspan = rtas_wingspan, \
-            rtas_max_roll_rate = rtas_max_roll_rate, \
-            rtas_speed_array = rtas_speed_array, \
+            rpas_max_bank_deg = rpas_max_bank_deg, \
+            rpas_wingspan = rpas_wingspan, \
+            rpas_max_roll_rate = rpas_max_roll_rate, \
+            rpas_speed_array = rpas_speed_array, \
             intruder_speed_array = intruder_speed_array, \
             daa_declaration_range = daa_declaration_range, \
             daa_fov_deg = daa_fov_deg, \
@@ -80,23 +80,23 @@ class Configuration:
             encounter_azimuth_array = encounter_azimuth_array
             )
         
-    def get_rtas_speed_array(self, parser):
-        custom_rtas_speed_enabled = parser['Settings']['custom_rtas_speed_enabled']
-        custom_rtas_speed_enabled = custom_rtas_speed_enabled.lower().strip()
-        self.custom_rtas_speed_enabled = custom_rtas_speed_enabled in self.valid_true_values
+    def get_rpas_speed_array(self, parser):
+        custom_rpas_speed_enabled = parser['Settings']['custom_rpas_speed_enabled']
+        custom_rpas_speed_enabled = custom_rpas_speed_enabled.lower().strip()
+        self.custom_rpas_speed_enabled = custom_rpas_speed_enabled in self.valid_true_values
 
-        self.min_rtas_speed =  float(parser['DEFAULTS']['min_rtas_speed'])
-        self.max_rtas_speed = float(parser['DEFAULTS']['max_rtas_speed'])
-        self.rtas_speed_interval = float(parser['DEFAULTS']['rtas_speed_interval'])
+        self.min_rpas_speed =  float(parser['DEFAULTS']['min_rpas_speed'])
+        self.max_rpas_speed = float(parser['DEFAULTS']['max_rpas_speed'])
+        self.rpas_speed_interval = float(parser['DEFAULTS']['rpas_speed_interval'])
 
-        self.custom_rtas_speed_array = parser['DEFAULTS']['custom_rtas_speed_array']
+        self.custom_rpas_speed_array = parser['DEFAULTS']['custom_rpas_speed_array']
 
-        if self.custom_rtas_speed_enabled:
-            rtas_speed_array = math_util.createCustArray(self.custom_rtas_speed_array)
+        if self.custom_rpas_speed_enabled:
+            rpas_speed_array = math_util.createCustArray(self.custom_rpas_speed_array)
         else:
-            rtas_speed_array = math_util.make_array(self.min_rtas_speed, self.max_rtas_speed, self.rtas_speed_interval)
+            rpas_speed_array = math_util.make_array(self.min_rpas_speed, self.max_rpas_speed, self.rpas_speed_interval)
             
-        return rtas_speed_array
+        return rpas_speed_array
         
     def get_intruder_speed_array(self, parser):
         custom_intruder_speed_enabled = parser['Settings']['custom_intruder_speed_enabled']
