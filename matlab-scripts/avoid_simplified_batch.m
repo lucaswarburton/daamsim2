@@ -41,5 +41,4 @@ function [turn_angles_arr, t2_arr, turn_angles_ov_arr, t2_ov_arr] = avoid_simpli
         turn_angles_ov_arr(:, k) = ta_ov(:);
         t2_ov_arr(:, k) = t2_ov(:);
     end
-    whos turn_angles_arr t2_arr turn_angles_ov_arr t2_ov_arr
 end
