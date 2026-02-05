@@ -89,6 +89,7 @@ def calculate_for_intruder_speed(intruder_speed):
         results = q.get()
         data.rr_val[results[0]][results[1]] = results[2]
         data.points[results[0]][results[1]] = results[3]
+        
     
     
     
