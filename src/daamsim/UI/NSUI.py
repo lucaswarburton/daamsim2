@@ -48,6 +48,7 @@ class NewSimUIInnerFrame(Frame):
         i += 1
 
         i = self.setup_rpas(i)
+        i = self.setup_rpas(i)
 
         i = self.setup_intruder_chars(i)
 
@@ -112,9 +113,12 @@ class NewSimUIInnerFrame(Frame):
         self.entries["custom_rpas_speed_array"].insert(0, self.cur_settings.custom_rpas_speed_array)
 
         self.labels["custom_rpas_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
+        self.labels["custom_rpas_speed_instructions"] = Label(self, text = "Use commas to separate speeds", bg=self.bg)
         
         self.labels["custom_rpas_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
+        self.labels["custom_rpas_speed_example"] = Label(self, text = "Ex: 10, 15, 20", bg=self.bg)
         
+        self.switch_cust_rpas_speed()
         self.switch_cust_rpas_speed()
         
         return i
@@ -308,6 +312,7 @@ class NewSimUIInnerFrame(Frame):
             self.enable_custom_rpas_speed_array()
         else:
             self.disable_custom_rpas_speed_array()
+            self.disable_custom_rpas_speed_array()
     
     
     def enable_custom_rpas_speed_array(self) -> None:  
@@ -316,15 +321,23 @@ class NewSimUIInnerFrame(Frame):
         
         self.labels["max_rpas_speed"].grid_forget()
         self.entries["max_rpas_speed"].grid_forget()
+        self.labels["max_rpas_speed"].grid_forget()
+        self.entries["max_rpas_speed"].grid_forget()
         
+        self.labels["rpas_speed_interval"].grid_forget()
+        self.entries["rpas_speed_interval"].grid_forget()
         self.labels["rpas_speed_interval"].grid_forget()
         self.entries["rpas_speed_interval"].grid_forget()
         
         self.labels["custom_rpas_speed_array"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         self.entries["custom_rpas_speed_array"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.labels["custom_rpas_speed_array"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["custom_rpas_speed_array"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         
         self.labels["custom_rpas_speed_instructions"].grid(column = 1, row=self.max_rpas_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
+        self.labels["custom_rpas_speed_instructions"].grid(column = 1, row=self.max_rpas_speed_row, columnspan=2, padx=2, pady=2, sticky=W)
         
+        self.labels["custom_rpas_speed_example"].grid(column = 1, row=self.rpas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         self.labels["custom_rpas_speed_example"].grid(column = 1, row=self.rpas_speed_interval_row, columnspan=2, padx=2, pady=2, sticky=W)
         
    
@@ -333,15 +346,23 @@ class NewSimUIInnerFrame(Frame):
         self.entries["custom_rpas_speed_array"].grid_forget()
         
         self.labels["custom_rpas_speed_instructions"].grid_forget()
+        self.labels["custom_rpas_speed_instructions"].grid_forget()
         
         self.labels["custom_rpas_speed_example"].grid_forget()
+        self.labels["custom_rpas_speed_example"].grid_forget()
         
+        self.labels["min_rpas_speed"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["min_rpas_speed"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         self.labels["min_rpas_speed"].grid(column = 1, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         self.entries["min_rpas_speed"].grid(column=2, row=self.min_rpas_speed_row, padx=2, pady=2, sticky=W)
         
         self.labels["max_rpas_speed"].grid(column = 1, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
         self.entries["max_rpas_speed"].grid(column=2, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.labels["max_rpas_speed"].grid(column = 1, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
+        self.entries["max_rpas_speed"].grid(column=2, row=self.max_rpas_speed_row, padx=2, pady=2, sticky=W)
         
+        self.labels["rpas_speed_interval"].grid(column = 1, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
+        self.entries["rpas_speed_interval"].grid(column=2, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
         self.labels["rpas_speed_interval"].grid(column = 1, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
         self.entries["rpas_speed_interval"].grid(column=2, row=self.rpas_speed_interval_row, padx=2, pady=2, sticky=W)
         
@@ -442,7 +463,13 @@ class NewSimUIInnerFrame(Frame):
 
         if(self.use_cust_rpas_speed.get()):
             rpas_speed_array = math_util.createCustArray(self.entries["custom_rpas_speed_array"].get())
+        if(self.use_cust_rpas_speed.get()):
+            rpas_speed_array = math_util.createCustArray(self.entries["custom_rpas_speed_array"].get())
         else:
+            min_speed = float(self.entries["min_rpas_speed"].get())
+            max_speed = float(self.entries["max_rpas_speed"].get())
+            speed_interval = float(self.entries["rpas_speed_interval"].get())
+            rpas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
             min_speed = float(self.entries["min_rpas_speed"].get())
             max_speed = float(self.entries["max_rpas_speed"].get())
             speed_interval = float(self.entries["rpas_speed_interval"].get())

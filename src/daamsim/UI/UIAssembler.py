@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 
 from .DMController import DMController
-from .Window import Window
+from .window import Window
 from .DMUI import DMUIFrame
 from .GMUI import GMUIFrame
 from .NSUI import NewSimUI

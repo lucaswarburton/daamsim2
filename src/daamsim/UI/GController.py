@@ -1,6 +1,6 @@
 from tkinter import messagebox
 
-from . import Graphs
+from .Graphs import PerSpeedPlot
 from data_classes.CurrentData import CurrentData
 
 from . import DMController
@@ -26,6 +26,7 @@ class GraphController:
         azimuth_array = daa_spec.encounter_azimuth_array
         fov = daa_spec.daa_fov_deg
         daa_range = daa_spec.daa_declaration_range
+        rpas_speeds = daa_spec.rpas_speed_array
         rpas_speeds = daa_spec.rpas_speed_array
         intruder_speeds = daa_spec.intruder_speed_array
         
@@ -58,6 +59,7 @@ class GraphController:
     
     def displayAllPerSpeedGraphs(self):
         res = messagebox.askquestion("Warning","This will generate graphs for all combinations of RPAS speed and Intruder speed. Proceed?")
+        res = messagebox.askquestion("Warning","This will generate graphs for all combinations of RPAS speed and Intruder speed. Proceed?")
         if res != "yes":
             return
             
@@ -68,6 +70,7 @@ class GraphController:
         fov = daa_spec.daa_fov_deg
         daa_range = daa_spec.daa_declaration_range
         
+        rpas_speeds = daa_spec.rpas_speed_array
         rpas_speeds = daa_spec.rpas_speed_array
         intruder_speeds = daa_spec.intruder_speed_array
         azimuth_array = daa_spec.encounter_azimuth_array

@@ -42,8 +42,7 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
                 numberOfAzimuthEvaluated += 1
         
   
-    #Sort points based on 
-    
+
     rr = get_daa_rr(numberOfAzimuthEvaluated, numberOfAzimuthsPassed)
     points = (azimuth_array, rmin_array, colour_array)
     return (rr, points)
