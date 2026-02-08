@@ -1,9 +1,9 @@
-from  calculations import graph_evals 
-from data_classes.CurrentData import CurrentData
-
 import matplotlib.pyplot as plt 
 import numpy as np
-import math
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+
+from  calculations import graph_evals 
+from data_classes.CurrentData import CurrentData
 
 FAIL_COLOUR = "red"
 PASS_COLOUR = "green"
@@ -98,6 +98,7 @@ class SurfaceMultiSpeedPlot:
 class LineMultiSpeedPlot:
     KTS_TO_MS = 0.514444
     def __init__(self) -> None:
+        
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
@@ -105,6 +106,7 @@ class LineMultiSpeedPlot:
         self.ax.set_ylabel("R min (m)")
 
         
+    #Note: This section could be improved to reduce holes in the line. The issue is that there are non-continuous sections in how the data is calculated in graph_evals
     def add_points(self, speeds, multi_speed_points):
         if len(speeds) != len(multi_speed_points):
             raise ValueError("Length of speeds and points ")
@@ -115,30 +117,124 @@ class LineMultiSpeedPlot:
             cur_speed = speeds[i]
             points = multi_speed_points[cur_speed]
             
-            pass_x_array = np.array([])
-            pass_y_array = np.array([])
-            pass_z_array = np.array([])
+            lines = []
+            colours = []
             
-            fail_x_array = np.array([])
-            fail_y_array = np.array([])
-            fail_z_array = np.array([])
+            lengths = []
             
             j=0
-            while j < len(points[2]):
-                if points[2][j] == PASS_COLOUR:
-                    pass_x_array = np.append(pass_x_array, points[1][j] * np.cos(points[0][j]))
-                    pass_y_array = np.append(pass_y_array, points[1][j] * np.sin(points[0][j]))
-                    pass_z_array = np.append(pass_z_array, cur_speed)
-                    
-                else:
-                    fail_x_array = np.append(fail_x_array, points[1][j] * np.cos(points[0][j]))
-                    fail_y_array = np.append(fail_y_array, points[1][j] * np.sin(points[0][j]))
-                    fail_z_array = np.append(fail_z_array, cur_speed)
-                j += 1
-    
             
-            self.ax.plot3D(pass_x_array, pass_y_array, pass_z_array, PASS_COLOUR)
-            self.ax.plot3D(fail_x_array, fail_y_array, fail_z_array, FAIL_COLOUR)
+            #Plot set of lines
+            #Note: This section is done due to the fact the dataset is not continuous and we are trying to keep performance when rendering the graph
+            
+            while j < len(points[2]):
+                #Green lines for passing points
+                if points[2][j] == PASS_COLOUR and points[2][j-1] == PASS_COLOUR:
+                    x2 =  points[1][j] * np.cos(points[0][j])
+                    y2 = points[1][j] * np.sin(points[0][j])
+                    z2 =  cur_speed
+                    
+                    x1 =  points[1][j-1] * np.cos(points[0][j-1])
+                    y1 = points[1][j-1] * np.sin(points[0][j-1])
+                    z1 =  cur_speed
+                    
+                    lines.append([tuple([x1, y1, z1]), tuple([x2, y2, z2])])
+                    colours.append(PASS_COLOUR)
+                    
+                    length = np.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+                    
+                    lengths.append(length)
+                
+                #Red lines otherwise
+                else:
+                    x2 =  points[1][j] * np.cos(points[0][j])
+                    y2 = points[1][j] * np.sin(points[0][j])
+                    z2 =  cur_speed
+                    
+                    x1 =  points[1][j-1] * np.cos(points[0][j-1])
+                    y1 = points[1][j-1] * np.sin(points[0][j-1])
+                    z1 =  cur_speed
+                    
+                    lines.append([tuple([x1, y1, z1]), tuple([x2, y2, z2])])
+                    colours.append(FAIL_COLOUR)
+                    
+                    length = np.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+                    
+                    lengths.append(length)
+                j += 1
+                
+            #Now we eleminate extreme outlier lines     
+            #Note: We can use Line3DCollection and add_collection3D to plot these individual lines, but this causes performance issues. Instead let's plot continuous segments    
+            mean = np.mean(lengths)
+            std = np.std(lengths)
+            
+            NUM_STANDARD_DEVIATIONS_TO_OUTLIER = 3
+            
+            
+            j = 0
+            start = 0
+            current_colour = colours[0]
+            #Iterate through individual line segments
+            while j < len(lines):
+                #If this line needs to end because the next segment is too long or is a different colour
+                if (j < len(lines) and (lengths[j] > (mean + (std * NUM_STANDARD_DEVIATIONS_TO_OUTLIER)))):
+                    Xs = []
+                    Ys = []
+                    Zs = []
+                    
+                    k = start
+                    #Add x1 y1 z1 for each line segment to Xs, Ys, Zs
+                    while k <= j:
+                        Xs.append(lines[k][0][0])
+                        Ys.append(lines[k][0][1])
+                        Zs.append(lines[k][0][2])
+                        k += 1
+                    
+                    #Plot this line for Xs, Ys, Zs with curren_colour for the line colour
+                    self.ax.plot3D(Xs, Ys, Zs, current_colour)
+                    
+                    #Because this line segment is an outlier, we want to start after this segment
+                    if j + 1 < len(lines):
+                        start = j + 1
+                        current_colour = (colours[j+1])
+                    
+                elif current_colour != colours[j]:
+                    Xs = []
+                    Ys = []
+                    Zs = []
+                    
+                    k = start
+                    #Add x1 y1 z1 for each line segment to Xs, Ys, Zs
+                    while k <= j:
+                        Xs.append(lines[k][0][0])
+                        Ys.append(lines[k][0][1])
+                        Zs.append(lines[k][0][2])
+                        k += 1
+                    
+                    #Plot this line for Xs, Ys, Zs with curren_colour for the line colour
+                    self.ax.plot3D(Xs, Ys, Zs, current_colour)
+                    
+                    #We can start at this segment because it is just a change in colour
+                    start = j
+                    current_colour = (colours[j])
+                    
+                j += 1
+            
+            Xs = []
+            Ys = []
+            Zs = []
+                    
+            k = start
+            #Add x1 y1 z1 for each line segment to Xs, Ys, Zs
+            while k < j:
+                Xs.append(lines[k][0][0])
+                Ys.append(lines[k][0][1])
+                Zs.append(lines[k][0][2])
+                k += 1
+            
+            self.ax.plot3D(Xs, Ys, Zs, current_colour)
+            
+                
             i += 1
             
         
@@ -232,12 +328,12 @@ class RPASLineMultiSpeedPlot(LineMultiSpeedPlot):
             points[key] = all_points[key][self.rpas_speed]
         return points        
             
-if __name__ == "__main__":
-    plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)
-    azimuth = np.array([-90*np.pi/180, 10*np.pi/180, 90*np.pi/180])
-    rmin = np.array([500,300,400])
-    colour = np.array(["red", "green", "red"])
-    points = (azimuth, rmin, colour)
-    plot1.add_points(points)
-    PerSpeedPlot.show_plt()
+# if __name__ == "__main__":
+#     plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)
+#     azimuth = np.array([-90*np.pi/180, 10*np.pi/180, 90*np.pi/180])
+#     rmin = np.array([500,300,400])
+#     colour = np.array(["red", "green", "red"])
+#     points = (azimuth, rmin, colour)
+#     plot1.add_points(points)
+#     PerSpeedPlot.show_plt()
     

@@ -158,7 +158,7 @@ class MultiSpeedPlotFrame(Frame):
             self.controller.displayRPASSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 0 and self.graph_type_selection.get() == 1:
             self.controller.displayRPASLineGraph(self.speed.get())
-        if self.speed_selection.get() == 1 and self.graph_type_selection.get() == 0:
+        elif self.speed_selection.get() == 1 and self.graph_type_selection.get() == 0:
             self.controller.displayIntruderSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 1 and self.graph_type_selection.get() == 1:
             self.controller.displayIntruderLineGraph(self.speed.get())
