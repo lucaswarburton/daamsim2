@@ -14,6 +14,7 @@ class NewSimController:
         self.master_controller.update_window()
          
     def run_new_sim(self) -> None:
+        self.view.save_current_settings()
         daa_spec = self.view.get_params()
         self.master_controller.calculation_mode()
         batch_calcs(daa_spec)

@@ -12,10 +12,11 @@ class CurrentData:
     _instance = None
     _lock = threading.Lock()
     _ENCODING = "latin-1"
-    _JSONv = "DAAMSIMJSONv1.0"
+    _JSONv = "DAAMSIMJSONv1.2"
 
     _dict_field_names = [
         "rr_val",
+        "points",
         "azimuth_vect",
         "r_min_m",
         "r_min_over",
@@ -39,7 +40,7 @@ class CurrentData:
     def __init__(self) -> None:
         if not hasattr(self, "_initialized"):
             for name in self._dict_field_names:
-                setattr(self, name, np.array([]))
+                setattr(self, name, dict())
             self._initialized = True
             self._sim_state = 0
             self.specs = Configuration().daa_spec

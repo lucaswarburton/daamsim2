@@ -1,4 +1,6 @@
 import numpy as np
+import multiprocessing as mp
+from data_classes.CurrentData import CurrentData
 
 def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range):
     FAIL_COLOUR = "red"
@@ -9,10 +11,11 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
     rmin_array = np.array([])
     colour_array = np.array([])
     
+    #Check Oncoming Points
     i = 0
     for i in range(len(azimuthDegOncoming)):
         if not np.isnan(RminOncoming[i]):
-            azimuth_array = np.append(azimuth_array, azimuthDegOncoming[i]*np.pi/180)
+            azimuth_array = np.append(azimuth_array, np.deg2rad(azimuthDegOncoming[i]) % (2*np.pi))
             rmin_array = np.append(rmin_array, RminOncoming[i])
             
             if abs(azimuthDegOncoming[i]) <= fov/2 and RminOncoming[i] < daa_range:
@@ -22,11 +25,12 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
                 colour_array = np.append(colour_array, FAIL_COLOUR)
             
             numberOfAzimuthEvaluated += 1
-            
+    
+    #Check Overtake Points
     if not (azimuthOvertake.size == 0):    
         for i in range(len(azimuthOvertake)):
             if not np.isnan(RminOvertake[i]):
-                azimuth_array = np.append(azimuth_array, azimuthOvertake[i]*np.pi/180)
+                azimuth_array = np.append(azimuth_array, np.deg2rad(azimuthDegOncoming[i]) % (2*np.pi))
                 rmin_array = np.append(rmin_array, RminOvertake[i])
             
                 if abs(azimuthOvertake[i]) <= fov/2 and RminOvertake[i] < daa_range:
@@ -38,7 +42,7 @@ def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, Rmi
                 numberOfAzimuthEvaluated += 1
         
   
-    print(numberOfAzimuthEvaluated)
+
     rr = get_daa_rr(numberOfAzimuthEvaluated, numberOfAzimuthsPassed)
     points = (azimuth_array, rmin_array, colour_array)
     return (rr, points)
@@ -48,4 +52,105 @@ def get_daa_rr(num_az_eval, num_az_pass):
     if num_az_eval == 0:
         return 0.0
     return float((num_az_eval-num_az_pass)/num_az_eval)
+
+def calc_worker(intruder_speed, rpas_speed, azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range, q: mp.Queue):
+    results = per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range)
+    q.put(tuple([intruder_speed, rpas_speed] + list(results)))
+
+def calculate_rr_points_for_intruder_speed(intruder_speed):
+    data = CurrentData()
+    processes = []
+    q = mp.Queue()
+    
+    daa_spec = data.specs
+    r_min = data.r_min_m
+    r_min_overtake = data.r_min_over
+    azimuth_array = daa_spec.encounter_azimuth_array
+    fov = daa_spec.daa_fov_deg
+    daa_range = daa_spec.daa_declaration_range
+    rpas_speeds = daa_spec.rpas_speed_array
+    
+    for rpas_speed in rpas_speeds:
+        exists = False
+        if intruder_speed in data.rr_val.keys():
+            if rpas_speed in data.rr_val[intruder_speed].keys():
+                exists = True
+                continue
+                
+        if not exists:
+            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
+            processes.append(p)
+            
+    for p in processes:
+        p.start()
+        
+    
+    i = 0
+    while i < len(processes):
+        results = q.get()
+        
+        if results[0] not in data.rr_val.keys():
+            data.rr_val[results[0]] = dict()
+            
+        if results[0] not in data.points.keys():
+            data.points[results[0]] = dict()
+        
+        data.rr_val[results[0]][results[1]] = results[2]
+        data.points[results[0]][results[1]] = results[3]
+        i +=1 
+        
+    for p in processes:
+        p.join()
+        
+    
+        
+    
+    
+    
+def calculate_rr_points_for_rpas_speed(rpas_speed):
+    data = CurrentData()
+    processes = []
+    q = mp.Queue()
+    
+    daa_spec = data.specs
+    r_min = data.r_min_m
+    r_min_overtake = data.r_min_over
+    azimuth_array = daa_spec.encounter_azimuth_array
+    fov = daa_spec.daa_fov_deg
+    daa_range = daa_spec.daa_declaration_range
+    intruder_speeds = daa_spec.intruder_speed_array
+    
+    for intruder_speed in intruder_speeds:
+        exists = False
+        if intruder_speed in data.rr_val.keys():
+            if rpas_speed in data.rr_val[intruder_speed].keys():
+                exists = True
+                continue
+                
+        if not exists:
+            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
+            processes.append(p)
+            
+    for p in processes:
+        p.start()
+       
+        
+    i = 0
+    while i < len(processes):
+        results = q.get()
+        
+        if results[0] not in data.rr_val.keys():
+            data.rr_val[results[0]] = dict()
+            
+        if results[0] not in data.points.keys():
+            data.points[results[0]] = dict()
+        
+        data.rr_val[results[0]][results[1]] = results[2]
+        data.points[results[0]][results[1]] = results[3]
+        i +=1 
+        
+    for p in processes:
+        p.join()
+        
+
 
