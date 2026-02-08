@@ -56,7 +56,7 @@ class PerSpeedPlot:
         
 class SurfaceMultiSpeedPlot:
     KTS_TO_MS = 0.514444
-    def __init__(self, cmap = "plasma") -> None:
+    def __init__(self, cmap = "plasma", down_sample_factor = 1) -> None:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
@@ -64,6 +64,7 @@ class SurfaceMultiSpeedPlot:
         self.ax.set_xlabel("R min (m)")
         self.ax.set_ylabel("R min (m)")
  
+        self.down_sample_factor = down_sample_factor
     
     # def set_title(self, title):
     #     self.ax.set_title(title)
@@ -82,16 +83,15 @@ class SurfaceMultiSpeedPlot:
         while i < len(speeds):
             cur_speed = speeds[i]
             points = multi_speed_points[speeds[i]]
-            x = points[1] * np.cos(np.deg2rad(points[0]))
+            x = points[1] * np.cos(points[0])
             Xs = np.append(Xs, x)
-            y = points[1] * np.sin(np.deg2rad(points[0]))
+            y = points[1] * np.sin(points[0])
             Ys= np.append(Ys, y)
             z = np.full(len(points[1]), cur_speed)
             Zs = np.append(Zs, z)
             i += 1
         
-        
-        surf = self.ax.plot_trisurf(Xs, Ys, Zs, linewidth=0, antialiased=False, cmap = self.cmap)
+        surf = self.ax.plot_trisurf(Xs[::self.down_sample_factor], Ys[::self.down_sample_factor], Zs[::self.down_sample_factor], linewidth=0, antialiased=False, cmap = self.cmap)
         self.fig.colorbar(surf)
         
     
@@ -113,7 +113,7 @@ class LineMultiSpeedPlot:
         keys = list(multi_speed_points.keys())
         while i < len(speeds):
             cur_speed = speeds[i]
-            points = multi_speed_points[keys[i]]
+            points = multi_speed_points[cur_speed]
             
             pass_x_array = np.array([])
             pass_y_array = np.array([])
@@ -126,25 +126,27 @@ class LineMultiSpeedPlot:
             j=0
             while j < len(points[2]):
                 if points[2][j] == PASS_COLOUR:
-                    np.append(pass_x_array, points[1][j] * np.cos(np.deg2rad(points[0][j])))
-                    np.append(pass_y_array, points[1][j] * np.sin(np.deg2rad(points[0][j])))
-                    np.append(pass_z_array, cur_speed)
+                    pass_x_array = np.append(pass_x_array, points[1][j] * np.cos(points[0][j]))
+                    pass_y_array = np.append(pass_y_array, points[1][j] * np.sin(points[0][j]))
+                    pass_z_array = np.append(pass_z_array, cur_speed)
                     
                 else:
-                    np.append(fail_x_array, points[1][j] * np.cos(np.deg2rad(points[0][j])))
-                    np.append(fail_y_array, points[1][j] * np.sin(np.deg2rad(points[0][j])))
-                    np.append(fail_z_array, cur_speed)
+                    fail_x_array = np.append(fail_x_array, points[1][j] * np.cos(points[0][j]))
+                    fail_y_array = np.append(fail_y_array, points[1][j] * np.sin(points[0][j]))
+                    fail_z_array = np.append(fail_z_array, cur_speed)
                 j += 1
+    
             
+            self.ax.plot3D(pass_x_array, pass_y_array, pass_z_array, PASS_COLOUR)
+            self.ax.plot3D(fail_x_array, fail_y_array, fail_z_array, FAIL_COLOUR)
             i += 1
             
         
-        self.ax.plot3D(pass_x_array, pass_y_array, pass_z_array, PASS_COLOUR)
-        self.ax.plot3D(fail_x_array, fail_y_array, fail_z_array, FAIL_COLOUR)
+        
   
 class IntruderSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
-    def __init__(self, intruder_speed):
-        super().__init__()
+    def __init__(self, intruder_speed, down_sample_factor = 1):
+        super().__init__(down_sample_factor=down_sample_factor)
         self.intruder_speed = intruder_speed
         self.data = CurrentData()
         degree_symbol = "\N{DEGREE SIGN}"
@@ -164,14 +166,14 @@ class IntruderSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
     
     
 class RPASSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
-    def __init__(self, rpas_speed):
-        super().__init__()
+    def __init__(self, rpas_speed, down_sample_factor = 1):
+        super().__init__(down_sample_factor=down_sample_factor)
         self.rpas_speed = rpas_speed
         self.data = CurrentData()
         degree_symbol = "\N{DEGREE SIGN}"
         title = "R min 3D Plot with RPAS Speed: " + str(rpas_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various Intruder Speeds."
         self.ax.set_title(title)
-        self.ax.set_zlabel("RPAS speed (kts)")
+        self.ax.set_zlabel("Intruder speed (kts)")
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)
         
         points = self.assemble_points()
@@ -215,7 +217,7 @@ class RPASLineMultiSpeedPlot(LineMultiSpeedPlot):
         degree_symbol = "\N{DEGREE SIGN}"
         title = "R min 3D Plot with RPAS Speed: " + str(rpas_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various Intruder Speeds. (No See)"
         self.ax.set_title(title)
-        self.ax.set_zlabel("RPAS speed (kts)")
+        self.ax.set_zlabel("Intruder speed (kts)")
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)
         
         points = self.assemble_points()

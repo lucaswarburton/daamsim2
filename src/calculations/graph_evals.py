@@ -131,11 +131,10 @@ def calculate_rr_points_for_rpas_speed(rpas_speed):
             
     for p in processes:
         p.start()
+       
         
-    for p in processes:
-        p.join()
-        
-    while not q.empty():
+    i = 0
+    while i < len(processes):
         results = q.get()
         
         if results[0] not in data.rr_val.keys():
@@ -146,4 +145,10 @@ def calculate_rr_points_for_rpas_speed(rpas_speed):
         
         data.rr_val[results[0]][results[1]] = results[2]
         data.points[results[0]][results[1]] = results[3]
+        i +=1 
+        
+    for p in processes:
+        p.join()
+        
+
 

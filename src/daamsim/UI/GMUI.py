@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 
 from data_classes.CurrentData import CurrentData
+from daamsim.Config import Configuration
 
 class GMUIFrame(Frame):
     def __init__(self, controller, master, bg = "lime green"):
@@ -154,11 +155,11 @@ class MultiSpeedPlotFrame(Frame):
     def create_graph(self):
         #RPAS Surface Graph
         if self.speed_selection.get() == 0 and self.graph_type_selection.get() == 0:
-            self.controller.displayRPASSurfaceGraph(self.speed.get())
+            self.controller.displayRPASSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 0 and self.graph_type_selection.get() == 1:
             self.controller.displayRPASLineGraph(self.speed.get())
         if self.speed_selection.get() == 1 and self.graph_type_selection.get() == 0:
-            self.controller.displayIntruderSurfaceGraph(self.speed.get())
+            self.controller.displayIntruderSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 1 and self.graph_type_selection.get() == 1:
             self.controller.displayIntruderLineGraph(self.speed.get())
     
@@ -179,10 +180,10 @@ class MultiSpeedPlotFrame(Frame):
             self.speed_selection = IntVar(self, 0)
             
             self.rpas_radio_button = Radiobutton(self, text="RPAS Speed", variable=self.speed_selection, value = 0, command=self.update_speed_select, bg=self.bg)
-            self.rpas_radio_button.grid(column=0, row = 3)
+            self.rpas_radio_button.grid(column=0, row = 3, sticky=W)
             
             self.intruder_radio_button = Radiobutton(self, text="Intruder Speed", variable=self.speed_selection, value = 1, command=self.update_speed_select, bg=self.bg)
-            self.intruder_radio_button.grid(column=1, row=3)
+            self.intruder_radio_button.grid(column=1, row=3, sticky=W)
             
             self.speed = DoubleVar()
             self.speed_label = Label(self, text = "Select Given Speed (kts):", bg=self.bg, font=("Ariel",12, "bold"))
@@ -197,14 +198,22 @@ class MultiSpeedPlotFrame(Frame):
             self.graph_type_selection = IntVar(self, 0)
             
             self.surface_radio_button = Radiobutton(self, text="Surface", variable=self.graph_type_selection, value = 0, bg=self.bg)
-            self.surface_radio_button.grid(column=0, row = 6)
+            self.surface_radio_button.grid(column=0, row = 6, sticky=W)
             
-            self.lines_radio_button = Radiobutton(self, text="Lines", variable=self.graph_type_selection, value = 1, bg=self.bg)
-            self.lines_radio_button.grid(column=1, row=6)
+            self.lines_radio_button = Radiobutton(self, text="Line (Pass Fail)", variable=self.graph_type_selection, value = 1, bg=self.bg)
+            self.lines_radio_button.grid(column=1, row=6, sticky=W)
             
+            self.down_sample_factor = IntVar()
+            self.down_sample_factor.set(Configuration().down_sample_factor)
+            
+            self.down_sample_factor_label = Label(self, text="Down Sample Factor (3D surface Plots Only):", bg=self.bg, font=("Ariel",10, "bold"))
+            self.down_sample_factor_label.grid(column=0, row=7, columnspan=2, padx=2, pady=2, sticky=W)
+            
+            self.down_sample_factor_entry = Scale(self, from_=1, to=100, orient=HORIZONTAL, variable=self.down_sample_factor, bg=self.bg, bd=0, highlightthickness=0, length=400)
+            self.down_sample_factor_entry.grid(column=2, row=7, columnspan=5, padx=2, pady=2, sticky=W)
             
             self.display_plot_button = Button(self, text="Create Graph", command=self.create_graph)
-            self.display_plot_button.grid(column=0, row=7, padx=2, pady=10, sticky= W)
+            self.display_plot_button.grid(column=0, row=8, padx=2, pady=10, sticky= W)
         
             # self.display_all_button = Button(self, text="Create All Graphs", command=self.controller.displayAllPerSpeedGraphs)
             # self.display_all_button.grid(column=0, row=5, padx=2, pady=2, sticky= W)
