@@ -1,6 +1,6 @@
 import numpy as np
-from multiprocessing import Process, Queue
-from data_classes import CurrentData
+import multiprocessing as mp
+from data_classes.CurrentData import CurrentData
 
 def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range):
     FAIL_COLOUR = "red"
@@ -51,15 +51,14 @@ def get_daa_rr(num_az_eval, num_az_pass):
         return 0.0
     return float((num_az_eval-num_az_pass)/num_az_eval)
 
-def calc_worker(intruder_speed, rpas_speed, azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range, q: Queue):
-    q.cancel_join_thread()
-    results = per_speed_graph_evals.convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range)
-    q.put([intruder_speed, rpas_speed] + results)
+def calc_worker(intruder_speed, rpas_speed, azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range, q: mp.Queue):
+    results = per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range)
+    q.put(tuple([intruder_speed, rpas_speed] + list(results)))
 
-def calculate_for_intruder_speed(intruder_speed):
+def calculate_rr_points_for_intruder_speed(intruder_speed):
     data = CurrentData()
     processes = []
-    q = Queue()
+    q = mp.Queue()
     
     daa_spec = data.specs
     r_min = data.r_min_m
@@ -73,30 +72,43 @@ def calculate_for_intruder_speed(intruder_speed):
         exists = False
         if intruder_speed in data.rr_val.keys():
             if rpas_speed in data.rr_val[intruder_speed].keys():
+                exists = True
                 continue
                 
         if not exists:
-            p = Process(taget = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
+            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
             processes.append(p)
             
     for p in processes:
         p.start()
         
+    
+    i = 0
+    while i < len(processes):
+        results = q.get()
+        
+        if results[0] not in data.rr_val.keys():
+            data.rr_val[results[0]] = dict()
+            
+        if results[0] not in data.points.keys():
+            data.points[results[0]] = dict()
+        
+        data.rr_val[results[0]][results[1]] = results[2]
+        data.points[results[0]][results[1]] = results[3]
+        i +=1 
+        
     for p in processes:
         p.join()
         
-    while not q.empty():
-        results = q.get()
-        data.rr_val[results[0]][results[1]] = results[2]
-        data.points[results[0]][results[1]] = results[3]
+    
         
     
     
     
-def calculate_for_rpas_speed(rpas_speed):
+def calculate_rr_points_for_rpas_speed(rpas_speed):
     data = CurrentData()
     processes = []
-    q = Queue()
+    q = mp.Queue()
     
     daa_spec = data.specs
     r_min = data.r_min_m
@@ -110,10 +122,11 @@ def calculate_for_rpas_speed(rpas_speed):
         exists = False
         if intruder_speed in data.rr_val.keys():
             if rpas_speed in data.rr_val[intruder_speed].keys():
+                exists = True
                 continue
                 
         if not exists:
-            p = Process(taget = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
+            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
             processes.append(p)
             
     for p in processes:
@@ -124,6 +137,13 @@ def calculate_for_rpas_speed(rpas_speed):
         
     while not q.empty():
         results = q.get()
+        
+        if results[0] not in data.rr_val.keys():
+            data.rr_val[results[0]] = dict()
+            
+        if results[0] not in data.points.keys():
+            data.points[results[0]] = dict()
+        
         data.rr_val[results[0]][results[1]] = results[2]
         data.points[results[0]][results[1]] = results[3]
 

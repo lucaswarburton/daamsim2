@@ -1,4 +1,5 @@
-from calculations.graph_evals import per_speed_graph_evals
+from  calculations import graph_evals 
+from data_classes.CurrentData import CurrentData
 
 import matplotlib.pyplot as plt 
 import numpy as np
@@ -47,7 +48,7 @@ class PerSpeedPlot:
         self.ax.scatter(points[0], points[1], c=points[2])
             
     def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range) -> list:
-        return per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
+        return graph_evals.per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
             
             
     def show_plt() -> None:
@@ -62,11 +63,7 @@ class SurfaceMultiSpeedPlot:
         self.cmap = cmap
         self.ax.set_xlabel("R min (m)")
         self.ax.set_ylabel("R min (m)")
-        # rpas_speed = round(rpas_speed * 0.514444, 1)
-        # intruder_speed = round(intruder_speed * 0.514444, 1)  
-        # degree_symbol = "\N{DEGREE SIGN}"
-        # title = "RPAS Speed: " + str(rpas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
-        # self.ax.set_title(title)
+ 
     
     # def set_title(self, title):
     #     self.ax.set_title(title)
@@ -79,15 +76,22 @@ class SurfaceMultiSpeedPlot:
         Xs = np.array([])
         Ys = np.array([])
         Zs = np.array([])
+        
         i=0
+        keys = list(multi_speed_points.keys())
         while i < len(speeds):
             cur_speed = speeds[i]
-            points = multi_speed_points[i]
-            Xs.append(points[1] * np.cos(points[0]))
-            Ys.append(points[1] * np.sin(points[0]))
-            Zs.append(np.full(len(points[1]), cur_speed))
+            points = multi_speed_points[speeds[i]]
+            x = points[1] * np.cos(np.deg2rad(points[0]))
+            Xs = np.append(Xs, x)
+            y = points[1] * np.sin(np.deg2rad(points[0]))
+            Ys= np.append(Ys, y)
+            z = np.full(len(points[1]), cur_speed)
+            Zs = np.append(Zs, z)
+            i += 1
         
-        surf = self.ax.plot_surface(Xs, Ys, Zs, cmap = self.cmap)
+        
+        surf = self.ax.plot_trisurf(Xs, Ys, Zs, linewidth=0, antialiased=False, cmap = self.cmap)
         self.fig.colorbar(surf)
         
     
@@ -97,56 +101,134 @@ class LineMultiSpeedPlot:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
+        self.ax.set_xlabel("R min (m)")
+        self.ax.set_ylabel("R min (m)")
 
-        # rpas_speed = round(rpas_speed * 0.514444, 1)
-        # intruder_speed = round(intruder_speed * 0.514444, 1)  
-        # degree_symbol = "\N{DEGREE SIGN}"
-        # title = "RPAS Speed: " + str(rpas_speed) + "m/s, Intruder Speed: " + str(intruder_speed) + "m/s, \n FOV = " + str(daa_fov) + degree_symbol + " , Range = " + str(daa_declaration_range) + "m, Risk Ratio = " + str(rr)
-        # self.ax.set_title(title)
-        
-    # def set_title(self, title):
-    #     self.ax.set_title(title)
-        
-    # def set_zlabel(self, zlabel):
-    #     self.ax.set_xlabel(zlabel)
         
     def add_points(self, speeds, multi_speed_points):
         if len(speeds) != len(multi_speed_points):
             raise ValueError("Length of speeds and points ")
         
         i=0
+        keys = list(multi_speed_points.keys())
         while i < len(speeds):
             cur_speed = speeds[i]
-            points = multi_speed_points[i]
+            points = multi_speed_points[keys[i]]
             
-            pass_x_array = []
-            pass_y_array = []
-            pass_z_array = []
+            pass_x_array = np.array([])
+            pass_y_array = np.array([])
+            pass_z_array = np.array([])
             
-            fail_x_array = []
-            fail_y_array = []
-            fail_z_array = []
+            fail_x_array = np.array([])
+            fail_y_array = np.array([])
+            fail_z_array = np.array([])
             
             j=0
             while j < len(points[2]):
                 if points[2][j] == PASS_COLOUR:
-                    pass_x_array.append(points[1][j] * np.cos(points[0][j]))
-                    pass_y_array.append(points[1][j] * np.sin(points[0][j]))
-                    pass_z_array.append(cur_speed)
+                    np.append(pass_x_array, points[1][j] * np.cos(np.deg2rad(points[0][j])))
+                    np.append(pass_y_array, points[1][j] * np.sin(np.deg2rad(points[0][j])))
+                    np.append(pass_z_array, cur_speed)
                     
                 else:
-                    fail_x_array.append(points[1][j] * np.cos(points[0][j]))
-                    fail_y_array.append(points[1][j] * np.sin(points[0][j]))
-                    fail_z_array.append(cur_speed)
+                    np.append(fail_x_array, points[1][j] * np.cos(np.deg2rad(points[0][j])))
+                    np.append(fail_y_array, points[1][j] * np.sin(np.deg2rad(points[0][j])))
+                    np.append(fail_z_array, cur_speed)
                 j += 1
             
+            i += 1
             
         
         self.ax.plot3D(pass_x_array, pass_y_array, pass_z_array, PASS_COLOUR)
         self.ax.plot3D(fail_x_array, fail_y_array, fail_z_array, FAIL_COLOUR)
   
+class IntruderSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
+    def __init__(self, intruder_speed):
+        super().__init__()
+        self.intruder_speed = intruder_speed
+        self.data = CurrentData()
+        degree_symbol = "\N{DEGREE SIGN}"
+        title = "R min 3D Plot with Intruder Speed: " + str(intruder_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various RPAS Speeds."
+        self.ax.set_title(title)
+        self.ax.set_zlabel("RPAS speed (kts)")
+        graph_evals.calculate_rr_points_for_intruder_speed(intruder_speed)
         
+        points = self.assemble_points()
+        self.add_points(self.data.specs.rpas_speed_array, points)
         
+        plt.show()
+        
+    def assemble_points(self):
+        all_points = self.data.points
+        return all_points[self.intruder_speed]
+    
+    
+class RPASSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
+    def __init__(self, rpas_speed):
+        super().__init__()
+        self.rpas_speed = rpas_speed
+        self.data = CurrentData()
+        degree_symbol = "\N{DEGREE SIGN}"
+        title = "R min 3D Plot with RPAS Speed: " + str(rpas_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various Intruder Speeds."
+        self.ax.set_title(title)
+        self.ax.set_zlabel("RPAS speed (kts)")
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)
+        
+        points = self.assemble_points()
+        self.add_points(self.data.specs.intruder_speed_array, points)
+        
+        plt.show()
+        
+    def assemble_points(self):
+        all_points = self.data.points
+        points = dict()
+        for key in all_points.keys():
+            points[key] = all_points[key][self.rpas_speed]
+        return points
+
+class IntruderLineMultiSpeedPlot(LineMultiSpeedPlot):
+    def __init__(self, intruder_speed):
+        super().__init__()
+        self.intruder_speed = intruder_speed
+        self.data = CurrentData()
+        degree_symbol = "\N{DEGREE SIGN}"
+        title = "R min 3D Plot with Intruder Speed: " + str(intruder_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various RPAS Speeds. (No See)"
+        self.ax.set_title(title)
+        self.ax.set_zlabel("RPAS speed (kts)")
+        graph_evals.calculate_rr_points_for_intruder_speed(intruder_speed)
+        
+        points = self.assemble_points()
+        self.add_points(self.data.specs.rpas_speed_array, points)
+        
+        plt.show()
+        
+    def assemble_points(self):
+        all_points = self.data.points
+        return all_points[self.intruder_speed]
+    
+    
+class RPASLineMultiSpeedPlot(LineMultiSpeedPlot):
+    def __init__(self, rpas_speed):
+        super().__init__()
+        self.rpas_speed = rpas_speed
+        self.data = CurrentData()
+        degree_symbol = "\N{DEGREE SIGN}"
+        title = "R min 3D Plot with RPAS Speed: " + str(rpas_speed) + "kts, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg) + degree_symbol +"m/s, \n FOV = " + str(self.data.specs.daa_fov_deg) + degree_symbol + " , Range = " + str(self.data.specs.daa_declaration_range) + "m, and various Intruder Speeds. (No See)"
+        self.ax.set_title(title)
+        self.ax.set_zlabel("RPAS speed (kts)")
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)
+        
+        points = self.assemble_points()
+        self.add_points(self.data.specs.intruder_speed_array, points)
+        
+        plt.show()
+        
+    def assemble_points(self):
+        all_points = self.data.points
+        points = dict()
+        for key in all_points.keys():
+            points[key] = all_points[key][self.rpas_speed]
+        return points        
             
 if __name__ == "__main__":
     plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)

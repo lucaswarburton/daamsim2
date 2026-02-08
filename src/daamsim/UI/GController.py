@@ -1,6 +1,6 @@
 from tkinter import messagebox
 
-from .Graphs import PerSpeedPlot
+from . import Graphs
 from data_classes.CurrentData import CurrentData
 
 from . import DMController
@@ -37,21 +37,18 @@ class GraphController:
                     results = [data.rr_val[intruder_speed][rpas_speed], data.points[intruder_speed][rpas_speed]]
                 
             if not exists:
-                results = PerSpeedPlot.convert_data(azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)
+                results = Graphs.PerSpeedPlot.convert_data(azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)
                 data.rr_val[intruder_speed][rpas_speed] = results[0]
                 data.points[intruder_speed][rpas_speed] = results[1]
                 
             rr = results[0]
             points = results[1]
-            plt = PerSpeedPlot(rpas_speed, intruder_speed, round(rr, 2), daa_range, fov)
+            plt = Graphs.PerSpeedPlot(rpas_speed, intruder_speed, round(rr, 2), daa_range, fov)
             plt.add_points(points)
-            PerSpeedPlot.show_plt()
+            Graphs.PerSpeedPlot.show_plt()
         else:
             messagebox.showerror("Invalid RPAS or Intruder speed!")
             
-        
-        
-    
     
     def displayAllPerSpeedGraphs(self):
         res = messagebox.askquestion("Warning","This will generate graphs for all combinations of RPAS speed and Intruder speed. Proceed?")
@@ -73,13 +70,28 @@ class GraphController:
             in_speed = round(in_speed, 3)
             for rpas_speed in rpas_speeds:
                 rpas_speed = round(rpas_speed, 3)
-                results = PerSpeedPlot.convert_data(azimuth_array, r_min[in_speed][rpas_speed], azimuth_array, r_min_overtake[in_speed][rpas_speed], fov, daa_range)
+                results = Graphs.PerSpeedPlot.convert_data(azimuth_array, r_min[in_speed][rpas_speed], azimuth_array, r_min_overtake[in_speed][rpas_speed], fov, daa_range)
                 rr = results[0]
                 points = results[1]
-                plt = PerSpeedPlot(rpas_speed, in_speed, round(rr, 2), daa_range, fov)
+                plt = Graphs.PerSpeedPlot(rpas_speed, in_speed, round(rr, 2), daa_range, fov)
                 plt.add_points(points)
         
-        PerSpeedPlot.show_plt()
+        Graphs.PerSpeedPlot.show_plt()
+        
+    def displayRPASSurfaceGraph(self, rpas_speed):
+        Graphs.RPASSurfaceMultiSpeedPlot(rpas_speed)
+        
+    def displayIntruderSurfaceGraph(self, intruder_speed):
+        Graphs.IntruderSurfaceMultiSpeedPlot(intruder_speed)
+        
+    def displayRPASLineGraph(self, rpas_speed):
+        Graphs.RPASLineMultiSpeedPlot(rpas_speed)
+        
+    def displayIntruderLineGraph(self, intruder_speed):
+        Graphs.IntruderLineMultiSpeedPlot(intruder_speed)
+        
+
+        
 
             
             
