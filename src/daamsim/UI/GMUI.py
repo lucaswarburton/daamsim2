@@ -157,11 +157,11 @@ class MultiSpeedPlotFrame(Frame):
         if self.speed_selection.get() == 0 and self.graph_type_selection.get() == 0:
             self.controller.displayRPASSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 0 and self.graph_type_selection.get() == 1:
-            self.controller.displayRPASLineGraph(self.speed.get())
+            self.controller.displayRPASLineGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 1 and self.graph_type_selection.get() == 0:
             self.controller.displayIntruderSurfaceGraph(self.speed.get(), self.down_sample_factor.get())
         elif self.speed_selection.get() == 1 and self.graph_type_selection.get() == 1:
-            self.controller.displayIntruderLineGraph(self.speed.get())
+            self.controller.displayIntruderLineGraph(self.speed.get(), self.down_sample_factor.get())
     
     # def create_all_graphs(self):
         
@@ -206,7 +206,7 @@ class MultiSpeedPlotFrame(Frame):
             self.down_sample_factor = IntVar()
             self.down_sample_factor.set(Configuration().down_sample_factor)
             
-            self.down_sample_factor_label = Label(self, text="Down Sample Factor (3D surface Plots Only):", bg=self.bg, font=("Ariel",10, "bold"))
+            self.down_sample_factor_label = Label(self, text="Down Sample Factor:", bg=self.bg, font=("Ariel",10, "bold"))
             self.down_sample_factor_label.grid(column=0, row=7, columnspan=2, padx=2, pady=2, sticky=W)
             
             self.down_sample_factor_entry = Scale(self, from_=1, to=100, orient=HORIZONTAL, variable=self.down_sample_factor, bg=self.bg, bd=0, highlightthickness=0, length=400)

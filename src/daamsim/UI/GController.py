@@ -1,10 +1,10 @@
 from tkinter import messagebox
 
-from .Graphs import PerSpeedPlot
 from data_classes.CurrentData import CurrentData
 
 from . import DMController
 from . import GMUI
+from . import Graphs
 
 class GraphController:
     def __init__(self, master_controller: DMController.DMController):
@@ -109,11 +109,11 @@ class GraphController:
     def displayIntruderSurfaceGraph(self, intruder_speed, down_sample_factor):
         Graphs.IntruderSurfaceMultiSpeedPlot(intruder_speed, down_sample_factor)
         
-    def displayRPASLineGraph(self, rpas_speed):
-        Graphs.RPASLineMultiSpeedPlot(rpas_speed)
+    def displayRPASLineGraph(self, rpas_speed, down_sample_factor):
+        Graphs.RPASLineMultiSpeedPlot(rpas_speed, down_sample_factor)
         
-    def displayIntruderLineGraph(self, intruder_speed):
-        Graphs.IntruderLineMultiSpeedPlot(intruder_speed)
+    def displayIntruderLineGraph(self, intruder_speed, down_sample_factor):
+        Graphs.IntruderLineMultiSpeedPlot(intruder_speed, down_sample_factor)
         
 
         

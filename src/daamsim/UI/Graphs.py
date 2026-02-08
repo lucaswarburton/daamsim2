@@ -97,13 +97,13 @@ class SurfaceMultiSpeedPlot:
     
 class LineMultiSpeedPlot:
     KTS_TO_MS = 0.514444
-    def __init__(self) -> None:
-        
+    def __init__(self, down_sample_factor = 1) -> None:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
         self.ax.set_xlabel("R min (m)")
         self.ax.set_ylabel("R min (m)")
+        self.down_sample_factor = down_sample_factor
 
         
     #Note: This section could be improved to reduce holes in the line. The issue is that there are non-continuous sections in how the data is calculated in graph_evals
@@ -161,7 +161,7 @@ class LineMultiSpeedPlot:
                     length = np.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
                     
                     lengths.append(length)
-                j += 1
+                j += self.down_sample_factor
                 
             #Now we eleminate extreme outlier lines     
             #Note: We can use Line3DCollection and add_collection3D to plot these individual lines, but this causes performance issues. Instead let's plot continuous segments    
@@ -285,8 +285,8 @@ class RPASSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
         return points
 
 class IntruderLineMultiSpeedPlot(LineMultiSpeedPlot):
-    def __init__(self, intruder_speed):
-        super().__init__()
+    def __init__(self, intruder_speed, down_sample_factor = 1):
+        super().__init__(down_sample_factor= down_sample_factor)
         self.intruder_speed = intruder_speed
         self.data = CurrentData()
         degree_symbol = "\N{DEGREE SIGN}"
@@ -306,8 +306,8 @@ class IntruderLineMultiSpeedPlot(LineMultiSpeedPlot):
     
     
 class RPASLineMultiSpeedPlot(LineMultiSpeedPlot):
-    def __init__(self, rpas_speed):
-        super().__init__()
+    def __init__(self, rpas_speed, down_sample_factor = 1):
+        super().__init__(down_sample_factor= down_sample_factor)
         self.rpas_speed = rpas_speed
         self.data = CurrentData()
         degree_symbol = "\N{DEGREE SIGN}"
