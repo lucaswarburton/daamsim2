@@ -53,14 +53,26 @@ def get_daa_rr(num_az_eval, num_az_pass):
         return 0.0
     return float((num_az_eval-num_az_pass)/num_az_eval)
 
-def calc_worker(intruder_speed, rpas_speed, azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range, q: mp.Queue):
-    results = per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range)
-    q.put(tuple([intruder_speed, rpas_speed] + list(results)))
+class WorkerData:
+    def __init__(self, intruder_speed, rpas_speed, azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range):
+        self.intruder_speed = intruder_speed
+        self.rpas_speed = rpas_speed
+        self.azimuthDegOncoming = azimuthDegOncoming
+        self.RminOncoming = RminOncoming
+        self.azimuthOvertake = azimuthOvertake
+        self.RminOvertake = RminOvertake
+        self.fov = fov
+        self.daa_range = daa_range
+    
+
+def calc_worker(data: WorkerData):
+    results = per_speed_graph_evals(data.azimuthDegOncoming, data.RminOncoming, data.azimuthOvertake, data.RminOvertake, data.fov, data.daa_range)
+    return tuple([data.intruder_speed, data.rpas_speed] + list(results))
 
 def calculate_rr_points_for_intruder_speed(intruder_speed):
     data = CurrentData()
-    processes = []
-    q = mp.Queue()
+    queued_data = []
+    results = []
     
     daa_spec = data.specs
     r_min = data.r_min_m
@@ -78,29 +90,23 @@ def calculate_rr_points_for_intruder_speed(intruder_speed):
                 continue
                 
         if not exists:
-            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
-            processes.append(p)
+            new_data = WorkerData(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)            
+            queued_data.append(new_data)
             
-    for p in processes:
-        p.start()
+    with mp.Pool(mp.cpu_count()) as p:
+        results = p.map(calc_worker, queued_data)
         
     
-    i = 0
-    while i < len(processes):
-        results = q.get()
-        
-        if results[0] not in data.rr_val.keys():
-            data.rr_val[results[0]] = dict()
+    for result in results: 
+        if result[0] not in data.rr_val.keys():
+            data.rr_val[result[0]] = dict()
             
-        if results[0] not in data.points.keys():
-            data.points[results[0]] = dict()
+        if result[0] not in data.points.keys():
+            data.points[result[0]] = dict()
         
-        data.rr_val[results[0]][results[1]] = results[2]
-        data.points[results[0]][results[1]] = results[3]
-        i +=1 
-        
-    for p in processes:
-        p.join()
+        data.rr_val[result[0]][result[1]] = result[2]
+        data.points[result[0]][result[1]] = result[3]
+
         
     
         
@@ -109,8 +115,8 @@ def calculate_rr_points_for_intruder_speed(intruder_speed):
     
 def calculate_rr_points_for_rpas_speed(rpas_speed):
     data = CurrentData()
-    processes = []
-    q = mp.Queue()
+    queued_data = []
+    results = []
     
     daa_spec = data.specs
     r_min = data.r_min_m
@@ -128,29 +134,23 @@ def calculate_rr_points_for_rpas_speed(rpas_speed):
                 continue
                 
         if not exists:
-            p = mp.Process(target = calc_worker, args=(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range, q))
-            processes.append(p)
+            new_data = WorkerData(intruder_speed, rpas_speed, azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)            
+            queued_data.append(new_data)
             
-    for p in processes:
-        p.start()
-       
+    with mp.Pool(mp.cpu_count()) as p:
+        results = p.map(calc_worker, queued_data)
         
-    i = 0
-    while i < len(processes):
-        results = q.get()
-        
-        if results[0] not in data.rr_val.keys():
-            data.rr_val[results[0]] = dict()
+    
+    for result in results: 
+        if result[0] not in data.rr_val.keys():
+            data.rr_val[result[0]] = dict()
             
-        if results[0] not in data.points.keys():
-            data.points[results[0]] = dict()
+        if result[0] not in data.points.keys():
+            data.points[result[0]] = dict()
         
-        data.rr_val[results[0]][results[1]] = results[2]
-        data.points[results[0]][results[1]] = results[3]
-        i +=1 
-        
-    for p in processes:
-        p.join()
+        data.rr_val[result[0]][result[1]] = result[2]
+        data.points[result[0]][result[1]] = result[3]
+
         
 
 

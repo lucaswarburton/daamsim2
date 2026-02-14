@@ -48,7 +48,6 @@ class NewSimUIInnerFrame(Frame):
         i += 1
 
         i = self.setup_rpas(i)
-        i = self.setup_rpas(i)
 
         i = self.setup_intruder_chars(i)
 

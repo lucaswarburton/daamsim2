@@ -44,6 +44,7 @@ def UI_main() -> None:
     w.set_DMUI_frame(dmui_frame)
     w.set_active_frame(new_sim_UI_frame)
     
+    w.protocol("WN_DELETE_WINDOW", w.destroy)
     w.mainloop()
 
 

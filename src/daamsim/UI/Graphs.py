@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import numpy as np
-from mpl_toolkits.mplot3d.art3d import Line3DCollection
+
+from tkinter import messagebox
 
 from  calculations import graph_evals 
 from data_classes.CurrentData import CurrentData
@@ -56,7 +57,7 @@ class PerSpeedPlot:
         
 class SurfaceMultiSpeedPlot:
     KTS_TO_MS = 0.514444
-    def __init__(self, cmap = "plasma", down_sample_factor = 1) -> None:
+    def __init__(self, cmap = "plasma", down_sample_factor = 1, contour_color= "purple") -> None:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
@@ -65,10 +66,8 @@ class SurfaceMultiSpeedPlot:
         self.ax.set_ylabel("R min (m)")
  
         self.down_sample_factor = down_sample_factor
-    
-    # def set_title(self, title):
-    #     self.ax.set_title(title)
-    
+
+        self.contour_color = contour_color
 
     def add_points(self, speeds, multi_speed_points):
         if len(speeds) != len(multi_speed_points):
@@ -78,32 +77,47 @@ class SurfaceMultiSpeedPlot:
         Ys = np.array([])
         Zs = np.array([])
         
+        min_z = np.min(speeds)
+        
         i=0
-        keys = list(multi_speed_points.keys())
         while i < len(speeds):
             cur_speed = speeds[i]
             points = multi_speed_points[speeds[i]]
-            x = points[1] * np.cos(points[0])
+            x = points[1] * np.sin(points[0])
             Xs = np.append(Xs, x)
-            y = points[1] * np.sin(points[0])
+            y = points[1] * np.cos(points[0])
             Ys= np.append(Ys, y)
             z = np.full(len(points[1]), cur_speed)
             Zs = np.append(Zs, z)
+            
             i += 1
+            
+        #Check if our dataset generally is too small
+        if len(Xs) < 3 or len(Ys) < 3 or len(Zs) < 3:
+            print("Dataset too small to generate Surface Plot")
+            messagebox.showerror("Dataset too small to generate Surface Plot")
+            return
         
+            
+        #Adjust down sample factor if our dataset would be too small
+        while (len(Xs)/self.down_sample_factor) < 3 or (len(Ys)/self.down_sample_factor) < 3 or (len(Zs)/self.down_sample_factor) < 3:
+            self.down_sample_factor -= 1
+            
         surf = self.ax.plot_trisurf(Xs[::self.down_sample_factor], Ys[::self.down_sample_factor], Zs[::self.down_sample_factor], linewidth=0, antialiased=False, cmap = self.cmap)
+        self.ax.tricontour(Xs, Ys, Zs, zdir="z", offset=min_z, colors = self.contour_color)
         self.fig.colorbar(surf)
         
     
 class LineMultiSpeedPlot:
     KTS_TO_MS = 0.514444
-    def __init__(self, down_sample_factor = 1) -> None:
+    def __init__(self, down_sample_factor = 1, detection_colour = "black") -> None:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(projection='3d')
         self.fig.set_size_inches((7,7))
         self.ax.set_xlabel("R min (m)")
         self.ax.set_ylabel("R min (m)")
         self.down_sample_factor = down_sample_factor
+        self.detection_colour = detection_colour
 
         
     #Note: This section could be improved to reduce holes in the line. The issue is that there are non-continuous sections in how the data is calculated in graph_evals
@@ -111,8 +125,47 @@ class LineMultiSpeedPlot:
         if len(speeds) != len(multi_speed_points):
             raise ValueError("Length of speeds and points ")
         
+        
+        #Plot the detection area for DAA
+        data = CurrentData()
+        dr = data.specs.daa_declaration_range
+        fov = data.specs.daa_fov_deg
+        
+        theta = np.linspace(np.deg2rad(-fov/2), np.deg2rad(fov/2), 100)
+        
+        z2 = np.max(speeds)
+        z1 = np.min(speeds)
+        
+        x1 = 0
+        xleft = dr * np.sin(np.deg2rad(-fov/2))
+        xright = dr * np.sin(np.deg2rad(fov/2))
+        
+        y1 = 0
+        yleft = dr * np.cos(np.deg2rad(-fov/2))
+        yright = dr * np.cos(np.deg2rad(fov/2))
+        
+        #plot vertical line at origin
+        self.ax.plot3D([x1, x1], [y1, y1], [z1, z2], self.detection_colour)
+        
+        #plot lines bounding left side
+        self.ax.plot3D([x1, xleft], [y1, yleft], [z1, z1], self.detection_colour) #Bottom line from 0 to detection range
+        self.ax.plot3D([x1, xleft], [y1, yleft], [z2, z2], self.detection_colour) #Top line from 0 to detection range
+        self.ax.plot3D([xleft, xleft], [yleft, yleft], [z1, z2], self.detection_colour) #Vertical line at detection range
+        
+        #plot lines bounding right side
+        self.ax.plot3D([x1, xright], [y1, yright], [z1, z1], self.detection_colour) #Bottom line from 0 to detection range
+        self.ax.plot3D([x1, xright], [y1, yright], [z2, z2], self.detection_colour) #Top line from 0 to detection range
+        self.ax.plot3D([xright, xright], [yright, yright], [z1, z2], self.detection_colour) #Vertical line at detection range
+        
+        #plot curves
+        xcurve, ycurve = dr * np.sin(theta), dr * np.cos(theta)
+        
+        self.ax.plot3D(xcurve, ycurve, z1, self.detection_colour)
+        self.ax.plot3D(xcurve, ycurve, z2, self.detection_colour)
+        
+        
+        #Plot results
         i=0
-        keys = list(multi_speed_points.keys())
         while i < len(speeds):
             cur_speed = speeds[i]
             points = multi_speed_points[cur_speed]
@@ -130,12 +183,12 @@ class LineMultiSpeedPlot:
             while j < len(points[2]):
                 #Green lines for passing points
                 if points[2][j] == PASS_COLOUR and points[2][j-1] == PASS_COLOUR:
-                    x2 =  points[1][j] * np.cos(points[0][j])
-                    y2 = points[1][j] * np.sin(points[0][j])
+                    x2 =  points[1][j] * np.sin(points[0][j])
+                    y2 = points[1][j] * np.cos(points[0][j])
                     z2 =  cur_speed
                     
-                    x1 =  points[1][j-1] * np.cos(points[0][j-1])
-                    y1 = points[1][j-1] * np.sin(points[0][j-1])
+                    x1 =  points[1][j-1] * np.sin(points[0][j-1])
+                    y1 = points[1][j-1] * np.cos(points[0][j-1])
                     z1 =  cur_speed
                     
                     lines.append([tuple([x1, y1, z1]), tuple([x2, y2, z2])])
@@ -147,12 +200,12 @@ class LineMultiSpeedPlot:
                 
                 #Red lines otherwise
                 else:
-                    x2 =  points[1][j] * np.cos(points[0][j])
-                    y2 = points[1][j] * np.sin(points[0][j])
+                    x2 =  points[1][j] * np.sin(points[0][j])
+                    y2 = points[1][j] * np.cos(points[0][j])
                     z2 =  cur_speed
                     
-                    x1 =  points[1][j-1] * np.cos(points[0][j-1])
-                    y1 = points[1][j-1] * np.sin(points[0][j-1])
+                    x1 =  points[1][j-1] * np.sin(points[0][j-1])
+                    y1 = points[1][j-1] * np.cos(points[0][j-1])
                     z1 =  cur_speed
                     
                     lines.append([tuple([x1, y1, z1]), tuple([x2, y2, z2])])
@@ -271,6 +324,7 @@ class RPASSurfaceMultiSpeedPlot(SurfaceMultiSpeedPlot):
         self.ax.set_title(title)
         self.ax.set_zlabel("Intruder speed (kts)")
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)
+        
         
         points = self.assemble_points()
         self.add_points(self.data.specs.intruder_speed_array, points)

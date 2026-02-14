@@ -206,7 +206,7 @@ class MultiSpeedPlotFrame(Frame):
             self.down_sample_factor = IntVar()
             self.down_sample_factor.set(Configuration().down_sample_factor)
             
-            self.down_sample_factor_label = Label(self, text="Down Sample Factor:", bg=self.bg, font=("Ariel",10, "bold"))
+            self.down_sample_factor_label = Label(self, text="Target Down Sample Factor:", bg=self.bg, font=("Ariel",10, "bold"))
             self.down_sample_factor_label.grid(column=0, row=7, columnspan=2, padx=2, pady=2, sticky=W)
             
             self.down_sample_factor_entry = Scale(self, from_=1, to=100, orient=HORIZONTAL, variable=self.down_sample_factor, bg=self.bg, bd=0, highlightthickness=0, length=400)
