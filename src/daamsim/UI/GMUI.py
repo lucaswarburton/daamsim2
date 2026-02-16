@@ -47,10 +47,10 @@ class MainSubFrame(Frame):
         self.title = Label(self, text = "Select a graph type:", font=("Ariel",20, "bold"), padx=5, pady=5, bg=bg)
         self.title.grid(column=0, row=1, padx=5, pady=5, sticky= W)
         
-        self.per_speed_graphs_button = Button(self, text="Per Speed Graphs", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("per_speed_sub_frame"))
+        self.per_speed_graphs_button = Button(self, text="Single Speed DAA-performance Plots", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("per_speed_sub_frame"))
         self.per_speed_graphs_button.grid(column=0, row = 2, padx=5, pady=5, sticky= W)
         
-        self.multi_speed_graphs_button = Button(self, text="Multi Speed 3D Plots", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("multi_speed_sub_frame"))
+        self.multi_speed_graphs_button = Button(self, text="Multi Speed DAA-performance Plots", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("multi_speed_sub_frame"))
         self.multi_speed_graphs_button.grid(column=0, row = 3, padx=5, pady=5, sticky= W)
         
         
@@ -90,8 +90,14 @@ class PerSpeedSubFrame(Frame):
         self.back_button = Button(self,  text = "Back", command= lambda: controller.setActiveFrame("main_subframe"), font=("Ariel",12, "bold"))
         self.back_button.grid(column=0, row=0, padx=2, pady=2, sticky= W)
         
-        self.title = Label(self, text = "Choose RPAS and Intruder Speed for subplot:", bg = bg, font=("Ariel",15, "bold"))
-        self.title.grid(column=0, row=1,columnspan=3, padx=2, pady=2, sticky= W)
+        self.title = Label(self, text = "DAA-performance graph based on speed ratio between RPAS and intruder", bg = bg, font=("Ariel",15, "bold"))
+        self.title.grid(column=0, row=1, columnspan=3, padx=2, pady=2, sticky= W)
+        
+        #This is to prevent spacing between columns
+        self.grid_columnconfigure(0, pad=0, weight=0)
+        self.grid_columnconfigure(1, pad=0, weight=0)
+        self.grid_columnconfigure(2, pad=0, weight=1)
+        
         
         self.regenerate()
         
@@ -135,10 +141,16 @@ class MultiSpeedPlotFrame(Frame):
         self.back_button = Button(self,  text = "Back", command= lambda: controller.setActiveFrame("main_subframe"), font=("Ariel",12, "bold"))
         self.back_button.grid(column=0, row=0, padx=2, pady=2, sticky= W)
         
-        self.title = Label(self, text = "3D Multispeed Plots", bg = bg, font=("Ariel",20, "bold"))
-        self.title.grid(column=0, row=1,columnspan=3, padx=2, pady=2, sticky= W)
+        self.title = Label(self, text = "3D Multispeed Data-performance graph based on speed ratio between intruder and RPAS", bg = bg, font=("Ariel",20, "bold"))
+        self.title.grid(column=0, row=1, columnspan=10, padx=2, pady=2, sticky= W)
         
         self.regenerate()
+        
+        #This is to prevent spacing between columns
+        self.grid_columnconfigure(0, pad=0, weight=0)
+        self.grid_columnconfigure(1, pad=0, weight=0)
+        self.grid_columnconfigure(2, pad=0, weight=0)
+        self.grid_columnconfigure(3, pad=0, weight=1)
         
         self.pack_propagate(0)
         self.grid_propagate(0)
@@ -207,7 +219,7 @@ class MultiSpeedPlotFrame(Frame):
             self.down_sample_factor.set(Configuration().down_sample_factor)
             
             self.down_sample_factor_label = Label(self, text="Target Down Sample Factor:", bg=self.bg, font=("Ariel",10, "bold"))
-            self.down_sample_factor_label.grid(column=0, row=7, columnspan=2, padx=2, pady=2, sticky=W)
+            self.down_sample_factor_label.grid(column=0, row=7, columnspan=3, padx=2, pady=2, sticky=W)
             
             self.down_sample_factor_entry = Scale(self, from_=1, to=100, orient=HORIZONTAL, variable=self.down_sample_factor, bg=self.bg, bd=0, highlightthickness=0, length=400)
             self.down_sample_factor_entry.grid(column=2, row=7, columnspan=5, padx=2, pady=2, sticky=W)
