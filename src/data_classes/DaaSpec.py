@@ -21,7 +21,6 @@ class DaaSpec:
     scans_track: int
 
     #Simulation Variables
-    NDecimals: int
     time_resol: float
     conflict_volume: float
     t_sim: float

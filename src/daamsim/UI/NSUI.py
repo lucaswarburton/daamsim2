@@ -206,14 +206,6 @@ class NewSimUIInnerFrame(Frame):
         self.labels["Simulation_Vars"] = Label(self, text = "Simulation Variables:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["Simulation_Vars"].grid(column = 0, row=i, columnspan=3, padx=5, pady=5, sticky = W)
         i += 1
-
-        #Remove this later
-        self.labels["NDecimals"] = Label(self, text = "Rounding Alpha:", bg=self.bg)
-        self.labels["NDecimals"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
-        self.entries["NDecimals"] = Entry(self)
-        self.entries["NDecimals"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
-        self.entries["NDecimals"].insert(0, self.daa_spec.NDecimals)
-        i += 1
         
         self.labels["time_resol"] = Label(self, text = "Time Resolution (s):", bg=self.bg)
         self.labels["time_resol"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
@@ -496,7 +488,6 @@ class NewSimUIInnerFrame(Frame):
         post_col = float(self.entries["post_col"].get())
         wind_speed = float(self.entries["wind_speed"].get())
         wind_dir = float(self.entries["wind_dir"].get())
-        NDecimals = int(self.entries["NDecimals"].get())
         human_factor_delay = int(self.entries["human_factor_delay"].get())
 
         if(self.use_cust_azimuth_array.get()):
@@ -518,7 +509,6 @@ class NewSimUIInnerFrame(Frame):
             daa_fov_deg = daa_fov_deg, \
             rate_of_revisit = rate_of_revisit, \
             scans_track = scans_track, \
-            NDecimals = NDecimals, \
             time_resol = time_resol, \
             conflict_volume = conflict_volume, \
             t_sim = t_sim, \

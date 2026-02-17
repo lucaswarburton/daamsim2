@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tkinter import messagebox
-from scipy.spatial import Delaunay
 
 from  calculations import graph_evals 
 from data_classes.CurrentData import CurrentData

@@ -51,7 +51,7 @@ class Configuration:
         scans_track = int(parser['DAA Defaults']['scans_track'])
 
         #Simulation Variables
-        NDecimals = int(parser['DAA Defaults']['NDecimals'])
+        self.NDecimals = int(parser['DAA Defaults']['NDecimals'])
         time_resol = float(parser['DAA Defaults']['time_resol'])
         conflict_volume = float(parser['DAA Defaults']['conflict_volume'])
         t_sim = float(parser['DAA Defaults']['t_sim'])
@@ -74,7 +74,6 @@ class Configuration:
             daa_fov_deg = daa_fov_deg, \
             rate_of_revisit = rate_of_revisit, \
             scans_track = scans_track, \
-            NDecimals = NDecimals, \
             time_resol = time_resol, \
             conflict_volume = conflict_volume, \
             t_sim = t_sim, \

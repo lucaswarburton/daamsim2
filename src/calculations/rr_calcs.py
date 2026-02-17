@@ -4,6 +4,7 @@ import os
 from data_classes.CurrentData import CurrentData
 from data_classes.SimulationParams import SimulationParams
 from data_classes.InitialConditions import InitialConditions
+from daamsim.Config import Configuration
 from . import math_util
 import numpy as np
 import matlab.engine
@@ -29,7 +30,7 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
     scans_track = specs.scans_track # scans needed to establish track after detection
     
     # Simulation variables
-    num_decimals = specs.NDecimals
+    num_decimals = Configuration().NDecimals
     time_resol = specs.time_resol # time resolution for approximation
     DMOD = specs.conflict_volume # collision bubble radius
     t_sim = specs.t_sim # simulation time
