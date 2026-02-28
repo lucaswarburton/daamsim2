@@ -12,6 +12,9 @@ def sind(x: float) -> float:
 def tand(x: float) -> float:
      return math.tan(math.radians(x))
 
+def cotd(x: float) -> float:
+     return 1 / tand(x)
+
 def make_array(min: float, max: float, increment: float) -> np.ndarray:
     if (min > max):
             raise ValueError("Create Array: Start cannot be greater than end. Start: " + str(min) + "End: " + str(max))
