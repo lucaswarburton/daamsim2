@@ -1,5 +1,6 @@
 import numpy as np
 import multiprocessing as mp
+import csv
 from data_classes.CurrentData import CurrentData
 
 def per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, fov, daa_range):
@@ -151,6 +152,46 @@ def calculate_rr_points_for_rpas_speed(rpas_speed):
         data.rr_val[result[0]][result[1]] = result[2]
         data.points[result[0]][result[1]] = result[3]
 
+#For a given set of vals, get normalized probability distribution that any plane will have that params given a dataset of known params and count of planes flying with that param.
+def get_normalized_distribution(params, dataset_params, dataset_counts):
+    #If we want to increase the floor of our distribution by a percentage of the max value (to deal with 0 ranges), uncomment below:
+    # dataset_counts = dataset_counts + (np.max(dataset_counts) * 0.01)
+    result_dist = np.interp(params, dataset_params, dataset_counts)
+    
+    result_sum = np.sum(result_dist)
+    
+    return result_dist/result_sum
+
+#For a set of speeds, gets the normal distribution based on the first set of speeds in a csv file with name filename
+def get_normalized_distribution_speeds(filename, speeds):
+    with open(filename, mode='r', newline='') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        speed_row = None
+        count_row = None
+
+        for row in csv_reader:
+            row_name:str = row[0]
+            #Check this is 
+            if row_name.lower().startswith("speed") and row_name.lower().endswith("min_bound (incl)") and speed_row is not None:
+                speed_row = np.array(row[1:])
+            if row_name.lower().startswith("speed") and row_name.lower().endswith("values") and count_row is not None:
+                count_row = np.array(row[1:])
+            
+            if speed_row is not None and count_row is not None:
+                break
         
-
-
+        if speed_row is not None and count_row is not None:
+            return get_normalized_distribution(speeds, speed_row, count_row)
+        else:
+            return None
+        
+def normalize_rr(rr, norm_dist):
+    failHeights = rr*norm_dist
+    passHeights = norm_dist - failHeights
+    
+    return (passHeights, failHeights
+            )
+    
+        
+        
+    
