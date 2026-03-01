@@ -154,7 +154,7 @@ def calculate_rr_points_for_rpas_speed(rpas_speed):
 
 #For a given set of vals, get normalized probability distribution that any plane will have that params given a dataset of known params and count of planes flying with that param.
 def get_normalized_distribution(params, dataset_params, dataset_counts):
-    #If we want to increase the floor of our distribution by a percentage of the max value (to deal with 0 ranges), uncomment below:
+    #If we want to increase the floor of our distribution by a percentage of the max value (to deal with 0 ranges), uncomment below: (ASK Dr. Borchshova ABOUT THIS)
     # dataset_counts = dataset_counts + (np.max(dataset_counts) * 0.01)
     result_dist = np.interp(params, dataset_params, dataset_counts)
     
@@ -189,8 +189,7 @@ def normalize_rr(rr, norm_dist):
     failHeights = rr*norm_dist
     passHeights = norm_dist - failHeights
     
-    return (passHeights, failHeights
-            )
+    return (passHeights, failHeights)
     
         
         
