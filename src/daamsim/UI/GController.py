@@ -27,8 +27,13 @@ class GraphController:
         fov = daa_spec.daa_fov_deg
         daa_range = daa_spec.daa_declaration_range
         rpas_speeds = daa_spec.rpas_speed_array
-        rpas_speeds = daa_spec.rpas_speed_array
         intruder_speeds = daa_spec.intruder_speed_array
+        
+        close_vel = data.close_vel
+        close_vel_over = data.close_vel_over
+        rpa_size = daa_spec.rpas_wingspan
+        intruder_detection_threshold = daa_spec.intruder_detection_thresh_arc_min
+        intruder_maneuver_delay = daa_spec.intruder_maneuver_delay
         
         if rpas_speed in rpas_speeds and intruder_speed in intruder_speeds:
             exists = False
@@ -38,15 +43,29 @@ class GraphController:
                     results = [data.rr_val[intruder_speed][rpas_speed], data.points[intruder_speed][rpas_speed]]
                 
             if not exists:
-                results = Graphs.PerSpeedPlot.convert_data(azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)
-                if intruder_speed not in data.rr_val.keys():
-                    data.rr_val[intruder_speed] = dict()
+                    results = Graphs.PerSpeedPlot.convert_data(azimuthDegOncoming = azimuth_array, \
+                        RminOncoming = r_min[intruder_speed][rpas_speed], \
+                        azimuthOvertake= azimuth_array, \
+                        RminOvertake = r_min_overtake[intruder_speed][rpas_speed], \
+                        close_vel = close_vel[intruder_speed][rpas_speed], \
+                        close_vel_over = close_vel_over[intruder_speed][rpas_speed],
+                        fov = fov,\
+                        daa_range = daa_range, \
+                        rpa_size = rpa_size, \
+                        intruder_detection_threshold = intruder_detection_threshold, \
+                        manuever_delay = intruder_maneuver_delay) 
+                    if intruder_speed not in data.rr_val.keys():
+                        data.rr_val[intruder_speed] = dict()
             
-                if intruder_speed not in data.points.keys():
-                    data.points[intruder_speed] = dict()
-                
-                data.rr_val[intruder_speed][rpas_speed] = results[0]
-                data.points[intruder_speed][rpas_speed] = results[1]
+                    if intruder_speed not in data.points.keys():
+                        data.points[intruder_speed] = dict()
+                    
+                    if intruder_speed not in data.srr_val.keys():
+                        data.srr_val[intruder_speed] = dict()
+                    
+                    data.rr_val[intruder_speed][rpas_speed] = results[0]
+                    data.points[intruder_speed][rpas_speed] = results[1]
+                    data.srr_val[intruder_speed][rpas_speed] = results[2]
                 
             rr = results[0]
             points = results[1]
@@ -66,6 +85,8 @@ class GraphController:
         data: CurrentData = CurrentData()
         r_min = data.r_min_m
         r_min_overtake = data.r_min_over
+        close_vel = data.close_vel
+        close_vel_over = data.close_vel_over
         daa_spec = data.specs
         fov = daa_spec.daa_fov_deg
         daa_range = daa_spec.daa_declaration_range
@@ -74,6 +95,11 @@ class GraphController:
         rpas_speeds = daa_spec.rpas_speed_array
         intruder_speeds = daa_spec.intruder_speed_array
         azimuth_array = daa_spec.encounter_azimuth_array
+        rpa_size = daa_spec.rpas_wingspan
+        intruder_detection_threshold = daa_spec.intruder_detection_thresh_arc_min
+        intruder_maneuver_delay = daa_spec.intruder_maneuver_delay
+        
+        
     
         for i, intruder_speed in enumerate(intruder_speeds):
             intruder_speed = round(intruder_speed, 3)
@@ -86,15 +112,29 @@ class GraphController:
                         results = [data.rr_val[intruder_speed][rpas_speed], data.points[intruder_speed][rpas_speed]]
                 
                 if not exists:
-                    results = Graphs.PerSpeedPlot.convert_data(azimuth_array, r_min[intruder_speed][rpas_speed], azimuth_array, r_min_overtake[intruder_speed][rpas_speed], fov, daa_range)
+                    results = Graphs.PerSpeedPlot.convert_data(azimuthDegOncoming = azimuth_array, \
+                        RminOncoming = r_min[intruder_speed][rpas_speed], \
+                        azimuthOvertake= azimuth_array, \
+                        RminOvertake = r_min_overtake[intruder_speed][rpas_speed], \
+                        close_vel = close_vel[intruder_speed][rpas_speed], \
+                        close_vel_over = close_vel_over[intruder_speed][rpas_speed],
+                        fov = fov,\
+                        daa_range = daa_range, \
+                        rpa_size = rpa_size, \
+                        intruder_detection_threshold = intruder_detection_threshold, \
+                        manuever_delay = intruder_maneuver_delay) 
                     if intruder_speed not in data.rr_val.keys():
                         data.rr_val[intruder_speed] = dict()
             
                     if intruder_speed not in data.points.keys():
                         data.points[intruder_speed] = dict()
                     
+                    if intruder_speed not in data.srr_val.keys():
+                        data.srr_val[intruder_speed] = dict()
+                    
                     data.rr_val[intruder_speed][rpas_speed] = results[0]
-                    data.points[intruder_speed][rpas_speed] = results[1] 
+                    data.points[intruder_speed][rpas_speed] = results[1]
+                    data.srr_val[intruder_speed][rpas_speed] = results[2]
 
                 rr = results[0]
                 points = results[1]
@@ -115,6 +155,17 @@ class GraphController:
     def displayIntruderLineGraph(self, intruder_speed, down_sample_factor):
         Graphs.IntruderLineMultiSpeedPlot(intruder_speed, down_sample_factor)
         
+    def displayNormalizedNoSeeGraph(self, rpas_speed, dist_file_name):
+        Graphs.RpasNormalizedRRPassFailNoSee(rpas_speed=rpas_speed, dist_file=dist_file_name)
+        
+    def displayCumulativeNoSeeGraph(self, rpas_speed, dist_file_name):
+        Graphs.RpasCumulativeRRPassFailNoSee(rpas_speed=rpas_speed, dist_file=dist_file_name)
+        
+    def displayNormalizedSeeAndAvoidGraph(self, rpas_speed, dist_file_name):
+        Graphs.RpasNormalizedRRPassFailSeeAndAvoid(rpas_speed=rpas_speed, dist_file=dist_file_name)
+    
+    def displayCumulativeSeeAndAvoidGraph(self, rpas_speed, dist_file_name):
+        Graphs.RpasCumulativeRRPassFailSeeAndAvoid(rpas_speed=rpas_speed, dist_file=dist_file_name)
 
         
 
