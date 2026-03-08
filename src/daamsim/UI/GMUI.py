@@ -256,7 +256,8 @@ class BarPlotFrame(Frame):
         
         self.config = Configuration()
         
-        self.dist_file_path = self.config.default_prob_dist_file
+        self.dist_file_path = StringVar()
+        self.dist_file_path.set(self.config.default_prob_dist_file)
         
         self.regenerate()
         
@@ -279,25 +280,26 @@ class BarPlotFrame(Frame):
         speeds = self.data.specs.rpas_speed_array.tolist()
         self.speed_box["values"] = speeds
         self.speed.set(speeds[0])
+        self.update()
         
             
     def create_graph(self):
         #RPAS Surface Graph
         if self.type_selection.get() == 0 and self.prob_type_selection.get() == 0:
-            self.controller.displayNormalizedNoSeeGraph(self.speed.get(), self.dist_file_path)
+            self.controller.displayNormalizedNoSeeGraph(self.speed.get(), self.dist_file_path.get())
         elif self.type_selection.get()== 0 and self.prob_type_selection.get() == 1:
-            self.controller.displayCumulativeNoSeeGraph(self.speed.get(), self.dist_file_path)
+            self.controller.displayCumulativeNoSeeGraph(self.speed.get(), self.dist_file_path.get())
         elif self.type_selection.get() == 1 and self.prob_type_selection.get() == 0:
-            self.controller.displayNormalizedSeeAndAvoidGraph(self.speed.get(), self.dist_file_path)
+            self.controller.displayNormalizedSeeAndAvoidGraph(self.speed.get(), self.dist_file_path.get())
         elif self.type_selection.get() == 1 and self.prob_type_selection.get() == 1:
-            self.controller.displayCumulativeSeeAndAvoidGraph(self.speed.get(), self.dist_file_path)
+            self.controller.displayCumulativeSeeAndAvoidGraph(self.speed.get(), self.dist_file_path.get())
     
     # def create_all_graphs(self):
         
     def select_dist_file(self) -> None:
-        temp = self.dist_file_path.strip().split("/")
-        initialdir = self.dist_file_path.replace(temp[-1], "")
-        self.dist_file_path = filedialog.askopenfilename(title="Select Speed Dist File", initialdir=initialdir, initialfile= temp[-1] if len(temp) > 1 else "", defaultextension=".csv", filetypes=[("CSV (*.csv)", "*.csv")])
+        temp = self.dist_file_path.get().strip().split("/")
+        initialdir = self.dist_file_path.get().replace(temp[-1], "")
+        self.dist_file_path.set(filedialog.askopenfilename(title="Select Speed Dist File", initialdir=initialdir, initialfile= temp[-1] if len(temp) > 1 else "", defaultextension=".csv", filetypes=[("CSV (*.csv)", "*.csv")]))
         
     def regenerate(self):
         self.data = CurrentData()
@@ -335,7 +337,8 @@ class BarPlotFrame(Frame):
             self.dist_file_button = Button(self, text="Select Speed Distribution File", command=self.select_dist_file)
             self.dist_file_button.grid(row=7, column=0, padx=5, pady=10, columnspan=2, sticky=W)
          
-            self.dist_file_path_entry = Entry(self, textvariable=StringVar(value=self.dist_file_path), width=50)
+
+            self.dist_file_path_entry = Entry(self, textvariable=self.dist_file_path, width=50)
             self.dist_file_path_entry.grid(row=7, column=2, padx=5, pady=10, columnspan=2, sticky=W)
             
             self.display_plot_button = Button(self, text="Create Graph", command=self.create_graph)

@@ -390,11 +390,14 @@ class RpasNormalizedRRPassFailNoSee:
         self.rpas_speed = rpas_speed
         self.data:CurrentData = CurrentData()
         
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+        
         title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
         
-        plt.title(title)
-        plt.xlabel("Intruder Speed (kts)")
-        plt.ylabel("Normalized Probability")
+        self.ax.set_title(title)
+        self.ax.set_xlabel("Intruder Speed (kts)")
+        self.ax.set_ylabel("Normalized Probability")
         
         
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
@@ -437,10 +440,10 @@ class RpasNormalizedRRPassFailNoSee:
             
         
         #plot passes and fails
-        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
-        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
         
-        plt.legend()
+        self.ax.legend()
         
         plt.show() 
         
@@ -449,11 +452,14 @@ class RpasCumulativeRRPassFailNoSee:
         self.rpas_speed = rpas_speed
         self.data:CurrentData = CurrentData()
         
+        self.fig =  plt.figure()
+        self.ax = self.fig.add_subplot()
+        
         title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
         
-        plt.title(title)
-        plt.xlabel("Intruder Speed (kts)")
-        plt.ylabel("Normalized Probability")
+        self.ax.set_title(title)
+        self.ax.set_xlabel("Intruder Speed (kts)")
+        self.ax.set_ylabel("Normalized Probability")
         
         
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
@@ -495,16 +501,16 @@ class RpasCumulativeRRPassFailNoSee:
         width -= 0.1 * width
         
         #plot passes and fails
-        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
-        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
         
         #plot line to show rr
         cumulative_rr = rr_fail[-1]
         
-        plt.axhline(y = cumulative_rr, linestyle = "--")
-        plt.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
+        self.ax.axhline(y = cumulative_rr, linestyle = "--")
+        self.ax.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
         
-        plt.legend()
+        self.ax.legend()
         
         plt.show() 
         
@@ -513,11 +519,14 @@ class RpasNormalizedRRPassFailSeeAndAvoid:
         self.rpas_speed = rpas_speed
         self.data:CurrentData = CurrentData()
         
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+        
         title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
         
-        plt.title(title)
-        plt.xlabel("Intruder Speed (kts)")
-        plt.ylabel("Normalized Probability")
+        self.ax.set_title(title)
+        self.ax.set_xlabel("Intruder Speed (kts)")
+        self.ax.set_ylabel("Normalized Probability")
         
         
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
@@ -562,11 +571,11 @@ class RpasNormalizedRRPassFailSeeAndAvoid:
             width = np.min(distances)
         
         #plot passes and fails
-        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
-        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
-        plt.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
         
-        plt.legend()
+        self.ax.legend()
         
         plt.show() 
         
@@ -575,11 +584,14 @@ class RpasCumulativeRRPassFailSeeAndAvoid:
         self.rpas_speed = rpas_speed
         self.data:CurrentData = CurrentData()
         
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+        
         title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
         
-        plt.title(title)
-        plt.xlabel("Intruder Speed (kts)")
-        plt.ylabel("Normalized Probability")
+        self.ax.set_title(title)
+        self.ax.set_xlabel("Intruder Speed (kts)")
+        self.ax.set_ylabel("Normalized Probability")
         
         
         graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
@@ -625,17 +637,17 @@ class RpasCumulativeRRPassFailSeeAndAvoid:
             width = np.min(distances)
         
         #plot passes and fails
-        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
-        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
-        plt.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        self.ax.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
         
         #plot line to show rr
         cumulative_rr = rr_fail[-1]
         
-        plt.axhline(y = cumulative_rr, linestyle = "--")
-        plt.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
+        self.ax.axhline(y = cumulative_rr, linestyle = "--")
+        self.ax.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
         
-        plt.legend()
+        self.ax.legend()
         
         plt.show() 
             
