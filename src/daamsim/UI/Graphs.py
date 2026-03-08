@@ -9,6 +9,7 @@ from data_classes.CurrentData import CurrentData
 
 FAIL_COLOUR = "red"
 PASS_COLOUR = "green"
+SEE_AVOID_COLOUR = "yellow"
 
 class PerSpeedPlot:
     KTS_TO_MS = 0.514444
@@ -49,8 +50,8 @@ class PerSpeedPlot:
     def add_points(self, points) -> None:
         self.ax.scatter(points[0], points[1], c=points[2])
             
-    def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range) -> list:
-        return graph_evals.per_speed_graph_evals(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, daa_fov, daa_declaration_range)
+    def convert_data(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, close_vel, close_vel_over, fov, daa_range, rpa_size, intruder_detection_threshold, manuever_delay) -> list:
+        return graph_evals.evaluate_dataset_for_rr_and_graph_points(azimuthDegOncoming, RminOncoming, azimuthOvertake, RminOvertake, close_vel, close_vel_over, fov, daa_range, rpa_size, intruder_detection_threshold, manuever_delay)
             
             
     def show_plt() -> None:
@@ -381,7 +382,262 @@ class RPASLineMultiSpeedPlot(LineMultiSpeedPlot):
         points = dict()
         for key in all_points.keys():
             points[key] = all_points[key][self.rpas_speed]
-        return points        
+        return points    
+    
+    
+class RpasNormalizedRRPassFailNoSee:
+    def __init__(self, rpas_speed, dist_file):
+        self.rpas_speed = rpas_speed
+        self.data:CurrentData = CurrentData()
+        
+        title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
+        
+        plt.title(title)
+        plt.xlabel("Intruder Speed (kts)")
+        plt.ylabel("Normalized Probability")
+        
+        
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
+        
+        all_intruder_rr = self.data.rr_val
+        intruder_speeds = self.data.specs.intruder_speed_array
+        
+        norm_dist = graph_evals.get_normalized_distribution_speeds(dist_file, intruder_speeds)
+        
+        if norm_dist is None:
+            print("Reference Distribution File Cannot Find Speed Distributions!")
+            messagebox.showerror("Error While Creating Graph!","Reference Distribution File Cannot Find Speed Distributions!")
+            return
+        
+        rr = []
+        for speed in intruder_speeds:
+            rr.append(all_intruder_rr[speed][rpas_speed])
+        
+        rr = np.array(rr)
+        
+        
+        rr_norm = graph_evals.normalize_rr(rr, norm_dist)
+        
+        rr_pass = rr_norm[0]
+        
+        rr_fail = rr_norm[1]
+        
+        #Get Minimum Distance between each speed to use as width of bars
+        distances = []
+        width=5.0
+        if len(intruder_speeds) >= 2:
+            i = 0
+            while i+1 < len(intruder_speeds):
+                distances.append(intruder_speeds[i+1] - intruder_speeds[i])
+                i +=1
+            width = np.min(distances)
+        
+        #Add Gap To Width
+        width -= 0.1 * width
+            
+        
+        #plot passes and fails
+        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        
+        plt.legend()
+        
+        plt.show() 
+        
+class RpasCumulativeRRPassFailNoSee:
+    def __init__(self, rpas_speed, dist_file):
+        self.rpas_speed = rpas_speed
+        self.data:CurrentData = CurrentData()
+        
+        title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
+        
+        plt.title(title)
+        plt.xlabel("Intruder Speed (kts)")
+        plt.ylabel("Normalized Probability")
+        
+        
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
+        
+        all_intruder_rr = self.data.rr_val
+        intruder_speeds = self.data.specs.intruder_speed_array
+        
+        norm_dist = graph_evals.get_normalized_distribution_speeds(dist_file, intruder_speeds)
+        
+        if norm_dist is None:
+            print("Reference Distribution File Cannot Find Speed Distributions!")
+            messagebox.showerror("Error While Creating Graph!","Reference Distribution File Cannot Find Speed Distributions!")
+            return
+        
+        rr = []
+        for speed in intruder_speeds:
+            rr.append(all_intruder_rr[speed][rpas_speed])
+        
+        rr = np.array(rr)
+        
+        
+        rr_cumulative= graph_evals.get_cumulative_rr(rr, norm_dist)
+        
+        rr_pass = rr_cumulative[0]
+        
+        rr_fail = rr_cumulative[1]
+        
+        #Get Minimum Distance between each speed to use as width of bars
+        distances = []
+        width=5.0
+        if len(intruder_speeds) >= 2:
+            i = 0
+            while i+1 < len(intruder_speeds):
+                distances.append(intruder_speeds[i+1] - intruder_speeds[i])
+                i +=1
+            width = np.min(distances)
+        
+        #Add Gap To Width
+        width -= 0.1 * width
+        
+        #plot passes and fails
+        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        
+        #plot line to show rr
+        cumulative_rr = rr_fail[-1]
+        
+        plt.axhline(y = cumulative_rr, linestyle = "--")
+        plt.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
+        
+        plt.legend()
+        
+        plt.show() 
+        
+class RpasNormalizedRRPassFailSeeAndAvoid:
+    def __init__(self, rpas_speed, dist_file):
+        self.rpas_speed = rpas_speed
+        self.data:CurrentData = CurrentData()
+        
+        title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
+        
+        plt.title(title)
+        plt.xlabel("Intruder Speed (kts)")
+        plt.ylabel("Normalized Probability")
+        
+        
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
+        
+        all_intruder_rr = self.data.rr_val
+        all_intruder_srr = self.data.srr_val
+        intruder_speeds = self.data.specs.intruder_speed_array
+        
+        norm_dist = graph_evals.get_normalized_distribution_speeds(dist_file, intruder_speeds)
+        
+        if norm_dist is None:
+            print("Reference Distribution File Cannot Find Speed Distributions!")
+            messagebox.showerror("Error While Creating Graph!","Reference Distribution File Cannot Find Speed Distributions!")
+            return
+        
+        rr = []
+        for speed in intruder_speeds:
+            rr.append(all_intruder_rr[speed][rpas_speed])
+        
+        rr = np.array(rr)
+        
+        srr = []
+        for speed in intruder_speeds:
+            srr.append(all_intruder_srr[speed][rpas_speed])
+        
+        srr = np.array(srr)
+        
+        saa_norm = graph_evals.normalize_saa(rr, srr, norm_dist)
+        
+        rr_pass = saa_norm[0]
+        rr_fail = saa_norm[1]
+        rr_pass_see = saa_norm[2]
+        
+        #Get Minimum Distance between each speed to use as width of bars
+        distances = []
+        width=5.0
+        if len(intruder_speeds) >= 2:
+            i = 0
+            while i+1 < len(intruder_speeds):
+                distances.append(intruder_speeds[i+1] - intruder_speeds[i])
+                i +=1
+            width = np.min(distances)
+        
+        #plot passes and fails
+        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        plt.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        
+        plt.legend()
+        
+        plt.show() 
+        
+class RpasCumulativeRRPassFailSeeAndAvoid:
+    def __init__(self, rpas_speed, dist_file):
+        self.rpas_speed = rpas_speed
+        self.data:CurrentData = CurrentData()
+        
+        title = "No See & Avoid\nRR " + str(rpas_speed) + "kts Rpas, Bank Angle: " + str(self.data.specs.rpas_max_bank_deg)
+        
+        plt.title(title)
+        plt.xlabel("Intruder Speed (kts)")
+        plt.ylabel("Normalized Probability")
+        
+        
+        graph_evals.calculate_rr_points_for_rpas_speed(rpas_speed)   
+        
+        all_intruder_rr = self.data.rr_val
+        all_intruder_srr = self.data.srr_val
+        intruder_speeds = self.data.specs.intruder_speed_array
+        
+        norm_dist = graph_evals.get_normalized_distribution_speeds(dist_file, intruder_speeds)
+        
+        if norm_dist is None:
+            print("Reference Distribution File Cannot Find Speed Distributions!")
+            messagebox.showerror("Error While Creating Graph!","Reference Distribution File Cannot Find Speed Distributions!")
+            return
+        
+        rr = []
+        for speed in intruder_speeds:
+            rr.append(all_intruder_rr[speed][rpas_speed])
+        
+        rr = np.array(rr)
+        
+        
+        srr = []
+        for speed in intruder_speeds:
+            srr.append(all_intruder_srr[speed][rpas_speed])
+        
+        srr = np.array(srr)
+        
+        saa_cumulative = graph_evals.get_cumulative_saa(rr, srr, norm_dist)
+        
+        rr_pass = saa_cumulative[0]
+        rr_fail = saa_cumulative[1]
+        rr_pass_see = saa_cumulative[2]
+        
+        #Get Minimum Distance between each speed to use as width of bars
+        distances = []
+        width=5.0
+        if len(intruder_speeds) >= 2:
+            i = 0
+            while i+1 < len(intruder_speeds):
+                distances.append(intruder_speeds[i+1] - intruder_speeds[i])
+                i +=1
+            width = np.min(distances)
+        
+        #plot passes and fails
+        plt.bar(intruder_speeds, rr_fail, label = "Fail", color=FAIL_COLOUR, edgecolor="black", width= width, linewidth  = width*0.1)
+        plt.bar(intruder_speeds, rr_pass, bottom = rr_fail, label = "Pass:Detect", color=PASS_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        plt.bar(intruder_speeds, rr_pass_see, bottom = rr_fail + rr_pass, label = "Pass:See", color=SEE_AVOID_COLOUR, edgecolor="black", width=width, linewidth = width*0.1)
+        
+        #plot line to show rr
+        cumulative_rr = rr_fail[-1]
+        
+        plt.axhline(y = cumulative_rr, linestyle = "--")
+        plt.text(0, cumulative_rr + 0.02, "RR =" + str(round(cumulative_rr, 2)))
+        
+        plt.legend()
+        
+        plt.show() 
             
 # if __name__ == "__main__":
 #     plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)

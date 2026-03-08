@@ -20,7 +20,7 @@ class SaveUI(Frame):
         
     def select_output_file(self) -> None:
         temp = self.output_file_path.strip().split("/")
-        initialdir = self.output_file_path.strip(temp[-1])
+        initialdir = self.output_file_path.replace(temp[-1], "")
         self.output_file_path = filedialog.asksaveasfilename(title="Select output File", initialdir=initialdir, initialfile= temp[-1] if len(temp) > 1 else "", defaultextension=".json", filetypes=[("JSON (*.json)", "*.json")])
         self.reset()
     

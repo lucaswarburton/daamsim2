@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 
 from data_classes.CurrentData import CurrentData
 from daamsim.Config import Configuration
@@ -19,6 +20,9 @@ class GMUIFrame(Frame):
         
         self.frames["multi_speed_sub_frame"] = MultiSpeedPlotFrame(controller=controller, master = self, bg=bg)
         self.frames["multi_speed_sub_frame"].grid(row=0, column=0, sticky="nsew")
+        
+        self.frames["bar_graph_sub_frame"] = BarPlotFrame(controller=controller, master=self, bg=bg)
+        self.frames["bar_graph_sub_frame"].grid(row=0, column=0, sticky="nsew")
         
         self.bind("<Map>", self.on_raise)
         
@@ -53,9 +57,11 @@ class MainSubFrame(Frame):
         self.multi_speed_graphs_button = Button(self, text="Multi Speed DAA-performance Plots", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("multi_speed_sub_frame"))
         self.multi_speed_graphs_button.grid(column=0, row = 3, padx=5, pady=5, sticky= W)
         
+        self.bar_graphs_button = Button(self, text="Bar Graph RR Plot", padx= 5, pady= 5, command= lambda: self.controller.setActiveFrame("bar_graph_sub_frame"))
+        self.bar_graphs_button.grid(column=0, row = 4, padx=5, pady=5, sticky= W)
         
-        self.per_speed_graphs_label = Label(self, text = "(If grayed out, run DAA Simulations (ARC-b) or load data)", padx=5, pady = 5, bg=bg)
-        self.per_speed_graphs_label.grid(column=0, row=4, padx=5, pady=5, sticky= W)
+        self.graphs_label = Label(self, text = "(If grayed out, run DAA Simulations (ARC-b) or load data)", padx=5, pady = 5, bg=bg)
+        self.graphs_label.grid(column=0, row=5, padx=5, pady=5, sticky= W)
         
         
     def lock_per_speed_button(self):
@@ -70,15 +76,23 @@ class MainSubFrame(Frame):
     def unlock_multi_speed_buttion(self):
         self.multi_speed_graphs_button.config(state=NORMAL)
         
+    def lock_bar_buttion(self):
+        self.bar_graphs_button.config(state=DISABLED)
+        
+    def unlock_bar_buttion(self):
+        self.bar_graphs_button.config(state=NORMAL)
+        
     def regenerate(self):
         data = CurrentData()
         match data._sim_state:
             case 0:
                 self.lock_per_speed_button()
                 self.lock_multi_speed_buttion()
+                self.lock_bar_buttion()
             case 1:
                 self.unlock_per_speed_button()
                 self.unlock_multi_speed_buttion()
+                self.unlock_bar_buttion()
         
     
 class PerSpeedSubFrame(Frame):
@@ -184,8 +198,6 @@ class MultiSpeedPlotFrame(Frame):
         self.data = CurrentData()
         
         if self.data._sim_state != 0:
-            self.rpas_speed = DoubleVar()
-            
             self.select_speed_plot_label = Label(self, text="Observe 3D plot for a single given:", bg=self.bg, font=("Ariel",12, "bold"))
             self.select_speed_plot_label.grid(column=0, row= 2, columnspan=3,  sticky = W)
             
@@ -200,7 +212,7 @@ class MultiSpeedPlotFrame(Frame):
             self.speed = DoubleVar()
             self.speed_label = Label(self, text = "Select Given Speed (kts):", bg=self.bg, font=("Ariel",12, "bold"))
             self.speed_label.grid(column=0, row=4, padx=2, pady=2, sticky=W, columnspan=2)
-            self.speed_box = ttk.Combobox(self, text = "Select RPAS speed value", textvariable=self.speed)
+            self.speed_box = ttk.Combobox(self, text = "Select speed value", textvariable=self.speed)
             self.speed_box.grid(column=2, row=4, padx=2, pady=2, sticky=W)
             self.update_speed_select()
             
@@ -230,3 +242,101 @@ class MultiSpeedPlotFrame(Frame):
             # self.display_all_button = Button(self, text="Create All Graphs", command=self.controller.displayAllPerSpeedGraphs)
             # self.display_all_button.grid(column=0, row=5, padx=2, pady=2, sticky= W)
 
+class BarPlotFrame(Frame):
+    def __init__(self, controller, master, bg = "lime green"):
+        Frame.__init__(self, master, bg=bg)
+        self.bg = bg
+        self.controller = controller
+        
+        self.back_button = Button(self,  text = "Back", command= lambda: controller.setActiveFrame("main_subframe"), font=("Ariel",12, "bold"))
+        self.back_button.grid(column=0, row=0, padx=2, pady=2, sticky= W)
+        
+        self.title = Label(self, text = "3D Multispeed Data-performance graph based on speed ratio between intruder and RPAS", bg = bg, font=("Ariel",20, "bold"))
+        self.title.grid(column=0, row=1, columnspan=10, padx=2, pady=2, sticky= W)
+        
+        self.config = Configuration()
+        
+        self.dist_file_path = self.config.default_prob_dist_file
+        
+        self.regenerate()
+        
+        #This is to prevent spacing between columns
+        self.grid_columnconfigure(0, pad=0, weight=0)
+        self.grid_columnconfigure(1, pad=0, weight=0)
+        self.grid_columnconfigure(2, pad=0, weight=0)
+        self.grid_columnconfigure(3, pad=0, weight=1)
+        
+        self.pack_propagate(0)
+        self.grid_propagate(0)
+    
+    
+    def update_speed_select(self):
+        #Keep in incase we want to switch between rpas and intruder speeds
+        # if self.speed_selection.get() == 0:
+        #     speeds = self.data.specs.rpas_speed_array.tolist()
+        # elif self.speed_selection.get() == 1:
+        #     speeds = self.data.specs.intruder_speed_array.tolist()
+        speeds = self.data.specs.rpas_speed_array.tolist()
+        self.speed_box["values"] = speeds
+        self.speed.set(speeds[0])
+        
+            
+    def create_graph(self):
+        #RPAS Surface Graph
+        if self.type_selection.get() == 0 and self.prob_type_selection.get() == 0:
+            self.controller.displayNormalizedNoSeeGraph(self.speed.get(), self.dist_file_path)
+        elif self.type_selection.get()== 0 and self.prob_type_selection.get() == 1:
+            self.controller.displayCumulativeNoSeeGraph(self.speed.get(), self.dist_file_path)
+        elif self.type_selection.get() == 1 and self.prob_type_selection.get() == 0:
+            self.controller.displayNormalizedSeeAndAvoidGraph(self.speed.get(), self.dist_file_path)
+        elif self.type_selection.get() == 1 and self.prob_type_selection.get() == 1:
+            self.controller.displayCumulativeSeeAndAvoidGraph(self.speed.get(), self.dist_file_path)
+    
+    # def create_all_graphs(self):
+        
+    def select_dist_file(self) -> None:
+        temp = self.dist_file_path.strip().split("/")
+        initialdir = self.dist_file_path.replace(temp[-1], "")
+        self.dist_file_path = filedialog.askopenfilename(title="Select Speed Dist File", initialdir=initialdir, initialfile= temp[-1] if len(temp) > 1 else "", defaultextension=".csv", filetypes=[("CSV (*.csv)", "*.csv")])
+        
+    def regenerate(self):
+        self.data = CurrentData()
+        
+        if self.data._sim_state != 0:    
+            self.select_type_plot_label = Label(self, text="Select if we consider Intruder See and Avoid or No Intruder See and Avoid:", bg=self.bg, font=("Ariel",12, "bold"))
+            self.select_type_plot_label.grid(column=0, row= 2, columnspan=4,  sticky = W)
+            
+            self.type_selection = IntVar(self, 0)
+            
+            self.no_see_radio_button = Radiobutton(self, text="No See and Avoid", variable=self.type_selection, value = 0, command=self.update_speed_select, bg=self.bg)
+            self.no_see_radio_button.grid(column=0, row = 3, sticky=W)
+            
+            self.including_see_radio_button = Radiobutton(self, text="Including See and Avoid", variable=self.type_selection, value = 1, command=self.update_speed_select, bg=self.bg)
+            self.including_see_radio_button.grid(column=1, columnspan=3, row=3, sticky=W)
+            
+            self.select_prob_type_plot_label = Label(self, text="Select Normalized or Cumulative Distribution:", bg=self.bg, font=("Ariel",12, "bold"))
+            self.select_prob_type_plot_label.grid(column=0, row= 4, columnspan=4,  sticky = W)
+            
+            self.prob_type_selection = IntVar(self, 0)
+            
+            self.nomalized_radio_button = Radiobutton(self, text="Normalized", variable=self.prob_type_selection, value = 0, command=self.update_speed_select, bg=self.bg)
+            self.nomalized_radio_button.grid(column=0, row = 5, sticky=W)
+            
+            self.cumulative_radio_button = Radiobutton(self, text="Cumulative", variable=self.prob_type_selection, value = 1, command=self.update_speed_select, bg=self.bg)
+            self.cumulative_radio_button.grid(column=1, columnspan=3, row=5, sticky=W)
+            
+            self.speed = DoubleVar()
+            self.speed_label = Label(self, text = "Select Speed (kts):", bg=self.bg, font=("Ariel",12, "bold"))
+            self.speed_label.grid(column=0, row=6, padx=2, pady=2, sticky=W, columnspan=2)
+            self.speed_box = ttk.Combobox(self, text = "Select speed value", textvariable=self.speed)
+            self.speed_box.grid(column=2, row=6, padx=2, pady=2, sticky=W)
+            self.update_speed_select()
+            
+            self.dist_file_button = Button(self, text="Select Speed Distribution File", command=self.select_dist_file)
+            self.dist_file_button.grid(row=7, column=0, padx=5, pady=10, columnspan=2, sticky=W)
+         
+            self.dist_file_path_entry = Entry(self, textvariable=StringVar(value=self.dist_file_path), width=50)
+            self.dist_file_path_entry.grid(row=7, column=2, padx=5, pady=10, columnspan=2, sticky=W)
+            
+            self.display_plot_button = Button(self, text="Create Graph", command=self.create_graph)
+            self.display_plot_button.grid(column=0, row=8, padx=5, pady=10, sticky= W)
