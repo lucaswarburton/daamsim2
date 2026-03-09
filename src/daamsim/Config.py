@@ -33,6 +33,7 @@ class Configuration:
         
         self.default_load_file_path = parser['Settings']['default_load_file_path']
         self.default_save_file_path = parser['Settings']['default_save_file_path']
+        self.default_prob_dist_file = parser['Settings']['default_prob_dist_file_path']
             
         
         #Read RPAS Characteristics
@@ -42,6 +43,8 @@ class Configuration:
         rpas_speed_array = self.get_rpas_speed_array(parser)
 
         #Intruder Characteristics
+        intruder_detection_thresh_arc_min = float(parser['DAA Defaults']['intruder_detection_thresh_arc_min'])
+        intruder_maneuver_delay = float(parser['DAA Defaults']['intruder_maneuver_delay'])
         intruder_speed_array = self.get_intruder_speed_array(parser)
 
         #DAA Characteristics
@@ -69,6 +72,8 @@ class Configuration:
             rpas_wingspan = rpas_wingspan, \
             rpas_max_roll_rate = rpas_max_roll_rate, \
             rpas_speed_array = rpas_speed_array, \
+            intruder_detection_thresh_arc_min = intruder_detection_thresh_arc_min, \
+            intruder_maneuver_delay = intruder_maneuver_delay, \
             intruder_speed_array = intruder_speed_array, \
             daa_declaration_range = daa_declaration_range, \
             daa_fov_deg = daa_fov_deg, \

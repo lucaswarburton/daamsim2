@@ -13,6 +13,8 @@ class DaaSpec:
 
     #Intruder Characteristics
     intruder_speed_array: np.array
+    intruder_detection_thresh_arc_min: float #in deg
+    intruder_maneuver_delay: float # in s
 
     #DAA Characteristics
     daa_declaration_range: float
