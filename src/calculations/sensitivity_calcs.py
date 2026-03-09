@@ -34,6 +34,8 @@ def sensitivity_calcs(specs: DaaSpec, range_increment, fov_increment, max_range)
                 )
             fov_rrs.append(calc_total_rr(daa_rr, dsaa_rr, specs))
         rr.append(fov_rrs)
+    
+    current_data.sensitivity_rr = rr
             
 
 

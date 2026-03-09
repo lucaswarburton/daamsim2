@@ -26,6 +26,7 @@ class CurrentData:
         "alpha_overtake_vect",
         "close_vel",
         "close_vel_over",
+        "sensitivity_rr"
     ]
     #0 for start up state
     #1 for rr_calcs ran

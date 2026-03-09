@@ -650,6 +650,46 @@ class RpasCumulativeRRPassFailSeeAndAvoid:
         self.ax.legend()
         
         plt.show() 
+
+class RRSensitivitySurfaceGraph:
+    def __init__(self, ownspeed, max_bank, fovs, ranges, rrs):
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(projection='3d')
+
+        X, Y = np.meshgrid(ranges, fovs)
+
+        surf = self.ax.plot_surface(X, Y, rrs)
+
+        self.ax.set_title(f"RR Sensitivity for {ownspeed} kts Own, {max_bank} deg Bank")
+        self.ax.set_xlabel("Range (m)")
+        self.ax.set_ylabel("FOV (deg)")
+        self.ax.set_zlabel("RR")
+
+        self.fig.colorbar(surf)
+
+        plt.show()
+
+class RRSensitivityContourGraph:
+    def __init__(self, ownspeed, max_bank, fovs, ranges, rrs):
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+
+        X, Y = np.meshgrid(ranges, fovs)
+        levels = np.arange(0.1, 1.1, 0.1)
+
+        contour = self.ax.contour(X, Y, rrs, levels=levels)
+
+        self.ax.grid(True)
+        self.fig.colorbar(contour)
+        
+        title_line1 = f"RR Sensitivity for {ownspeed} kts Own, {max_bank} deg Bank"
+        title_line2 = "Lines At RR Increments of 0.1"
+        self.ax.set_title(title_line1 + "\n" + title_line2)
+
+        self.ax.set_xlabel("DAA Range (m)")
+        self.ax.set_ylabel("DAA FOV (deg)")
+
+        plt.show()
             
 # if __name__ == "__main__":
 #     plot1 = PerSpeedPlot(10, 10, 0.25, 1000, 60)
