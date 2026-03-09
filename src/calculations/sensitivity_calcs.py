@@ -1,9 +1,9 @@
 from data_classes.DaaSpec import DaaSpec
 from data_classes.CurrentData import CurrentData
 from daamsim.UI.ProgressFrameUI import ProgressFrame
-from calculations.graph_evals import per_speed_graph_evals
-import math_util
+from  calculations import graph_evals
 import numpy as np
+from scipy.interpolate import interp1d
 
 def sensitivity_calcs(specs: DaaSpec, range_increment, fov_increment, max_range):
     # max_bank = specs.rpas_max_bank_deg
@@ -20,9 +20,9 @@ def sensitivity_calcs(specs: DaaSpec, range_increment, fov_increment, max_range)
         specs.daa_fov_deg = fov
         for range in ranges:
             specs.daa_declaration_range = range
-            daaRr, dsaaRr = [] * len(specs.intruder_speed_array), [] * len(specs.intruder_speed_array)
+            daa_rr, dsaa_rr = [] * len(specs.intruder_speed_array), [] * len(specs.intruder_speed_array)
             for i in range(len(specs.intruder_speed_array)):
-                daaRr[i], dsaaRr[i] = daa_rr_w_see_and_avoid(
+                daa_rr[i], dsaa_rr[i] = daa_rr_w_see_and_avoid(
                     current_data.alpha_oncoming_vect,
                     current_data.r_min_m,
                     current_data.alpha_overtake_vect,
@@ -32,7 +32,7 @@ def sensitivity_calcs(specs: DaaSpec, range_increment, fov_increment, max_range)
                     fov,
                     specs.daa_declaration_range,
                 )
-                fov_rrs.append(calc_total_rr(specs.intruder_speed_array[i], daaRr, dsaaRr, specs))
+            fov_rrs.append(calc_total_rr(daa_rr, dsaa_rr, specs))
         rr.append(fov_rrs)
             
 
@@ -98,5 +98,23 @@ def daa_rr_w_see_and_avoid(azimuth_deg_oncoming, r_min_oncoming, azimuth_overtak
 
     return daa_rr, dsaa_rr
 
-def calc_total_rr(a, b, c, d):
-    return 0
+def calc_total_rr(daa_rr, dsaa_rr, specs):
+    speed_bins = np.array(specs.intruder_speed_array)
+    distribution = graph_evals.get_normalized_distribution_speeds(specs.dist_file, specs.intruder_speed_array)
+    interp = interp1d(speed_bins, distribution, kind="nearest", fill_value="extrapolate")
+
+    pass_height = [0] * len(speed_bins)
+    fail_height = [0] * len(speed_bins)
+    saa_height = [0] * len(speed_bins)
+
+    for i in range(len(speed_bins)):
+        bin_dist = float(interp(speed_bins[i]))
+
+        fail_height_no_see = bin_dist * daa_rr[i]
+        pass_height_no_see = bin_dist - fail_height_no_see
+
+        fail_height[i] = bin_dist * dsaa_rr[i]
+        saa_height[i] = bin_dist - fail_height[i] - pass_height_no_see
+        pass_height[i] = bin_dist - fail_height_no_see
+
+    return np.sum(fail_height)
