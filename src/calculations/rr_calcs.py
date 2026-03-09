@@ -63,8 +63,8 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
     current_data.ground_int_speed[int_key] = dict()
     current_data.alpha_oncoming_vect[int_key] = dict()
     current_data.alpha_overtake_vect[int_key] = dict()
-    current_data.clos_vel[int_key] = dict()
-    current_data.clos_vel_over[int_key] = dict()
+    current_data.close_vel[int_key] = dict()
+    current_data.close_vel_over[int_key] = dict()
     
     for rpas_speed in specs.rpas_speed_array:
         
@@ -130,8 +130,8 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
         r_min_m_over = np.full(n, np.nan)
         tm = np.full(n, np.nan)
         tm_over = np.full(n, np.nan)
-        clos_vel = np.full(n, np.nan)
-        clos_vel_over = np.full(n, np.nan)
+        close_vel = np.full(n, np.nan)
+        close_vel_over = np.full(n, np.nan)
         delta_hdg_r = np.full(n, np.nan)
         delta_hdg_l = np.full(n, np.nan)
         delta_hdg_r_over = np.full(n, np.nan)
@@ -144,10 +144,10 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
 
         for k in range(n):
             # simulate oncoming collision alpha
-            r_min_m[k], clos_vel[k], delta_hdg_l[k], delta_hdg_r[k], azim_l[k], azim_r[k], tm[k] = simulate_alpha(alpha_oncoming_vect[k], False, eng, simulation_params, turn_angles_arr[k], t2_arr[k], initial_conditions[k], k, False)
+            r_min_m[k], close_vel[k], delta_hdg_l[k], delta_hdg_r[k], azim_l[k], azim_r[k], tm[k] = simulate_alpha(alpha_oncoming_vect[k], False, eng, simulation_params, turn_angles_arr[k], t2_arr[k], initial_conditions[k], k, False)
 
             # simulate overtake collision alpha
-            r_min_m_over[k], clos_vel_over[k], delta_hdg_l_over[k], delta_hdg_r_over[k], azim_l_over[k], azim_r_over[k], tm_over[k] = simulate_alpha(alpha_overtake_vect[k], True, eng, simulation_params, turn_angles_ov_arr[k], t2_ov_arr[k], initial_conditions_ov[k], k, False)
+            r_min_m_over[k], close_vel_over[k], delta_hdg_l_over[k], delta_hdg_r_over[k], azim_l_over[k], azim_r_over[k], tm_over[k] = simulate_alpha(alpha_overtake_vect[k], True, eng, simulation_params, turn_angles_ov_arr[k], t2_ov_arr[k], initial_conditions_ov[k], k, False)
     
         # save data
         rpas_key = float(round(rpas_speed, 3))
@@ -157,8 +157,8 @@ def rr_calcs(intruder_speed: float, i: int, eng: object):
         current_data.ground_int_speed[int_key][rpas_key] = ground_int_speed
         current_data.alpha_oncoming_vect[int_key][rpas_key] = alpha_oncoming_vect
         current_data.alpha_overtake_vect[int_key][rpas_key] = alpha_overtake_vect
-        current_data.clos_vel[int_key][rpas_key] = clos_vel
-        current_data.clos_vel_over[int_key][rpas_key] = clos_vel_over
+        current_data.close_vel[int_key][rpas_key] = close_vel
+        current_data.close_vel_over[int_key][rpas_key] = close_vel_over
 
 
 def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: SimulationParams, turn_angles: np.array, t2: np.array, ic: InitialConditions, k: int, run_extra_simulations: bool):
@@ -235,10 +235,10 @@ def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: Simulati
 
         if isOvertake:
             r_min_m_over = tm * math.sqrt(vvel)
-            clos_vel_over = math.sqrt(vvel)
+            close_vel_over = math.sqrt(vvel)
         else:
             r_min_m = tm * math.sqrt(vvel)
-            clos_vel = math.sqrt(vvel)
+            close_vel = math.sqrt(vvel)
 
         if pref_man_turn >= 0:
             delta_hdg_r = pref_man_turn
@@ -308,9 +308,9 @@ def simulate_alpha(alpha: float, isOvertake: bool, eng: object, params: Simulati
                         y_i[time] = y_i[time - 1] + ground_int_speed * math.cos(psi_i) * time_resol
                         x_i[time] = x_i[time - 1] + ground_int_speed * math.sin(psi_i) * time_resol
         if isOvertake:
-            return r_min_m_over, clos_vel_over, delta_hdg_l, delta_hdg_r, azim_l, azim_r, tm
+            return r_min_m_over, close_vel_over, delta_hdg_l, delta_hdg_r, azim_l, azim_r, tm
         else:
-            return r_min_m, clos_vel, delta_hdg_l, delta_hdg_r, azim_l, azim_r, tm
+            return r_min_m, close_vel, delta_hdg_l, delta_hdg_r, azim_l, azim_r, tm
     else: # alpha is 0 or 180 or -180
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 # end function

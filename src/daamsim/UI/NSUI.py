@@ -127,6 +127,20 @@ class NewSimUIInnerFrame(Frame):
         self.labels["Intruder_Chars"] = Label(self, text = "Intruder Characteristics:", bg=self.bg, font=("Ariel",15, "bold"))
         self.labels["Intruder_Chars"].grid(column = 0, row=i, columnspan=3, padx=2, pady=2, sticky = W)
         i += 1
+        
+        self.labels["intruder_detection_thresh_arc_min"] = Label(self, text = "Detection Threshold Arc (Arc Min):", bg=self.bg)
+        self.labels["intruder_detection_thresh_arc_min"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["intruder_detection_thresh_arc_min"] = Entry(self)
+        self.entries["intruder_detection_thresh_arc_min"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["intruder_detection_thresh_arc_min"].insert(0, self.daa_spec.intruder_detection_thresh_arc_min)
+        i += 1
+        
+        self.labels["intruder_maneuver_delay"] = Label(self, text = "Maneuver Delay (s):", bg=self.bg)
+        self.labels["intruder_maneuver_delay"].grid(column = 1, row=i, padx=2, pady=2, sticky=W)
+        self.entries["intruder_maneuver_delay"] = Entry(self)
+        self.entries["intruder_maneuver_delay"].grid(column=2, row=i, padx=2, pady=2, sticky=W)
+        self.entries["intruder_maneuver_delay"].insert(0, self.daa_spec.intruder_maneuver_delay)
+        i += 1
 
         self.use_cust_intruder_speed = BooleanVar()
         self.use_cust_intruder_speed.set(self.cur_settings.custom_intruder_speed_enabled)
@@ -475,6 +489,8 @@ class NewSimUIInnerFrame(Frame):
             rpas_speed_array = math_util.make_array(min_speed, max_speed, speed_interval)
 
         #Read Intruder Chars
+        intruder_detection_thresh_arc_min = float(self.entries["intruder_detection_thresh_arc_min"].get())
+        intruder_maneuver_delay = float(self.entries["intruder_maneuver_delay"].get())
         if(self.use_cust_intruder_speed.get()):
             intruder_speed_array = math_util.createCustArray(self.entries["custom_intruder_speed_array"].get())
         else:
@@ -513,6 +529,8 @@ class NewSimUIInnerFrame(Frame):
             rpas_wingspan = rpas_wingspan, \
             rpas_max_roll_rate = rpas_max_roll_rate, \
             rpas_speed_array = rpas_speed_array, \
+            intruder_detection_thresh_arc_min = intruder_detection_thresh_arc_min, \
+            intruder_maneuver_delay = intruder_maneuver_delay, \
             intruder_speed_array = intruder_speed_array, \
             daa_declaration_range = daa_declaration_range, \
             daa_fov_deg = daa_fov_deg, \

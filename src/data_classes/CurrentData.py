@@ -15,6 +15,7 @@ class CurrentData:
     _JSONv = "DAAMSIMJSONv1.2"
 
     _dict_field_names = [
+        "srr_val",
         "rr_val",
         "points",
         "azimuth_vect",
@@ -23,8 +24,8 @@ class CurrentData:
         "ground_int_speed",
         "alpha_oncoming_vect",
         "alpha_overtake_vect",
-        "clos_vel",
-        "clos_vel_over",
+        "close_vel",
+        "close_vel_over",
     ]
     #0 for start up state
     #1 for rr_calcs ran
